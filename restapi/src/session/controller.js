@@ -8,6 +8,13 @@ const getStudents = (req, res) => {
   });
 };
 
+const getSessions = (req, res) => {
+  pool.query(queries.getSessions, (error, results) => {
+    if (error) throw error;
+    res.status(200).json(results.rows);
+  })
+}
+
 const getStudentById = (req, res) => {
   const id = parseInt(req.params.id);
   pool.query(queries.getStudentById, [id], (error, results) => {
@@ -71,6 +78,7 @@ const updateStudent = (req, res) => {
 
 module.exports = {
   getStudents,
+  getSessions,
   getStudentById,
   addStudent,
   removeStudent,
