@@ -23,6 +23,14 @@ const getStudentById = (req, res) => {
   });
 };
 
+const getSessionById = ( req, res ) => {
+  const sessionNumber = parseInt(req.params.sessionNumber)
+  pool.query(queries.getSessionById, [sessionNumber], (error, results) => {
+    if (error) throw error;
+    res.status(200).json(results.rows);
+  });
+};
+
 const addStudent = (req, res) => {
   const { name, email, age, dob } = req.body;
   pool.query(queries.checkEmailExists, [email], (error, results) => {
@@ -80,6 +88,7 @@ module.exports = {
   getStudents,
   getSessions,
   getStudentById,
+  getSessionById,
   addStudent,
   removeStudent,
   updateStudent,

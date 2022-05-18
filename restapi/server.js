@@ -17,6 +17,6 @@ app.get("/", (req, res) => {
     res.send("Hello World!");
 })
 
-app.use('/api/v1/sessions', sessionRoutes);
+app.use('/sessions', sessionRoutes);
 
 app.listen(port, () => console.log(`app listening on port ${port}`))
