@@ -16,6 +16,21 @@ const getSessionById = (req, res) => {
   });
 };
 
+const getRecentSessions = (req, res) => {
+  pool.query(queries.getSessionsRecent, (error, results) => {
+    if (error) throw error;
+    res.status(200).json(results.rows);
+  });
+};
+
+const filterSessions = (req, res) => {
+  const { lowBound, highBound, order } = req.body;
+  pool.query(queries.filterByDate, [lowBound, highBound, order], (error,results) => {
+    if (error) throw error;
+    res.status(200).json(results.rows)
+  });
+}
+
 const addSession = (req, res) => {
   const {
     date,
@@ -119,7 +134,9 @@ const updateSession = (req, res) => {
 
 module.exports = {
   getSessions,
+  getRecentSessions,
   getSessionById,
+  filterSessions,
   addSession,
   removeSession,
   wipeTable,

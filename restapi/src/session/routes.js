@@ -4,6 +4,7 @@ const controller = require('./controller');
 const router = Router();
 
 router.get('/', controller.getSessions);
+router.get('/recent', controller.getRecentSessions)
 
 router.post('/', controller.addSession);
 
