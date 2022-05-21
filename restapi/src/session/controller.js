@@ -24,10 +24,18 @@ const getRecentSessions = (req, res) => {
 };
 
 const filterSessions = (req, res) => {
-  const { lowBound, highBound, order } = req.body;
-  pool.query(queries.filterByDate, [lowBound, highBound, order], (error,results) => {
+  const {from, to} = req.params
+  pool.query(queries.filterByDate, [from, to], (error,results) => {
     if (error) throw error;
-    res.status(200).json(results.rows)
+    res.status(200).json(results.rows);
+  });
+}
+
+const filterSessionsRecent = (req, res) => {
+  const {from, to} = req.params
+  pool.query(queries.filterByDateRecent, [from, to], (error,results) => {
+    if (error) throw error;
+    res.status(200).json(results.rows);
   });
 }
 
@@ -137,6 +145,7 @@ module.exports = {
   getRecentSessions,
   getSessionById,
   filterSessions,
+  filterSessionsRecent,
   addSession,
   removeSession,
   wipeTable,

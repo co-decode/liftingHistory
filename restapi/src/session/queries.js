@@ -14,7 +14,8 @@ const deleteData = "DELETE FROM session"
 
 const updateSession = "UPDATE session SET date = $1, alias = $2, horizontal_press = $3, vertical_press = $4, vertical_pull = $5, elbow_flexion = $6, knee_flexion = $7, hip_hinge = $8 WHERE session_number = $9";
 
-const filterByDate = "SELECT * FROM session WHERE date > $1 AND date < $2 ORDER BY date $3"
+const filterByDate = "SELECT * FROM session WHERE date > $1 AND date < $2 ORDER BY date"
+const filterByDateRecent = "SELECT * FROM session WHERE date > $1 AND date < $2 ORDER BY date DESC"
 
 
 module.exports = {
@@ -26,5 +27,6 @@ module.exports = {
   deleteData,
   updateSession,
   filterByDate,
+  filterByDateRecent,
   getSessionsRecent
 };
