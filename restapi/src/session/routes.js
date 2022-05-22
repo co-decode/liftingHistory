@@ -6,7 +6,7 @@ const router = Router();
 router.get('/', controller.getSessions);
 router.get('/recent', controller.getRecentSessions)
 router.get('/filter/:from/:to',controller.filterSessions)
-router.get('/filter/recent',controller.filterSessionsRecent)
+router.get('/filter/recent/:from/:to',controller.filterSessionsRecent)
 
 router.post('/', controller.addSession);
 
