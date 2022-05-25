@@ -1,11 +1,18 @@
-const Pool = require('pg').Pool;
+const Pool = require('pg-pool');
+const url = require('url')
 
-const pool = new Pool({
-    user: "hssgwxnsugbpxe",
-    host: "ec2-3-228-235-79.compute-1.amazonaws.com",
-    database: "d1jobvt6b8bieu",
-    password: "2ad9b5106f384a36d6d17460f804f08ef30f24390a924c51225aecde41c8d4ff",
-    port: 5432,
-})
+const params = url.parse(process.env.DATABASE_URL);
+const auth = params.auth.split(':');
+
+const config = {
+  user: auth[0],
+  password: auth[1],
+  host: params.hostname,
+  port: params.port,
+  database: params.pathname.split('/')[1],
+  ssl: true
+};
+
+const pool = new Pool(config);
 
 module.exports = pool;
