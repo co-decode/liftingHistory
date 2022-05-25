@@ -3,13 +3,11 @@ const sessionRoutes = require('./src/session/routes');
 const app = express();
 const port = process.env.PORT || 3001;
 
-console.log("Anything?")
-
 const cors = require('cors');
 
 app.use(
     cors({
-        origin: "http://localhost:3000"
+        origin: "*"
     })
 )
 
