@@ -1,4 +1,4 @@
-const getSessions = "SELECT * FROM s ORDER BY date";
+const getSessions = "SELECT * FROM sessions ORDER BY date";
 const getSessionsRecent = "SELECT * FROM sessions ORDER BY date DESC"
 
 const getSessionById = "SELECT * FROM sessions WHERE session_number  = $1";
