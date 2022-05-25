@@ -3,6 +3,8 @@ const sessionRoutes = require('./src/session/routes');
 const app = express();
 const port = process.env.PORT || 3001;
 
+console.log("Anything?")
+
 const cors = require('cors');
 
 app.use(
@@ -13,9 +15,9 @@ app.use(
 
 app.use(express.json());
 
-// app.get("/", (req, res) => {
-//     res.send("Hello World!");
-// })   
+app.get("/", (req, res) => {
+    res.send("Hello World!");
+})   
 
 app.use('/sessions', sessionRoutes);
 
