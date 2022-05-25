@@ -1,7 +1,7 @@
 const express = require('express');
 const sessionRoutes = require('./src/session/routes');
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 const cors = require('cors');
 
