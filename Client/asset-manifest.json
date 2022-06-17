@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/liftingHistory-Client/static/css/main.af795874.css",
+    "main.js": "/liftingHistory-Client/static/js/main.61f777cc.js",
+    "index.html": "/liftingHistory-Client/index.html",
+    "main.af795874.css.map": "/liftingHistory-Client/static/css/main.af795874.css.map",
+    "main.61f777cc.js.map": "/liftingHistory-Client/static/js/main.61f777cc.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.af795874.css",
+    "static/js/main.61f777cc.js"
+  ]
+}
