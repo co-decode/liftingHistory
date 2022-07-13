@@ -3,7 +3,7 @@ const makeRouter = require('./src/session/routes');
 const cors = require('cors');
 
 
-function makeApp(sessionRoutes) { 
+function makeApp(sessionRoutes, database) { 
     const app = express();
 
     app.use(
@@ -20,13 +20,15 @@ function makeApp(sessionRoutes) {
 
     app.use('/sessions', sessionRoutes);
 
-    app.post('/users', (req,res) => {
+    app.post('/users', async (req,res) => {
         const { password, username } = req.body
         if (!password || !username) {
             res.sendStatus(400);
             return
         }
-        res.send({userId: 0})
+        const userId = await database.createUser(username, password);
+
+        res.send({userId})
     })
     return app
 }
