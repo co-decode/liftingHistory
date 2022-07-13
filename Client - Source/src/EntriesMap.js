@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import Axios from "axios";
 
+const url = {
+  local: "http://localhost:3001",
+  heroku: "https://node-lifting-history.herokuapp.com"
+}
+
 function EntriesMap({ get, setGet, recent, lowBound, highBound, filtered, requesting, setRequesting }) {
   const [date, setDate] = useState();
   const [alias, setAlias] = useState();
@@ -14,14 +19,14 @@ function EntriesMap({ get, setGet, recent, lowBound, highBound, filtered, reques
   const refreshDB = () => {
     setRequesting(true)
     if (recent && !filtered) {
-      Axios.get("https://node-lifting-history.herokuapp.com/sessions/recent")
+      Axios.get(`${url.local}/sessions/recent`)
         .then((res) => {
           setGet(res.data);
           setRequesting(false)
         })
         .catch((err) => {console.log(err); alert("Get request failed")});
     } else if (!recent && !filtered) {
-      Axios.get("https://node-lifting-history.herokuapp.com/sessions")
+      Axios.get(`${url.local}/sessions`)
         .then((res) => {
           setGet(res.data);
           setRequesting(false)
@@ -29,7 +34,7 @@ function EntriesMap({ get, setGet, recent, lowBound, highBound, filtered, reques
         .catch((err) => {console.log(err); alert("Get request failed")});
     } else if (filtered) {
         if (!recent) {
-          Axios.get(`https://node-lifting-history.herokuapp.com/sessions/filter/"${lowBound}"/"${highBound}"`)
+          Axios.get(`${url.local}/sessions/filter/"${lowBound}"/"${highBound}"`)
           .then((res) => {
             setGet(res.data);
             setRequesting(false)
@@ -37,7 +42,7 @@ function EntriesMap({ get, setGet, recent, lowBound, highBound, filtered, reques
           .catch((err) => {console.log(err); alert("Get request failed")});
         }
         else if (recent) {
-          Axios.get(`https://node-lifting-history.herokuapp.com/sessions/filter/recent/"${lowBound}"/"${highBound}"`)
+          Axios.get(`${url.local}/sessions/filter/recent/"${lowBound}"/"${highBound}"`)
           .then((res) => {
             setGet(res.data);
             setRequesting(false)
@@ -50,7 +55,7 @@ function EntriesMap({ get, setGet, recent, lowBound, highBound, filtered, reques
   const editEntry = (e, sessionNumber) => {
     e.preventDefault();
     setRequesting(true)
-    Axios.put(`https://node-lifting-history.herokuapp.com/sessions/${sessionNumber}`, {
+    Axios.put(`${url.local}/sessions/${sessionNumber}`, {
       date,
       alias,
       horizontal_press: horizontalPress,
@@ -69,7 +74,7 @@ function EntriesMap({ get, setGet, recent, lowBound, highBound, filtered, reques
 
     if(window.confirm("You are about to delete this entry. Are you sure?")){
       setRequesting(true)
-      Axios.delete(`https://node-lifting-history.herokuapp.com/sessions/${sessionNumber}`)
+      Axios.delete(`${url.local}/sessions/${sessionNumber}`)
       .then((res)=> {console.log("Deleting Entry"); setRequesting(false)})
       .then(()=>refreshDB())
       .catch((err)=> {console.log(err); alert("Delete request failed")})

@@ -13,7 +13,11 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.1",
-    "nodemon": "^2.0.16",
+    "nodemon": "^2.0.19",
     "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "jest": "^28.1.2",
+    "supertest": "^6.2.4"
   }
 }
