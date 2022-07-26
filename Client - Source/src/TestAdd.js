@@ -1,14 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function TestAdd() {
   const [create, setCreate] = useState(
     { lifts: {
-        deadlift: { uid: 2, mass: null, reps: null, sets: null, scheme: null, variation: null },
-        squat: { uid: 2, mass: null, reps: null, sets: null, scheme: null, variation: null },
-        bench: { uid: 2, mass: null, reps: null, sets: null, scheme: null, variation: null }
+        deadlift: { mass: null, reps: null, sets: null, scheme: null, variation: null },
+        squat: { mass: null, reps: null, sets: null, scheme: null, variation: null },
+        bench: { mass: null, reps: null, sets: null, scheme: null, variation: null }
     }, date: null });
+  const dateRefs = useRef({date: null, time: null})
   const [response, setResponse] = useState(null);
+  const [user, setUser] = useState(null);
+  const link = useNavigate();
+
+
+  useEffect(()=> {
+    axios({
+        method:"get",
+        withCredentials: true,
+        url: "http://localhost:3001/authenticated"
+    }).then(res => {
+        if (!res.data) link('/login')
+        else if (res.data) {
+            setUser(res.data)
+        }
+    })
+  }, [link])
+
 
   function post(clone) {
     axios({
@@ -18,7 +37,7 @@ export default function TestAdd() {
         date: clone.date,
       },
       withCredentials: true,
-      url: "http://localhost:3001/sessions/2",
+      url: `http://localhost:3001/sessions/${user.uid}`,
     }).then((res) => {
         console.log("something happened")
       setResponse(res.data);
@@ -27,7 +46,13 @@ export default function TestAdd() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const time = new Date(Date.now()).toISOString();
+    const datePart = dateRefs.current.date.value
+    const timePart = dateRefs.current.time.value
+    if (!datePart || !timePart) {
+        setResponse("Timestamp is invalid")
+        return console.log("Timestamp is invalid")
+    }
+    const time = new Date(new Date(datePart).setTime(new Date(datePart).getTime() + parseInt(timePart.slice(0,2)) * 3600000 + parseInt(timePart.slice(3,5)) * 60000)).toISOString()
     const dlClone = Object.assign({}, create.lifts.deadlift)
     const sqClone = Object.assign({}, create.lifts.squat)
     const bClone = Object.assign({}, create.lifts.bench)
@@ -35,24 +60,27 @@ export default function TestAdd() {
     Object.values(clone.lifts.deadlift).some(val => !!val === false) && delete clone.lifts.deadlift
     Object.values(clone.lifts.squat).some(val => !!val === false) && delete clone.lifts.squat
     Object.values(clone.lifts.bench).some(val => !!val === false) && delete clone.lifts.bench
-    // console.log(JSON.stringify(clone))
-    // console.log(JSON.stringify(create))
-    post(clone)
+    if (Object.keys(clone.lifts).length > 0) {
+        post(clone)
+    }
   };
+
+  if (!user) return <strong>Loading...</strong>
 
   return (
     <div>
-      Hello World!
-      {response && response}
       <form onSubmit={(e) => handleSubmit(e)}>
+        <label htmlFor="date">Date of Session</label>
+        <input id="date" type="date" defaultValue={new Date(Date.now()).toISOString().slice(0,10)} 
+            ref={el=>dateRefs.current = {...dateRefs.current, date: el}}/>
+        <input type="time" defaultValue={new Date(Date.now()).toLocaleTimeString().slice(0,5)} 
+            ref={el=>dateRefs.current = {...dateRefs.current, time: el}}/>
         <DeadliftField create={create} setCreate={setCreate}/>
         <SquatField create={create} setCreate={setCreate}/>
         <BenchField create={create} setCreate={setCreate}/>
       <button type="submit">Submit</button>
       </form>
-      <button onClick={() => console.log(JSON.stringify(create))}>
-        Click me
-      </button>
+            {response && response}
     </div>
   );
 }
@@ -145,3 +173,4 @@ function BenchField({create, setCreate}) {
         </fieldset>
     )
 }
+

@@ -182,20 +182,26 @@ export default function TestEdit({get, setGet, edit, setEdit}) {
     return (
         <div>
             <button onClick={() => setEdit(0)}>Cancel Changes</button>
-            <button onClick={() => console.log(update)}>log Update Object</button>
-            <button onClick={() => console.log(get.date.filter(v=>v.sid === edit)[0].exercises)}>log get Object</button>
+            {/* <button onClick={() => console.log(update)}>log Update Object</button> */}
+            {/* <button onClick={() => console.log(get.date.filter(v=>v.sid === edit)[0].exercises)}>log get Object</button> */}
             <button onClick={() => submitUpdate(update)}>Submit Update</button>
-            {!update ? null : Object.keys(update.lifts).length === 3 ? null : 
+            {!update ? null : 
+            // Object.keys(update.lifts).length === 3 ? null : 
              ['deadlift', 'squat', 'bench'].filter(v=>!get.date.filter(v=>v.sid === edit)[0].exercises.includes(v))
                 .map(val=>{return(
                     <div key={`missing${val}`}>
-                    <button  onClick={()=>{update.newLifts[val] ? removeExercise(val) : setUpdate({...update, newLifts: {...update.newLifts, [val]:    {mass: null, reps: null, sets: null, scheme: null, variation: null}}})}}>
+                    <button  onClick={()=>{
+                        update.newLifts[val] 
+                        ? removeExercise(val) 
+                        : setUpdate({...update, newLifts: {...update.newLifts, 
+                                [val]: {mass: null, reps: null, sets: null, scheme: null, variation: null}
+                            }})
+                    }}>
                         {update.newLifts[val] ? `Cancel ` : `Add ` }{val.replace(/^\w/, (c)=>c.toUpperCase())}
                     </button>
                     {update.newLifts[val] ? addFieldset(val) : null}
                     </div>)})
             }
-
             {returnSid(get, [edit])}
             {feedback}
         </div>

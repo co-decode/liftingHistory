@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import TestEdit from "./TestEdit";
+import { useNavigate } from "react-router-dom";
 
 export default function Test() {
     const [get, setGet] = useState(null)
@@ -12,24 +13,32 @@ export default function Test() {
         ascending: true
     })
     const editRefs = useRef({});
+    const link = useNavigate();
 
-    
-    useEffect(() => {
+    useEffect(()=> {
         axios({
             method:"get",
             withCredentials: true,
-            url:"http://localhost:3001/user/2"
-        }).then(res=> {
-            setGet(res.data[0])
-            const earliest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>a-b)[0])
-            const latest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>b-a)[0])
-            setDateFilter({
-                from: new Date(earliest.setTime(earliest.getTime() + 1 * 86400000)).toISOString().slice(0,10), 
-                to: new Date(latest.setTime(latest.getTime() + 2 * 86400000)).toISOString().slice(0,10),
-                ascending: true
+            url: "http://localhost:3001/authenticated"
+        }).then(res => {
+            !res.data ? link('/login') :
+            axios({
+                method:"get",
+                withCredentials: true,
+                url:`http://localhost:3001/sessions/${res.data.uid}`
+            }).then(res=> {
+                console.log(res.data[0])
+                setGet(res.data[0])
+                const earliest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>a-b)[0])
+                const latest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>b-a)[0])
+                setDateFilter({
+                    from: new Date(earliest.setTime(earliest.getTime() + 1 * 86400000)).toISOString().slice(0,10), 
+                    to: new Date(latest.setTime(latest.getTime() + 2 * 86400000)).toISOString().slice(0,10),
+                    ascending: true
+                })
             })
         })
-    }, [])
+    }, [link])
 
     useEffect(() => {
         if (edit > 0) {
@@ -115,10 +124,8 @@ export default function Test() {
                 <button onClick={()=> setDateFilter({...dateFilter, ascending: !dateFilter.ascending})}>Reverse Order</button>
             </fieldset>
             : null}
-            {/* <button onClick={()=>console.log(new Date(get.date.map(v=>new Date(v.date)).sort((a,b)=>b-a)[0]).toISOString())}>log stuff</button>
-            <button onClick={()=>console.log(get.date.map(v=>v.date))}>log stuff</button>
-            <button onClick={()=>console.log(dateFilter)}>log stuff</button> */}
-            {edit ? <TestEdit get={get} setGet={setGet} edit={edit} setEdit={setEdit} /> : returnSid(get, dateFilter.from, dateFilter.to, dateFilter.ascending)}
+            {edit ? <TestEdit get={get} setGet={setGet} edit={edit} setEdit={setEdit} /> 
+                  : returnSid(get, dateFilter.from, dateFilter.to, dateFilter.ascending)}
             
         </div>
     )

@@ -5,64 +5,17 @@ const passportLocal = require('passport-local').Strategy
 const bcrypt = require('bcryptjs')
 const session = require('express-session')
 const {userPool} = require('./db')
-
 const {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray} = require('./utils')
-
-
 
 function makeApp(sessionRoutes, database) { 
     const app = express();
     const initializePassport = require("./passport-config")
-    initializePassport(
-        passport, 
-        (username) => {
-            let user
-            userPool.query(`SELECT * FROM users WHERE username = '${username}'`,
-            (err, result) => {
-                if (err) throw err
-                user = result.rows[0]
-            })
-            
-            return user
-        },
-        id => userPool.query(`SELECT uid FROM users`, (error, result) => {
-            if (error) throw error
-            return result.rows[0]
-        })
-    );
-    
-    // const users = []    
-
-    // 1 - DONE - Users should come from postgres now.
-    // 2 - Sessions queries should be passed a user.
-        // DONE - Get all sessions for user
-        // DEFER... when I need it - Get single session for user by xdatex -> sid.
-        // DONE - Post session from user, client needs to pass date.
-        // DONE - Delete session by user and user id
-        // DONE - Update session by user and user id, and lifts object
-
-    // 2.5 = The client should deliver data in the form required by the server logic, also be sure to lock the passing of sensitive information to client logic, users should not be ablfe to delete random session ids, etc.
-        // DONE - Receive and display all sessions for user
-        // Add a session from the client 
-            // Needs to receive client ID from the authenticated check on the front end
-        // DONE - Delete a session from the clienT
-        // DONE - Update a sessions from the client - Need to add lifts and remove lifts from update object.
-
-    // 3 - I should clean up the state of the front end, keep it as an object.
-
-    // 4 - Testing after that? Ha, probably needs a start from the beginning. I need more tutorial experience.
-        // Still should see if my current tests can be adapted to my new users table.
-    // 5 - I would like to have a friending feature, along with instant messaging with sockets.
-    // 6 - Should package it up with docker.
-    // 7 - Should set up Travis CI.
-    // 8 - Should implement redis, even if it doesn't improve anything.
-
-    app.use(
-        cors({
-            origin: ['http://localhost:3000','http://localhost:3001'],
-            credentials: true
-        })
-    )
+    initializePassport(passport) 
+   
+    app.use(cors({
+        origin: ['http://localhost:3000','http://localhost:3001'],
+        credentials: true
+    }))
 
     app.use(express.json());
     app.use(express.urlencoded({extended: true}));
@@ -71,13 +24,12 @@ function makeApp(sessionRoutes, database) {
         resave: false,
         saveUninitialized: false
     }))
+    //Look up how to improve the secret ^^^, maybe heroku will provide an environment variable?
     app.use(passport.initialize())
     app.use(passport.session())
 
-    // app.use('/sessions', sessionRoutes);
-
-    //Get all sessions for a user
-    app.get('/user/:id', (req,res,next) => {
+    // -- CRUD Endpoints --
+    app.get('/sessions/:id', (req,res,next) => {
         const id = parseInt(req.params.id);
         userPool.connect((err, client, release) => {
             if (err) throw err
@@ -93,7 +45,6 @@ function makeApp(sessionRoutes, database) {
         })
     })
 
-    //Create session
     app.post('/sessions/:id', (req,res,next) => {
         const id = parseInt(req.params.id);
         const lifts = req.body.lifts;
@@ -108,14 +59,13 @@ function makeApp(sessionRoutes, database) {
                 console.log(sid)
                 userPool.query(`${createInsertFromObject(id, sid, lifts)}`, (err, result) => {
                     if (err) throw err;
-                    res.send("success!")
+                    res.send("Session successfully recorded")
                     })
                 })
             }
         )
     })
 
-    // Update an existing session // Method is smart now, but the client needs to package data correctly.
     app.put('/sessions/:id/:sid', (req,res,next) => {
         const [id,sid] = [parseInt(req.params.id), parseInt(req.params.sid)];
         const {lifts, newLifts, lostLifts, date} = req.body
@@ -127,7 +77,6 @@ function makeApp(sessionRoutes, database) {
         })
     })
 
-    // Delete a session
     app.delete('/sessions/:sid', (req,res,next) => {
         const sid = req.params.sid;
         userPool.query(`DELETE FROM deadlift WHERE sid = ${sid}; DELETE FROM squat WHERE sid = ${sid}; DELETE FROM bench WHERE sid = ${sid}; DELETE FROM sessions WHERE sid = ${sid}`, (err, result) => {
@@ -136,17 +85,7 @@ function makeApp(sessionRoutes, database) {
         })
     })
     
-    // app.post('/users', async (req,res) => {
-    //     const { password, username } = req.body
-    //     if (!password || !username) {
-    //         res.sendStatus(400);
-    //         return
-    //     }
-    //     const userId = await database.createUser(username, password);
-
-    //     res.send({userId})
-    // })
-
+    // -- Authentication Endpoints --
     app.post('/login', (req,res,next) => { 
         passport.authenticate('local', (err, user, info) => {
             if (err) {
@@ -202,16 +141,70 @@ function makeApp(sessionRoutes, database) {
           res.send("Logged Out")
         });
         console.log("Logged Out")
-      });
+    });
 
     app.get('/authenticated', (req,res,next) => {
         if (req.user) {
-            res.send(req.user)
+            res.send({uid: req.user.uid, username: req.user.username})
         }
         else {res.send(null)}
-        // console.log(req.user)
     })
 
     return app
 }
 module.exports = makeApp
+
+ // 1 - DONE - Users should come from postgres now.
+    // 2 - Sessions queries should be passed a user.
+        // DONE - Get all sessions for user
+        // DEFER... when I need it - Get single session for user by xdatex -> sid.
+        // DONE - Post session from user, client needs to pass date.
+        // DONE - Delete session by user and user id
+        // DONE - Update session by user and user id, and lifts object
+
+    // 2.5 = The client should deliver data in the form required by the server logic, also be sure to lock the passing of sensitive information to client logic, users should not be ablfe to delete random session ids, etc.
+        // DONE - Receive and display all sessions for user
+        // Add a session from the client 
+            // Needs to receive client ID from the authenticated check on the front end
+        // DONE - Delete a session from the clienT
+        // DONE - Update a sessions from the client - Need to add lifts and remove lifts from update object.
+
+    // 3 - I should clean up the state of the front end, keep it as an object.
+
+    // 4 - Testing after that? Ha, probably needs a start from the beginning. I need more tutorial experience.
+        // Still should see if my current tests can be adapted to my new users table.
+    // 5 - I would like to have a friending feature, along with instant messaging with sockets.
+    // 6 - Should package it up with docker.
+    // 7 - Should set up Travis CI.
+    // 8 - Should implement redis, even if it doesn't improve anything.
+
+ //     (username) => {
+    //         let user
+    //         userPool.query(`SELECT * FROM users WHERE username = '${username}'`,
+    //         (err, result) => {
+    //             if (err) throw err
+    //             user = result.rows[0]
+    //         })
+            
+    //         return user
+    //     },
+    //     id => userPool.query(`SELECT uid FROM users`, (error, result) => {
+    //         if (error) throw error
+    //         return result.rows[0]
+    //     })
+    // )
+    
+    // const users = []    
+
+    // app.use('/sessions', sessionRoutes);
+
+    // app.post('/users', async (req,res) => {
+    //     const { password, username } = req.body
+    //     if (!password || !username) {
+    //         res.sendStatus(400);
+    //         return
+    //     }
+    //     const userId = await database.createUser(username, password);
+
+    //     res.send({userId})
+    // })
