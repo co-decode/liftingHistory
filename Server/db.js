@@ -11,6 +11,14 @@ const configLOCAL = {
   port: 5432
 };
 
+const userDB = {
+  host: "localhost",
+  database: "Lifting Database",
+  user: "postgres",
+  password: " ",
+  port: 5432
+}
+
 // HEROKU URL
 
 // const params = url.parse(process.env.DATABASE_URL);
@@ -26,5 +34,6 @@ const configLOCAL = {
 // };
 
 const pool = new Pool(configLOCAL);
+const userPool = new Pool(userDB)
 
-module.exports = pool;
+module.exports = {pool, userPool};

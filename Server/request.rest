@@ -1,0 +1,46 @@
+POST http://localhost:3001/sessions/2
+Content-Type: application/json
+
+{
+    "lifts": {
+        "deadlift": {"mass": 180, "reps": 1, "sets": 4, "scheme": "pyramid",    "variation": "conventional"},
+        "bench": {"mass": 90, "reps": 2, "sets": 3, "scheme": "pyramid", "variation": "close grip"},
+        "squat": {"mass": 130, "reps": 3, "sets": 2, "scheme": "pyramid", "variation": "high bar"}
+    },
+    "date": "2022-07-19T04:51:31.790Z"
+}
+
+###
+
+GET http://localhost:3001/user/2
+
+###
+
+POST http://localhost:3001/register
+Content-Type: application/json
+
+{
+    "username": "secondUser",
+    "password": "second"
+}
+
+
+###
+
+DELETE http://localhost:3001/sessions/17
+
+###
+
+PUT http://localhost:3001/sessions/2/19
+Content-Type: application/json
+
+{
+    "lifts": {
+        "deadlift": {"mass": 180, "reps": 1, "sets": 4, "scheme": "pyramid",    "variation": "Conventional"},
+        "bench": {"mass": 80, "reps": 2, "sets": 3, "scheme": "pyramid", "variation": "standard"},
+        "squat": {"mass": 250, "reps": 1, "sets": 2, "scheme": "pyramid", "variation": "high bar"}                
+    },
+    "newLifts": {},
+    "lostLifts": [],
+    "date": "2022-07-19T04:51:31.790Z"
+}
