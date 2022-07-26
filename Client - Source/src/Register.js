@@ -15,7 +15,7 @@ export default function Register() {
       withCredentials: true,
       url: "http://localhost:3001/authenticated"
     }).then(res => {
-      !!res.data && link('/main');
+      !!res.data && link('/test');
     })
     .then(()=>setLoading(false))
   },[link])

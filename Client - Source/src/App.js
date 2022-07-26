@@ -26,7 +26,7 @@ export default function App() {
 
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to={callServer ? "/main" : "/login"} replace/>} />
+        <Route path="*" element={<Navigate to={callServer ? "/test" : "/login"} replace/>} />
       </Routes>
   );
 }

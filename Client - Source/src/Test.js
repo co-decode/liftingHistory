@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import TestEdit from "./TestEdit";
 import { useNavigate } from "react-router-dom";
+import Logout from "./Logout";
 
 export default function Test() {
     const [get, setGet] = useState(null)
@@ -12,6 +13,7 @@ export default function Test() {
         to: null,
         ascending: true
     })
+    const [user, setUser] = useState(null)
     const editRefs = useRef({});
     const link = useNavigate();
 
@@ -21,22 +23,30 @@ export default function Test() {
             withCredentials: true,
             url: "http://localhost:3001/authenticated"
         }).then(res => {
-            !res.data ? link('/login') :
+            if (!res.data) link('/login')
+            else {
+            setUser(res.data)
             axios({
                 method:"get",
                 withCredentials: true,
                 url:`http://localhost:3001/sessions/${res.data.uid}`
             }).then(res=> {
-                console.log(res.data[0])
-                setGet(res.data[0])
-                const earliest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>a-b)[0])
-                const latest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>b-a)[0])
-                setDateFilter({
-                    from: new Date(earliest.setTime(earliest.getTime() + 1 * 86400000)).toISOString().slice(0,10), 
-                    to: new Date(latest.setTime(latest.getTime() + 2 * 86400000)).toISOString().slice(0,10),
-                    ascending: true
-                })
+                // console.log(res.data[0])
+                if (res.data[0].date){
+                    setGet(res.data[0])
+                    const earliest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>a-b)[0])
+                    const latest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>b-a)[0])
+                    setDateFilter({
+                        from: new Date(earliest.setTime(earliest.getTime())).toISOString().slice(0,10), 
+                        to: new Date(latest.setTime(latest.getTime() + 2 * 86400000)).toISOString().slice(0,10),
+                        ascending: true
+                    })
+                }
+                else {
+                    setGet(false)
+                }
             })
+            }
         })
     }, [link])
 
@@ -59,7 +69,7 @@ export default function Test() {
             axios({
                 method:"get",
                 withCredentials: true,
-                url:"http://localhost:3001/user/2"
+                url:`http://localhost:3001/sessions/${user.uid}`
             }).then(res=> {
                 setGet(res.data[0])
             })
@@ -68,7 +78,8 @@ export default function Test() {
 
     function returnSid(get, from, to, ascending) {
 
-        let sidList = get.date.filter(v=> v.date >= from && v.date <= to).map(v=>v.sid)
+        let sidList = 
+        get.date.filter(v=> v.date >= from && v.date <= to).sort((a,b)=>new Date(a.date) - new Date(b.date)).map(v=>v.sid)
 
         if (!ascending) {sidList = sidList.reverse()}
 
@@ -78,12 +89,13 @@ export default function Test() {
                     let exerciseCall = get.date.filter(v => v.sid === sidVal)[0].exercises;
                     return (
                         <div key={sidVal} ref={(element) => {editRefs.current = {...editRefs.current, [sidVal]: element}}}>
-                            <div>{new Date(get.date.filter(v => v.sid === sidVal)[0].date).toString()}</div>
+                            <div>{new Date(get.date.filter(v => v.sid === sidVal)[0].date).toLocaleString()}
                             <button onClick={()=>deleteSession(sidVal)}>Delete this session</button>
                             <button onClick={()=>setEdit(sidVal)}>Edit this session</button>
+                            </div>
                             {exerciseCall.map(v => {
                                 return (
-                                    <div key={v}>
+                                    <div key={v} style={{display:"inline-block", marginRight:"20px"}}>
                                         <strong>{v[0].toUpperCase() + v.slice(1)}: </strong>
                                         <div>
                                             Mass: {get[v].filter(v => v.sid === sidVal)[0].mass}
@@ -115,17 +127,22 @@ export default function Test() {
 
     return (
         <div>
-            {get?.date ? 
-            <fieldset>
+            <h1>Lifting Log</h1>
+            <button onClick={()=>link('/testAdd')}>Add an Entry</button>
+            <Logout />
+            {edit ? <TestEdit get={get} setGet={setGet} edit={edit} setEdit={setEdit} />
+                  : <>
+                    {get ? <>
+                    <fieldset>
                 <label htmlFor="from">From: </label>
                 <input id="from" type="date" defaultValue={`${dateFilter.from}`} onChange={(e)=>setDateFilter({...dateFilter, from: e.target.value})} />
                 <label htmlFor="to">To: </label>
                 <input id="to" type="date" defaultValue={`${dateFilter.to}`} onChange={(e)=>setDateFilter({...dateFilter, to: e.target.value})}/>
                 <button onClick={()=> setDateFilter({...dateFilter, ascending: !dateFilter.ascending})}>Reverse Order</button>
-            </fieldset>
-            : null}
-            {edit ? <TestEdit get={get} setGet={setGet} edit={edit} setEdit={setEdit} /> 
-                  : returnSid(get, dateFilter.from, dateFilter.to, dateFilter.ascending)}
+                    </fieldset>
+                    {returnSid(get, dateFilter.from, dateFilter.to, dateFilter.ascending)}
+                    </> : "There's nothing here yet! Add some entries."}
+                    </>}
             
         </div>
     )

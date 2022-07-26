@@ -16,7 +16,7 @@ export default function Login() {
       withCredentials: true,
       url: "http://localhost:3001/authenticated"
     }).then(res => {
-      !!res.data && link('/main');
+      !!res.data && link('/test');
     })
   }, [link])
   

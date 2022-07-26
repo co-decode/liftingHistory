@@ -69,12 +69,15 @@ export default function TestAdd() {
 
   return (
     <div>
+        <button onClick={()=>link('/test')}>Go back</button>
       <form onSubmit={(e) => handleSubmit(e)}>
+        <>
         <label htmlFor="date">Date of Session</label>
         <input id="date" type="date" defaultValue={new Date(Date.now()).toISOString().slice(0,10)} 
             ref={el=>dateRefs.current = {...dateRefs.current, date: el}}/>
-        <input type="time" defaultValue={new Date(Date.now()).toLocaleTimeString().slice(0,5)} 
+        <input type="time" defaultValue={`${new Date(Date.now()).getHours().toString().padStart(2,'0')}:${new Date(Date.now()).getMinutes().toString().padStart(2,'0')}`} 
             ref={el=>dateRefs.current = {...dateRefs.current, time: el}}/>
+        </> {/* Date Input Component */}
         <DeadliftField create={create} setCreate={setCreate}/>
         <SquatField create={create} setCreate={setCreate}/>
         <BenchField create={create} setCreate={setCreate}/>

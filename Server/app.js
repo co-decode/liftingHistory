@@ -19,12 +19,16 @@ function makeApp(sessionRoutes, database) {
 
     app.use(express.json());
     app.use(express.urlencoded({extended: true}));
+    const salt1 = bcrypt.genSaltSync();
+    const salt2 = bcrypt.genSaltSync();
+    const secret = bcrypt.hashSync(salt1 + salt2, 10);
     app.use(session({
-        secret: "secret",
+        secret,
         resave: false,
         saveUninitialized: false
     }))
-    //Look up how to improve the secret ^^^, maybe heroku will provide an environment variable?
+    //Look up more about the secret ^^^, maybe heroku will provide an environment variable?
+        // Currently Bcrypt is generating a new secret each time the app is started.
     app.use(passport.initialize())
     app.use(passport.session())
 
@@ -48,7 +52,6 @@ function makeApp(sessionRoutes, database) {
     app.post('/sessions/:id', (req,res,next) => {
         const id = parseInt(req.params.id);
         const lifts = req.body.lifts;
-        // Let the client decide the date vVv
         const date = req.body.date;
         userPool.query(`INSERT INTO sessions (uid, date, exercises) VALUES (${id}, '${date}', ${createExercisesFromBody(lifts)})`, (err, result) => {
             if (err) throw err;
