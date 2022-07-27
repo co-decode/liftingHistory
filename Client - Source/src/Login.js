@@ -53,7 +53,7 @@ export default function Login() {
     <>
     {loading ? <p>"Awaiting server response..."</p> :
       <>
-      <strong>{response}</strong>
+        <h1>Lifting Log</h1>
         <div>
           <label htmlFor="username">Username: </label>
           <input type="text" id="username" name="username" required onChange={e=>handleChangeUser(e)}/>
@@ -66,6 +66,7 @@ export default function Login() {
           <button type="submit" onClick={login}>Login</button>
         </div>
       <button onClick={() => link("/register")}>Go to Register</button>
+      <strong>{response}</strong>
       </>
     }
     </>
