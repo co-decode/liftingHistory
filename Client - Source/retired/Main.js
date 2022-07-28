@@ -2,7 +2,7 @@ import { useEffect, useState, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import EntriesMap from "./EntriesMap";
-import Logout from "./Logout";
+import Logout from "../src/Logout";
 
 const reduceLoad = (loading, action) => {
   switch (action) {

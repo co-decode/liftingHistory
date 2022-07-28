@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
+import { authenticatedKick } from "./utils/variables";
 
 
 export default function Login() {
@@ -9,6 +10,8 @@ export default function Login() {
   const [response, setResponse] = useState(null)
   const link = useNavigate();
   const [loading, setLoading] = useState(true);
+
+  // Test below vv
   
   const callServer = useCallback( async () => {
     return Axios({
@@ -16,7 +19,7 @@ export default function Login() {
       withCredentials: true,
       url: "http://localhost:3001/authenticated"
     }).then(res => {
-      !!res.data && link('/test');
+      !!res.data && link(authenticatedKick);
     })
   }, [link])
   

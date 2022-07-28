@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import TestEdit from "./TestEdit";
+import TestEdit from "./Edit";
 import { useNavigate } from "react-router-dom";
 import Logout from "./Logout";
 

@@ -1,8 +1,8 @@
-import Main from "./Main";
+// import Main from "./Main";
 import Login from "./Login";
 import Register from "./Register";
-import Test from "./Test";
-import TestAdd from "./TestAdd"
+import Log from "./Log";
+import Add from "./Add"
 import axios from "axios";
 import React, { useCallback } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -20,13 +20,12 @@ export default function App() {
   }, [])
   return (
       <Routes>
-        <Route path="/main" element={<Main />} />
-        <Route path="/test" element={<Test />}/>
-        <Route path="/testAdd" element={<TestAdd />}/>
-
+        {/* <Route path="/main" element={<Main />} /> */}
+        <Route path="/log" element={<Log />}/>
+        <Route path="/add" element={<Add />}/>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to={callServer ? "/test" : "/login"} replace/>} />
+        <Route path="*" element={<Navigate to={callServer ? "/log" : "/login"} replace/>} />
       </Routes>
   );
 }

@@ -1,0 +1,6 @@
+I want a filter sessions by exercise feature.
+I want a calendar visualisation of sessions feature.
+
+!! Edit component is sending all updates to uid = 2, build a test
+!! Login component, and Register Component link to the wrong resource, build tests
+!! Log component should pass user details to the Edit component, build a test

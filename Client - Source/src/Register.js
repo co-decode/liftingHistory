@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
+import { authenticatedKick } from "./utils/variables";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -15,7 +16,7 @@ export default function Register() {
       withCredentials: true,
       url: "http://localhost:3001/authenticated"
     }).then(res => {
-      !!res.data && link('/test');
+      !!res.data && link(authenticatedKick);
     })
     .then(()=>setLoading(false))
   },[link])
