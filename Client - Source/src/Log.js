@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import TestEdit from "./Edit";
+import Edit from "./Edit";
 import { useNavigate } from "react-router-dom";
 import Logout from "./Logout";
 
-export default function Test() {
+export default function Log() {
     const [get, setGet] = useState(null)
     const [edit, setEdit] = useState(0)
     const [prevEdit, setPrevEdit] = useState(null)
@@ -130,7 +130,7 @@ export default function Test() {
             <h1>Lifting Log</h1>
             <button onClick={()=>link('/testAdd')}>Add an Entry</button>
             <Logout />
-            {edit ? <TestEdit get={get} setGet={setGet} edit={edit} setEdit={setEdit} />
+            {edit ? <Edit get={get} setGet={setGet} edit={edit} setEdit={setEdit} user={user} />
                   : <>
                     {get ? <>
                     <fieldset>

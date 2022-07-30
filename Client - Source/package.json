@@ -40,6 +40,7 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/user-event": "^14.3.0"
+    "@testing-library/user-event": "^14.3.0",
+    "msw": "^0.44.2"
   }
 }

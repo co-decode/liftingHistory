@@ -16,7 +16,7 @@ function variationOptions(exercise, existing) {
     }
 }
 
-export default function TestEdit({get, setGet, edit, setEdit}) {
+export default function Edit({get, setGet, edit, setEdit, user}) {
     
     const [update, setUpdate] = useState(null)
     const [feedback, setFeedback] = useState(null)
@@ -120,11 +120,11 @@ export default function TestEdit({get, setGet, edit, setEdit}) {
             method:"PUT",
             data: update,
             withCredentials: true,
-            url: `http://localhost:3001/sessions/${2}/${edit}`
+            url: `http://localhost:3001/sessions/${user.uid}/${edit}`
         }).then(res=> axios({
             method:"get",
             withCredentials: true,
-            url:"http://localhost:3001/user/2"
+            url:`http://localhost:3001/sessions/${user.uid}`
         }).then(res=> {
             setGet(res.data[0])
             setEdit(0)
