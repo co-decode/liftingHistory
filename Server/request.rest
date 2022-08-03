@@ -27,7 +27,7 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3001/sessions/17
+DELETE http://localhost:3001/sessions/24
 
 ###
 

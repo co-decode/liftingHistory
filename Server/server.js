@@ -2,9 +2,10 @@ const https = require('https')
 const path = require('path')
 const fs = require('fs')
 const port = process.env.PORT || 3001;
+const database = require('./queryFunctions')
 const makeRouter = require('./src/session/routes');
 const makeApp = require('./app');
-const app = makeApp(makeRouter());
+const app = makeApp(database);
 
 
 

@@ -1,6 +1,15 @@
-I want a filter sessions by exercise feature.
+DONE - I want a filter sessions by exercise feature.
+I want the scheme to generate a tonnage data point for the session.
+    Is this off the get object? I think so.
+DONE - I want the database to accept floats for the mass entry.
+DONE - Fix the add component for accepting floats as well.
+DONE - Fix the add component by removing duplication of code.
 I want a calendar visualisation of sessions feature.
 
-!! Edit component is sending all updates to uid = 2, build a test
-!! Login component, and Register Component link to the wrong resource, build tests
-!! Log component should pass user details to the Edit component, build a test
+tonnage:
+scheme === linear: reps * sets * mass
+scheme === pyramid: mass * 0.8 * 10 + mass * 0.85 * 6 + mass * 0.9 * 3 + mass * 0.95 * 1
+reps / sets = 20 / 8 = 2.5  is default, percentage deviation from this ratio is multiplied into the tonnage to approximate mass tonnage
+therefore, rep tonnage is accurate, standard pyramid scheme is accurate, tonnage quality is accurate, and mass tonnage is approximate. AND all values are used fruitfully in calculations.
+
+First dispay how many reps completed for deadlift for all entries.

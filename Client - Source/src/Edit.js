@@ -4,7 +4,7 @@ import axios from "axios";
 function variationOptions(exercise, existing) {
     const dl = ['Conventional', 'Sumo']
     const sq = ['High Bar', 'Front', 'Low Bar']
-    const b = ['Standard', 'Close Grip']
+    const b = ['Standard', 'Close Grip', 'Wide Grip']
     switch (exercise) {
         case 'deadlift':
             return (<>{dl.filter(v => v !== existing).map(v=><option key={`dl${v}`}>{v}</option>)}</>)
@@ -16,7 +16,7 @@ function variationOptions(exercise, existing) {
     }
 }
 
-export default function Edit({get, setGet, edit, setEdit, user}) {
+export default function Edit({get, setGet, edit, setEdit, user, setDateFilter}) {
     
     const [update, setUpdate] = useState(null)
     const [feedback, setFeedback] = useState(null)
@@ -46,9 +46,16 @@ export default function Edit({get, setGet, edit, setEdit, user}) {
             <div>
                 {sidList.map(sidVal => {
                     let exerciseCall = get.date.filter(v => v.sid === sidVal)[0].exercises;
+                    let time = new Date(new Date(get.date.filter(v => v.sid === sidVal)[0].date).setTime(new Date(get.date.filter(v => v.sid === sidVal)[0].date).getTime() + 9 * 60 * 1000 * 60 + 30 * 60 * 1000)).toISOString()
                     return (
                         <div key={sidVal}>
-                            <div>{new Date(get.date.filter(v => v.sid === sidVal)[0].date).toString()}</div>
+                            <>
+                            <label htmlFor="date">Date of Session</label>
+                            <input id="date" type="date" defaultValue={time.slice(0,10)} 
+                                onChange={(e)=>setUpdate({...update, date: e.target.value + update.date.slice(10)})}/>
+                            <input type="time" defaultValue={time.slice(11,19)} 
+                                onChange={(e)=>setUpdate({...update, date: update.date.slice(0,11) + e.target.value})}/>
+                            </>
                             {/* <button onClick={()=>setEdit(true)}>Edit this session</button> */}
                             {exerciseCall.map(v => {
                                 const filtered = get[v].filter(v => v.sid === sidVal)[0]
@@ -61,7 +68,7 @@ export default function Edit({get, setGet, edit, setEdit, user}) {
                                         <div>
                                             <label htmlFor={`${v}mass`}>Mass:</label> 
                                             <input id={`${v}mass`} onChange={(e)=>{
-                                                setUpdate({...update, lifts: {...update.lifts, [v]: {...update.lifts[v], mass: parseInt(e.target.value)}}})
+                                                setUpdate({...update, lifts: {...update.lifts, [v]: {...update.lifts[v], mass: parseFloat(e.target.value)}}})
                                             }} defaultValue={filtered.mass} />
                                         </div>
                                         <div>
@@ -128,6 +135,13 @@ export default function Edit({get, setGet, edit, setEdit, user}) {
         }).then(res=> {
             setGet(res.data[0])
             setEdit(0)
+            const earliest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>a-b)[0])
+            const latest = new Date(res.data[0].date.map(v=>new Date(v.date)).sort((a,b)=>b-a)[0])
+            setDateFilter({
+                from: new Date(earliest.setTime(earliest.getTime())).toISOString().slice(0,10), 
+                to: new Date(latest.setTime(latest.getTime() + 34 * 60 * 60 * 1000)).toISOString().slice(0,10),
+                ascending: true
+            })
         }))
     }
     
@@ -135,7 +149,7 @@ export default function Edit({get, setGet, edit, setEdit, user}) {
         return (
         <fieldset> <div>{exercise}</div>
             <label htmlFor={`${exercise}mass`}>Mass</label>
-            <input id={`${exercise}mass`} onChange={e=>setUpdate({...update, newLifts: {...update.newLifts, [exercise]: {...update.newLifts[exercise],mass: parseInt(e.target.value)}}})}/>
+            <input id={`${exercise}mass`} onChange={e=>setUpdate({...update, newLifts: {...update.newLifts, [exercise]: {...update.newLifts[exercise],mass: parseFloat(e.target.value)}}})}/>
             <label htmlFor={`${exercise}reps`}>Reps</label>
             <input id={`${exercise}reps`} onChange={e=>setUpdate({...update, newLifts: {...update.newLifts, [exercise]: {...update.newLifts[exercise], reps: parseInt(e.target.value)}}})}/>
             <label htmlFor={`${exercise}sets`}>Sets</label>
@@ -182,7 +196,7 @@ export default function Edit({get, setGet, edit, setEdit, user}) {
     return (
         <div>
             <button onClick={() => setEdit(0)}>Cancel Changes</button>
-            {/* <button onClick={() => console.log(update)}>log Update Object</button> */}
+            <button onClick={() => console.log(update, typeof update.date)}>log Update Object</button>
             {/* <button onClick={() => console.log(get.date.filter(v=>v.sid === edit)[0].exercises)}>log get Object</button> */}
             <button onClick={() => submitUpdate(update)}>Submit Update</button>
             {!update ? null : 
@@ -207,30 +221,3 @@ export default function Edit({get, setGet, edit, setEdit, user}) {
         </div>
     )
 }
-
-// If the entry is missing lifts, add a button for adding a lift, a button for each missing lift
-// Button should be nicely capitalised.
-// Button click should add fields for input, and it should populate the newLifts property of the update object.
-// After showing fieldset, the button should read 'remove <exercise>' and should edit the newLifts property.
-// The fieldset should change the update object on completion
-    // What happens when an incomplete newLifts object is submitted? CRASH
-    // Add some validation.
-// Only thing left to do is remove lifts
-    // Make sure the deletion is undoable.
-// There should be a button that says remove lift
-// The button should populate the lostLifts object, and depopulate the lifts object.
-// The button should hide, or disable the exercise information.
-// The button should depop the lostLifts, repop the lifts and re show the exercise information on second click.
-    // The button should read 'undo removal'
-
-// It works...
-
-// DONE - I would like the page to load back to the position of the selected session.
-// Refreshing on the edit page redirects back to the all sessions page... can I set up a router instead of dynamic components?
-    // Not sure this is fixable... nor is it necessarily unworkable... I think I do leave it for now.
-
-// I would like to sort entries by date.
-// I would like to be able to reverse the order of the display.
-
-
-// I should now integrate these components into the authentication process. I'll plan this before going ahead.

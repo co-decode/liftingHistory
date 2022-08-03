@@ -5,9 +5,10 @@ const passportLocal = require('passport-local').Strategy
 const bcrypt = require('bcryptjs')
 const session = require('express-session')
 const {userPool} = require('./db')
+const db = require('./queryFunctions')
 const {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray} = require('./utils')
 
-function makeApp(sessionRoutes, database) { 
+function makeApp(database, sessionRoutes) { 
     const app = express();
     const initializePassport = require("./passport-config")
     initializePassport(passport) 
@@ -33,6 +34,8 @@ function makeApp(sessionRoutes, database) {
     app.use(passport.session())
 
     // -- CRUD Endpoints --
+
+    
     app.get('/sessions/:id', (req,res,next) => {
         const id = parseInt(req.params.id);
         userPool.connect((err, client, release) => {
@@ -80,12 +83,14 @@ function makeApp(sessionRoutes, database) {
         })
     })
 
-    app.delete('/sessions/:sid', (req,res,next) => {
-        const sid = req.params.sid;
-        userPool.query(`DELETE FROM deadlift WHERE sid = ${sid}; DELETE FROM squat WHERE sid = ${sid}; DELETE FROM bench WHERE sid = ${sid}; DELETE FROM sessions WHERE sid = ${sid}`, (err, result) => {
-            if (err) throw err;
+    app.delete('/sessions/:sid', async (req,res,next) => {
+        const {sid} = req.params;
+        try {
+            const returned = await database.deleteQuery(sid)
             res.status(200).send("Session removed")
-        })
+        } catch (error) {
+            res.send("Failure")
+        }
     })
     
     // -- Authentication Endpoints --
