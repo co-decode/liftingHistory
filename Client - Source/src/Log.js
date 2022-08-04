@@ -3,6 +3,7 @@ import axios from "axios";
 import Edit from "./Edit";
 import { useNavigate } from "react-router-dom";
 import Logout from "./Logout";
+import Tonnage from "./Tonnage";
 
 export default function Log() {
     const [get, setGet] = useState(null)
@@ -126,53 +127,9 @@ export default function Log() {
         )
     }
 
-    function returnTonnage(get) {
-        const benchSidList = get.date.filter(val => val.exercises.includes("bench"))
-        const deadliftSidList = get.date.filter(val => val.exercises.includes("deadlift"))
-        const squatSidList = get.date.filter(val => val.exercises.includes("squat"))
+    // function returnTonnage(get) {
 
-        return (
-            <>
-            <div>
-            - Total Reps - {["bench","deadlift","squat"].map(exercise=>{
-                const sidList = get.date.filter(val=> val.exercises.includes(exercise))
-                return(
-                    <div key={`${exercise}TotalReps`}> {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
-                    {sidList.map(v => get[exercise].filter(val => val.sid === v.sid)).reduce((acc, v)=> {
-                        let addition
-                        if (v[0].scheme === "Linear") {
-                            addition = v[0].reps * v[0].sets
-                        }
-                        else if (v[0].scheme === "Pyramid") {
-                            addition =  v[0].reps
-                        }
-                        return acc + addition}, 0)}
-                    </div>
-                )
-            })
-            }</div>
-            <div>
-            - Mass Tonnage - {["bench","deadlift","squat"].map(exercise=>{
-                const sidList = get.date.filter(val=> val.exercises.includes(exercise))
-                return(
-                    <div key={`${exercise}MassTonnage`}> {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
-                    {sidList.map(v => get[exercise].filter(val => val.sid === v.sid)).reduce((acc, v)=> {
-                        let addition
-                        if (v[0].scheme === "Linear") {
-                            addition = v[0].mass * v[0].reps * v[0].sets
-                        }
-                        else if (v[0].scheme === "Pyramid") {
-                            addition = v[0].mass * 0.8 * 10 + v[0].mass * 0.85 * 6 + v[0].mass * 0.9 * 3 + v[0].mass * 0.95 * 1 * (v[0].reps / 20 ) * ((2.5 * v[0].sets) / v[0].reps)
-                        }
-                        return acc + parseInt(addition)}, 0)} kg
-                    </div>
-                )
-            })
-            }
-            </div>
-            </>
-        )
-    }
+    // }
     
     if (get === null) return <strong>Loading...</strong>;
 
@@ -181,6 +138,7 @@ export default function Log() {
             <h1>Lifting Log</h1>
             <button onClick={()=>link('/Add')}>Add an Entry</button>
             <button onClick={()=>setTons(!tons)}>show Tonnage</button>
+            <button onClick={()=>console.log(JSON.stringify(get))}>show Tonnage</button>
             <Logout />
             {edit ? <Edit get={get} setGet={setGet} edit={edit} setEdit={setEdit} user={user} setDateFilter={setDateFilter} />
                   : !tons ? <>
@@ -202,7 +160,7 @@ export default function Log() {
                     </> : null}
             {!edit && tons ? 
             <>
-                {returnTonnage(get)}
+                <Tonnage get={get} />
             </> 
             : null}
         </div>
