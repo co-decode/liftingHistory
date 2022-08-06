@@ -102,19 +102,25 @@ export default function Log() {
                                     <div key={v} style={{display:"inline-block", marginRight:"20px"}}>
                                         <strong>{v[0].toUpperCase() + v.slice(1)}: </strong>
                                         <div>
-                                            Mass: {get[v].filter(v => v.sid === sidVal)[0].mass}
+                                            Max: {get[v].filter(v => v.sid === sidVal)[0].mass.reduce((acc, item) => {
+                                                return item > acc ? item : acc
+                                                })} kg
                                         </div>
                                         <div>
-                                            Reps: {get[v].filter(v => v.sid === sidVal)[0].reps}
+                                            Reps: {get[v].filter(v => v.sid === sidVal)[0].reps.reduce((acc, val) => {
+                                                return val + acc
+                                            })}
                                         </div>
                                         <div>
-                                            Sets: {get[v].filter(v => v.sid === sidVal)[0].sets}
+                                            Sets: {get[v].filter(v => v.sid === sidVal)[0].reps.length}
                                         </div>
                                         <div>
-                                            Scheme: {get[v].filter(v => v.sid === sidVal)[0].scheme}
+                                            Tonnage: {get[v].filter(v => v.sid === sidVal)[0].reps.reduce((acc, rep, ind) => {
+                                                return parseInt(rep * get[v].filter(v => v.sid === sidVal)[0].mass[ind]) + acc
+                                            }, 0)} kg
                                         </div>
                                         <div>
-                                            Variation: {get[v].filter(v => v.sid === sidVal)[0].variation}
+                                            {get[v].filter(v => v.sid === sidVal)[0].variation.toString().replace(/,/, ", ")}
                                         </div>
                                     </div>
                                 )
@@ -138,7 +144,7 @@ export default function Log() {
             <h1>Lifting Log</h1>
             <button onClick={()=>link('/Add')}>Add an Entry</button>
             <button onClick={()=>setTons(!tons)}>show Tonnage</button>
-            <button onClick={()=>console.log(JSON.stringify(get))}>show Tonnage</button>
+            <button onClick={()=>console.log(JSON.stringify(get))}>show get</button>
             <Logout />
             {edit ? <Edit get={get} setGet={setGet} edit={edit} setEdit={setEdit} user={user} setDateFilter={setDateFilter} />
                   : !tons ? <>

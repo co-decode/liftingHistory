@@ -3,8 +3,12 @@
 
 // exercisesArray = ["deadlift", "squat"];
 
-const lifts = {deadlift: {mass: 160, reps: 1, sets: 4, scheme: "pyramid", variation: "standard"},
-        squat: {mass: 150, reps: 1, sets: 4, scheme: "pyramid", variation: "standard"}}
+// const lifts = {deadlift: {mass: 160, reps: 1, sets: 4, scheme: "pyramid", variation: "standard"},
+//         squat: {mass: 150, reps: 1, sets: 4, scheme: "pyramid", variation: "standard"}}
+
+const lifts =  {deadlift: {mass: [155, 160, 167.5, 160], reps: [1,1,1,1], variation: ["Conventional", "Mixed"]},
+bench: {mass: [80, 85, 90, 95, 90, 90], reps: [5,3,1,1,1,1], variation: ["Wide Grip", "Flat"]},
+squat: {mass: [130, 137.5, 142.5, 137.5, 130, 120], reps: [3, 1, 1, 1, 3, 5], variation: ["High Bar"]}}
 
 function createExercisesFromBody(lifts) {
     let keys = Object.keys(lifts);
@@ -29,10 +33,22 @@ function createInsertFromObject(id, sid, lifts) {
     const exerciseArray = Object.keys(lifts)
     let output = ``;
     for (let i = 0; i < exerciseArray.length; i++) {
-        output = output.concat(`INSERT INTO ${exerciseArray[i]} (uid, sid, mass, reps, sets, scheme, variation) VALUES (${id}, ${sid}, ${lifts[exerciseArray[i]].mass}, ${lifts[exerciseArray[i]].reps}, ${lifts[exerciseArray[i]].sets}, '${lifts[exerciseArray[i]].scheme}', '${lifts[exerciseArray[i]].variation}');`)
+        lifts[exerciseArray[i]].mass.toString()
+        output = output.concat(`INSERT INTO ${exerciseArray[i]} (uid, sid, mass, reps, variation) VALUES (${id}, ${sid}, '{${lifts[exerciseArray[i]].mass}}', '{${lifts[exerciseArray[i]].reps}}', '{${lifts[exerciseArray[i]].variation}}');`)
     }
     return output
 }
+// console.log(createInsertFromObject(3, 45, lifts))
+/* 
+function createInsertFromObject(id, sid, lifts) {
+    const exerciseArray = Object.keys(lifts)
+    let output = ``;
+    for (let i = 0; i < exerciseArray.length; i++) {
+        output = output.concat(`INSERT INTO ${exerciseArray[i]} (uid, sid, mass, reps, sets, scheme, variation) VALUES (${id}, ${sid}, ${lifts[exerciseArray[i]].mass}, ${lifts[exerciseArray[i]].reps}, ${lifts[exerciseArray[i]].sets}, '${lifts[exerciseArray[i]].scheme}', '${lifts[exerciseArray[i]].variation}');`)
+    }
+    return output
+} 
+*/
 
 function createUpdateFromObject(sid, lifts) {
     const exerciseArray = Object.keys(lifts)

@@ -11,9 +11,16 @@ const configLOCAL = {
   port: 5432
 };
 
+// const userDB = {
+//   host: "localhost",
+//   database: "Lifting Database",
+//   user: "postgres",
+//   password: " ",
+//   port: 5432
+// }
 const userDB = {
   host: "localhost",
-  database: "Lifting Database",
+  database: "Weightlifting",
   user: "postgres",
   password: " ",
   port: 5432
