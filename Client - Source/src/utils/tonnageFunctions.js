@@ -40,158 +40,158 @@ export default function returnTonnage(get, tonFormat, interval) {
   // }
 }
 
-function repsPerSession(get) {
-  return (
-    <>
-      <div>
-        - Total Reps -{" "}
-        {exerciseArray.map((exercise) => {
-          const sidList = get.date.filter((val) =>
-            val.exercises.includes(exercise)
-          );
-          return (
-            <div key={`${exercise}TotalReps`}>
-              {" "}
-              {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
-              {sidList
-                .map((sidV) => [
-                  get[exercise].filter((val) => val.sid === sidV.sid),
-                  sidV.date,
-                ])
-                .map((v) => {
-                  let addition;
-                  // console.log(JSON.stringify(v))
-                  if (v[0][0].scheme === "Linear") {
-                    addition = v[0][0].reps * v[0][0].sets;
-                  } else if (v[0][0].scheme === "Pyramid") {
-                    addition = v[0][0].reps;
-                  }
-                  return (
-                    <div key={`${v[1]}_${addition}`}>
-                      Session Date: {new Date(v[1]).toDateString()} Reps:{" "}
-                      {addition}
-                    </div>
-                  );
-                })}
-            </div>
-          );
-        })}
-      </div>
-    </>
-  );
-}
-function repsPerWeek(get) {
-  function getWeek(date) {
-    const time = new Date(date);
-    const onejan = new Date(time.getFullYear(), 0, 1);
-    const week = Math.ceil(
-      ((time.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7
-    );
-    return week;
-  }
-  const sidsBundled = get.date.map((v) => {
-    return {
-      sid: v.sid,
-      week: `${getWeek(v.date)}-${new Date(v.date).getFullYear()}`,
-    };
-  });
-  const sidsBinned = sidsBundled.reduce((acc, v) => {
-    return Object.keys(acc).includes(v.week)
-      ? { ...acc, [v.week]: [...acc[v.week], v.sid] }
-      : { ...acc, [v.week]: [v.sid] };
-  }, {});
-  return (
-    <>
-      {Object.keys(sidsBinned).map((week) => {
-        return (
-          <div key={`${week}`}>
-            <div>{week}</div>
-            <div>
-              {exerciseArray.map((exercise) => {
-                const sidsByExercise = get.date
-                  .filter((val) => sidsBinned[week].includes(val.sid))
-                  .filter((val) => val.exercises.includes(exercise));
-                return (
-                  <div key={`${exercise}TotalReps`}>
-                    {" "}
-                    {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
-                    {sidsByExercise
-                      .map((sidV) =>
-                        get[exercise].filter((val) => val.sid === sidV.sid)
-                      )
-                      .reduce((acc, v) => {
-                        let addition;
-                        // console.log(JSON.stringify(v))
-                        if (v[0].scheme === "Linear") {
-                          addition = v[0].reps * v[0].sets;
-                        } else if (v[0].scheme === "Pyramid") {
-                          addition = v[0].reps;
-                        }
-                        return acc + addition;
-                      }, 0)}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-    </>
-  );
-}
-function repsPerMonth(get) {
-  const sidsBundled = get.date.map((v) => {
-    return {
-      sid: v.sid,
-      month: `${new Date(v.date).getMonth() + 1}-${new Date(
-        v.date
-      ).getFullYear()}`,
-    };
-  });
-  const sidsBinned = sidsBundled.reduce((acc, v) => {
-    return Object.keys(acc).includes(v.month)
-      ? { ...acc, [v.month]: [...acc[v.month], v.sid] }
-      : { ...acc, [v.month]: [v.sid] };
-  }, {});
-  return (
-    <>
-      {Object.keys(sidsBinned).map((month) => {
-        return (
-          <div key={`${month}`}>
-            <div>{month}</div>
-            <div>
-              {exerciseArray.map((exercise) => {
-                const sidsByExercise = get.date
-                  .filter((val) => sidsBinned[month].includes(val.sid))
-                  .filter((val) => val.exercises.includes(exercise));
-                return (
-                  <div key={`${exercise}TotalReps`}>
-                    {" "}
-                    {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
-                    {sidsByExercise
-                      .map((sidV) =>
-                        get[exercise].filter((val) => val.sid === sidV.sid)
-                      )
-                      .reduce((acc, v) => {
-                        let addition;
-                        // console.log(JSON.stringify(v))
-                        if (v[0].scheme === "Linear") {
-                          addition = v[0].reps * v[0].sets;
-                        } else if (v[0].scheme === "Pyramid") {
-                          addition = v[0].reps;
-                        }
-                        return acc + addition;
-                      }, 0)}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-    </>
-  );
-}
+// function repsPerSession(get) {
+//   return (
+//     <>
+//       <div>
+//         - Total Reps -{" "}
+//         {exerciseArray.map((exercise) => {
+//           const sidList = get.date.filter((val) =>
+//             val.exercises.includes(exercise)
+//           );
+//           return (
+//             <div key={`${exercise}TotalReps`}>
+//               {" "}
+//               {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
+//               {sidList
+//                 .map((sidV) => [
+//                   get[exercise].filter((val) => val.sid === sidV.sid),
+//                   sidV.date,
+//                 ])
+//                 .map((v) => {
+//                   let addition;
+//                   // console.log(JSON.stringify(v))
+//                   if (v[0][0].scheme === "Linear") {
+//                     addition = v[0][0].reps * v[0][0].sets;
+//                   } else if (v[0][0].scheme === "Pyramid") {
+//                     addition = v[0][0].reps;
+//                   }
+//                   return (
+//                     <div key={`${v[1]}_${addition}`}>
+//                       Session Date: {new Date(v[1]).toDateString()} Reps:{" "}
+//                       {addition}
+//                     </div>
+//                   );
+//                 })}
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </>
+//   );
+// }
+// function repsPerWeek(get) {
+//   function getWeek(date) {
+//     const time = new Date(date);
+//     const onejan = new Date(time.getFullYear(), 0, 1);
+//     const week = Math.ceil(
+//       ((time.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7
+//     );
+//     return week;
+//   }
+//   const sidsBundled = get.date.map((v) => {
+//     return {
+//       sid: v.sid,
+//       week: `${getWeek(v.date)}-${new Date(v.date).getFullYear()}`,
+//     };
+//   });
+//   const sidsBinned = sidsBundled.reduce((acc, v) => {
+//     return Object.keys(acc).includes(v.week)
+//       ? { ...acc, [v.week]: [...acc[v.week], v.sid] }
+//       : { ...acc, [v.week]: [v.sid] };
+//   }, {});
+//   return (
+//     <>
+//       {Object.keys(sidsBinned).map((week) => {
+//         return (
+//           <div key={`${week}`}>
+//             <div>{week}</div>
+//             <div>
+//               {exerciseArray.map((exercise) => {
+//                 const sidsByExercise = get.date
+//                   .filter((val) => sidsBinned[week].includes(val.sid))
+//                   .filter((val) => val.exercises.includes(exercise));
+//                 return (
+//                   <div key={`${exercise}TotalReps`}>
+//                     {" "}
+//                     {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
+//                     {sidsByExercise
+//                       .map((sidV) =>
+//                         get[exercise].filter((val) => val.sid === sidV.sid)
+//                       )
+//                       .reduce((acc, v) => {
+//                         let addition;
+//                         // console.log(JSON.stringify(v))
+//                         if (v[0].scheme === "Linear") {
+//                           addition = v[0].reps * v[0].sets;
+//                         } else if (v[0].scheme === "Pyramid") {
+//                           addition = v[0].reps;
+//                         }
+//                         return acc + addition;
+//                       }, 0)}
+//                   </div>
+//                 );
+//               })}
+//             </div>
+//           </div>
+//         );
+//       })}
+//     </>
+//   );
+// }
+// function repsPerMonth(get) {
+//   const sidsBundled = get.date.map((v) => {
+//     return {
+//       sid: v.sid,
+//       month: `${new Date(v.date).getMonth() + 1}-${new Date(
+//         v.date
+//       ).getFullYear()}`,
+//     };
+//   });
+//   const sidsBinned = sidsBundled.reduce((acc, v) => {
+//     return Object.keys(acc).includes(v.month)
+//       ? { ...acc, [v.month]: [...acc[v.month], v.sid] }
+//       : { ...acc, [v.month]: [v.sid] };
+//   }, {});
+//   return (
+//     <>
+//       {Object.keys(sidsBinned).map((month) => {
+//         return (
+//           <div key={`${month}`}>
+//             <div>{month}</div>
+//             <div>
+//               {exerciseArray.map((exercise) => {
+//                 const sidsByExercise = get.date
+//                   .filter((val) => sidsBinned[month].includes(val.sid))
+//                   .filter((val) => val.exercises.includes(exercise));
+//                 return (
+//                   <div key={`${exercise}TotalReps`}>
+//                     {" "}
+//                     {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
+//                     {sidsByExercise
+//                       .map((sidV) =>
+//                         get[exercise].filter((val) => val.sid === sidV.sid)
+//                       )
+//                       .reduce((acc, v) => {
+//                         let addition;
+//                         // console.log(JSON.stringify(v))
+//                         if (v[0].scheme === "Linear") {
+//                           addition = v[0].reps * v[0].sets;
+//                         } else if (v[0].scheme === "Pyramid") {
+//                           addition = v[0].reps;
+//                         }
+//                         return acc + addition;
+//                       }, 0)}
+//                   </div>
+//                 );
+//               })}
+//             </div>
+//           </div>
+//         );
+//       })}
+//     </>
+//   );
+// }
 // function totalReps(get) {
 //   return (
 //     <>
@@ -226,140 +226,140 @@ function repsPerMonth(get) {
 //     </>
 //   );
 // }
-function massPerSession(get) {
-  return (
-    <>
-      <div>
-        - Mass Tonnage -{" "}
-        {exerciseArray.map((exercise) => {
-          const sidList = get.date.filter((val) =>
-            val.exercises.includes(exercise)
-          );
-          return (
-            <div key={`${exercise}MassTonnage`}>
-              {" "}
-              {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
-              {sidList
-                .map((sidV) => [
-                  get[exercise].filter((val) => val.sid === sidV.sid),
-                  sidV.date,
-                ])
-                .map((v) => {
-                  let addition = massFormula(v[0][0].scheme, v[0][0].mass, v[0][0].reps, v[0][0].sets)
-                  return (
-                    <div key={`${v[1]}_${addition}`}>
-                      Session Date: {new Date(v[1]).toDateString()}{" "}
-                      {parseInt(addition)} kg
-                    </div>
-                  );
-                })}
-            </div>
-          );
-        })}
-      </div>
-    </>
-  );
-}
-function massPerWeek(get) {
-  function getWeek(date) {
-    const time = new Date(date);
-    const onejan = new Date(time.getFullYear(), 0, 1);
-    const week = Math.ceil(
-      ((time.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7
-    );
-    return week;
-  }
-  const sidsBundled = get.date.map((v) => {
-    return {
-      sid: v.sid,
-      week: `${getWeek(v.date)}-${new Date(v.date).getFullYear()}`,
-    };
-  });
-  const sidsBinned = sidsBundled.reduce((acc, v) => {
-    return Object.keys(acc).includes(v.week)
-      ? { ...acc, [v.week]: [...acc[v.week], v.sid] }
-      : { ...acc, [v.week]: [v.sid] };
-  }, {});
-  return (
-    <>
-      {Object.keys(sidsBinned).map((week) => {
-        return (
-          <div key={`${week}`}>
-            <div>{week}</div>
-            <div>
-              {exerciseArray.map((exercise) => {
-                const sidsByExercise = get.date
-                  .filter((val) => sidsBinned[week].includes(val.sid))
-                  .filter((val) => val.exercises.includes(exercise));
-                return (
-                  <div key={`${exercise}TotalReps`}>
-                    {" "}
-                    {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
-                    {sidsByExercise
-                      .map((sidV) =>
-                        get[exercise].filter((val) => val.sid === sidV.sid)
-                      )
-                      .reduce((acc, v) => {
-                        return acc + parseInt(massFormula(v[0].scheme, v[0].mass, v[0].reps, v[0].sets));
-                      }, 0)}{" "}
-                    kg
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-    </>
-  );
-}
-function massPerMonth(get) {
-  const sidsBundled = get.date.map((v) => {
-    return {
-      sid: v.sid,
-      month: `${new Date(v.date).getMonth() + 1}-${new Date(
-        v.date
-      ).getFullYear()}`,
-    };
-  });
-  const sidsBinned = sidsBundled.reduce((acc, v) => {
-    return Object.keys(acc).includes(v.month)
-      ? { ...acc, [v.month]: [...acc[v.month], v.sid] }
-      : { ...acc, [v.month]: [v.sid] };
-  }, {});
-  return (
-    <>
-      {Object.keys(sidsBinned).map((month) => {
-        return (
-          <div key={`${month}`}>
-            <div>{month}</div>
-            <div>
-              {exerciseArray.map((exercise) => {
-                const sidsByExercise = get.date
-                  .filter((val) => sidsBinned[month].includes(val.sid))
-                  .filter((val) => val.exercises.includes(exercise));
-                return (
-                  <div key={`${exercise}TotalReps`}>
-                    {" "}
-                    {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
-                    {sidsByExercise
-                      .map((sidV) =>
-                        get[exercise].filter((val) => val.sid === sidV.sid)
-                      )
-                      .reduce((acc, v) => {
-                        return acc + parseInt(massFormula(v[0].scheme, v[0].mass, v[0].reps, v[0].sets));
-                      }, 0)}{" "}
-                    kg
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-    </>
-  );
-}
+// function massPerSession(get) {
+//   return (
+//     <>
+//       <div>
+//         - Mass Tonnage -{" "}
+//         {exerciseArray.map((exercise) => {
+//           const sidList = get.date.filter((val) =>
+//             val.exercises.includes(exercise)
+//           );
+//           return (
+//             <div key={`${exercise}MassTonnage`}>
+//               {" "}
+//               {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
+//               {sidList
+//                 .map((sidV) => [
+//                   get[exercise].filter((val) => val.sid === sidV.sid),
+//                   sidV.date,
+//                 ])
+//                 .map((v) => {
+//                   let addition = massFormula(v[0][0].scheme, v[0][0].mass, v[0][0].reps, v[0][0].sets)
+//                   return (
+//                     <div key={`${v[1]}_${addition}`}>
+//                       Session Date: {new Date(v[1]).toDateString()}{" "}
+//                       {parseInt(addition)} kg
+//                     </div>
+//                   );
+//                 })}
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </>
+//   );
+// }
+// function massPerWeek(get) {
+//   function getWeek(date) {
+//     const time = new Date(date);
+//     const onejan = new Date(time.getFullYear(), 0, 1);
+//     const week = Math.ceil(
+//       ((time.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7
+//     );
+//     return week;
+//   }
+//   const sidsBundled = get.date.map((v) => {
+//     return {
+//       sid: v.sid,
+//       week: `${getWeek(v.date)}-${new Date(v.date).getFullYear()}`,
+//     };
+//   });
+//   const sidsBinned = sidsBundled.reduce((acc, v) => {
+//     return Object.keys(acc).includes(v.week)
+//       ? { ...acc, [v.week]: [...acc[v.week], v.sid] }
+//       : { ...acc, [v.week]: [v.sid] };
+//   }, {});
+//   return (
+//     <>
+//       {Object.keys(sidsBinned).map((week) => {
+//         return (
+//           <div key={`${week}`}>
+//             <div>{week}</div>
+//             <div>
+//               {exerciseArray.map((exercise) => {
+//                 const sidsByExercise = get.date
+//                   .filter((val) => sidsBinned[week].includes(val.sid))
+//                   .filter((val) => val.exercises.includes(exercise));
+//                 return (
+//                   <div key={`${exercise}TotalReps`}>
+//                     {" "}
+//                     {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
+//                     {sidsByExercise
+//                       .map((sidV) =>
+//                         get[exercise].filter((val) => val.sid === sidV.sid)
+//                       )
+//                       .reduce((acc, v) => {
+//                         return acc + parseInt(massFormula(v[0].scheme, v[0].mass, v[0].reps, v[0].sets));
+//                       }, 0)}{" "}
+//                     kg
+//                   </div>
+//                 );
+//               })}
+//             </div>
+//           </div>
+//         );
+//       })}
+//     </>
+//   );
+// }
+// function massPerMonth(get) {
+//   const sidsBundled = get.date.map((v) => {
+//     return {
+//       sid: v.sid,
+//       month: `${new Date(v.date).getMonth() + 1}-${new Date(
+//         v.date
+//       ).getFullYear()}`,
+//     };
+//   });
+//   const sidsBinned = sidsBundled.reduce((acc, v) => {
+//     return Object.keys(acc).includes(v.month)
+//       ? { ...acc, [v.month]: [...acc[v.month], v.sid] }
+//       : { ...acc, [v.month]: [v.sid] };
+//   }, {});
+//   return (
+//     <>
+//       {Object.keys(sidsBinned).map((month) => {
+//         return (
+//           <div key={`${month}`}>
+//             <div>{month}</div>
+//             <div>
+//               {exerciseArray.map((exercise) => {
+//                 const sidsByExercise = get.date
+//                   .filter((val) => sidsBinned[month].includes(val.sid))
+//                   .filter((val) => val.exercises.includes(exercise));
+//                 return (
+//                   <div key={`${exercise}TotalReps`}>
+//                     {" "}
+//                     {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
+//                     {sidsByExercise
+//                       .map((sidV) =>
+//                         get[exercise].filter((val) => val.sid === sidV.sid)
+//                       )
+//                       .reduce((acc, v) => {
+//                         return acc + parseInt(massFormula(v[0].scheme, v[0].mass, v[0].reps, v[0].sets));
+//                       }, 0)}{" "}
+//                     kg
+//                   </div>
+//                 );
+//               })}
+//             </div>
+//           </div>
+//         );
+//       })}
+//     </>
+//   );
+// }
 // function totalMass(get) {
 //   return (
 //     <>
