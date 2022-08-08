@@ -1,44 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function variationOptions(exercise, existing) {
-  const dl = ["Conventional", "Sumo"];
-  const sq = ["High Bar", "Front", "Low Bar"];
-  const b = ["Standard", "Close Grip", "Wide Grip"];
-  switch (exercise) {
-    case "deadlift":
-      return (
-        <>
-          {dl
-            .filter((v) => v !== existing)
-            .map((v) => (
-              <option key={`dl${v}`}>{v}</option>
-            ))}
-        </>
-      );
-    case "squat":
-      return (
-        <>
-          {sq
-            .filter((v) => v !== existing)
-            .map((v) => (
-              <option key={`sq${v}`}>{v}</option>
-            ))}
-        </>
-      );
-    case "bench":
-      return (
-        <>
-          {b
-            .filter((v) => v !== existing)
-            .map((v) => (
-              <option key={`b${v}`}>{v}</option>
-            ))}
-        </>
-      );
-    default:
-      return;
-  }
+function variationOptions(exercise, index, existing) {
+  const variationObject = {
+    deadlift: [
+      ["Conventional", "Sumo"],
+      ["Double Overhand", "Mixed Grip", "Straps"],
+    ],
+    squat: [["High Bar", "Front", "Low Bar"]],
+    bench: [
+      ["Close Grip", "Standard", "Wide Grip"],
+      ["Flat", "Incline"],
+    ],
+  };
+  return variationObject[exercise][index]
+    .filter((v) => v !== existing)
+    .map((v) => <option key={`${exercise}${index}${v}`}>{v}</option>);
 }
 
 export default function Edit({
@@ -51,6 +28,7 @@ export default function Edit({
 }) {
   const [update, setUpdate] = useState(null);
   const [feedback, setFeedback] = useState(null);
+  const [fields, setFields] = useState({})
 
   useEffect(() => {
     const session = get.date.filter((v) => v.sid === edit)[0];
@@ -60,6 +38,7 @@ export default function Edit({
       lostLifts: [],
       date: session.date,
     };
+    const fieldsInitial = {}
     session.exercises.forEach((v) => {
       const filtered = get[v].filter((v) => v.sid === edit)[0];
       updateObject.lifts[v] = {
@@ -67,7 +46,9 @@ export default function Edit({
         reps: filtered.reps,
         variation: filtered.variation,
       };
+      fieldsInitial[v] = filtered.mass.length
     });
+    setFields(fieldsInitial)
     setUpdate(updateObject);
   }, [get, edit]);
 
@@ -133,13 +114,27 @@ export default function Edit({
                     {exercise[0].toUpperCase() + exercise.slice(1)}:
                     {update?.lostLifts.includes(exercise) ? null : (
                       <>
-                        {Array(filtered.mass.length)
+                        <input onChange={(e)=> {
+                            if (e.target.value >= 1 && e.target.value <= 20) {
+                                setFields({...fields, [exercise]: parseInt(e.target.value)})
+                                setUpdate({
+                                    ...update,
+                                    lifts: {
+                                      ...update.lifts,
+                                      [exercise]: {
+                                        ...update.lifts[exercise],
+                                        mass: Array(parseInt(e.target.value)).fill(null).map((v,i)=> update.lifts[exercise].mass[i] ? update.lifts[exercise].mass[i] : filtered.mass[i] ? filtered.mass[i] : v ),
+                                        reps: Array(parseInt(e.target.value)).fill(null).map((v,i)=> update.lifts[exercise].reps[i] ? update.lifts[exercise].reps[i] : filtered.reps[i] ? filtered.reps[i] : v )
+                                        
+                                }}})
+                        }}}/>
+                        {Array(fields[exercise])
                           .fill(null)
                           .map((set, setNo) => {
                             return (
-                              <div>
+                              <div key={`${exercise}set${setNo}`}>
                                 {" "}
-                                Set {setNo + 1}:
+                                Set {setNo + 1} -{" "}
                                 <label htmlFor={`${exercise}Set${setNo}mass`}>
                                   Mass:
                                 </label>
@@ -172,88 +167,65 @@ export default function Edit({
                                   id={`${exercise}Set${setNo}reps`}
                                   onChange={(e) => {
                                     setUpdate({
-                                        ...update,
-                                        lifts: {
-                                          ...update.lifts,
-                                          [exercise]: {
-                                            ...update.lifts[exercise],
-                                            reps: [
-                                              ...update.lifts[exercise].reps,
-                                            ].map((v, i) => {
-                                              return i === setNo
-                                                ? parseInt(e.target.value)
-                                                : v;
-                                            }),
-                                          },
+                                      ...update,
+                                      lifts: {
+                                        ...update.lifts,
+                                        [exercise]: {
+                                          ...update.lifts[exercise],
+                                          reps: [
+                                            ...update.lifts[exercise].reps,
+                                          ].map((v, i) => {
+                                            return i === setNo
+                                              ? parseInt(e.target.value)
+                                              : v;
+                                          }),
                                         },
-                                      });
+                                      },
+                                    });
                                   }}
                                   defaultValue={filtered.reps[setNo]}
                                 />
                               </div>
                             );
                           })}
+
                         <div>
-                          <label htmlFor={`${exercise}mass`}>Mass:</label>
-                          <input
-                            id={`${exercise}mass`}
-                            onChange={(e) => {
-                              setUpdate({
-                                ...update,
-                                lifts: {
-                                  ...update.lifts,
-                                  [exercise]: {
-                                    ...update.lifts[exercise],
-                                    mass: parseFloat(e.target.value),
-                                  },
-                                },
-                              });
-                            }}
-                            defaultValue={filtered.mass}
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor={`${exercise}reps`}>Reps:</label>
-                          <input
-                            id={`${exercise}reps`}
-                            onChange={(e) => {
-                              setUpdate({
-                                ...update,
-                                lifts: {
-                                  ...update.lifts,
-                                  [exercise]: {
-                                    ...update.lifts[exercise],
-                                    reps: parseInt(e.target.value),
-                                  },
-                                },
-                              });
-                            }}
-                            defaultValue={filtered.reps}
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor={`${exercise}variation`}>
-                            Variation:
-                          </label>
-                          <select
-                            id={`${exercise}variation`}
-                            onChange={(e) => {
-                              setUpdate({
-                                ...update,
-                                lifts: {
-                                  ...update.lifts,
-                                  [exercise]: {
-                                    ...update.lifts[exercise],
-                                    variation: e.target.value,
-                                  },
-                                },
-                              });
-                            }}
-                            defaultValue={filtered.variation}
-                          >
-                            <option>{filtered.variation}</option>
-                            {variationOptions(exercise, filtered.variation)}
-                          </select>
+                          {" "}
+                          Variation
+                          {filtered.variation.map((v, varNo) => {
+                            return (
+                              <div key={`${exercise}var${varNo}`}>
+                                <label htmlFor={`${exercise}variation`}>
+                                  {varNo + 1}
+                                </label>
+                                <select
+                                  id={`${exercise}variation`}
+                                  onChange={(e) => {
+                                    setUpdate({
+                                      ...update,
+                                      lifts: {
+                                        ...update.lifts,
+                                        [exercise]: {
+                                          ...update.lifts[exercise],
+                                          variation: [
+                                            ...update.lifts[exercise].variation,
+                                          ].map((v, i) => {
+                                            return i === varNo
+                                              ? e.target.value
+                                              : v;
+                                          }),
+                                        },
+                                      },
+                                    });
+                                  }}
+                                  defaultValue={filtered.variation[varNo]}
+                                >
+                                  <option>{filtered.variation[varNo]}</option>
+                                  {variationOptions(exercise, varNo, v)}
+                                </select>
+                              </div>
+                            );
+                          })}
                         </div>
                       </>
                     )}
@@ -425,6 +397,9 @@ export default function Edit({
       <button onClick={() => setEdit(0)}>Cancel Changes</button>
       <button onClick={() => console.log(update, typeof update.date)}>
         log Update Object
+      </button>
+      <button onClick={() => console.log(fields)}>
+        log fields Object
       </button>
       {/* <button onClick={() => console.log(get.date.filter(v=>v.sid === edit)[0].exercises)}>log get Object</button> */}
       <button onClick={() => submitUpdate(update)}>Submit Update</button>

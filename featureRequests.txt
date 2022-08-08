@@ -20,6 +20,8 @@ DONE - I want the scheme to generate a tonnage data point.
         Done some. Probably can do more, but I'll leave them as they are at the moment
         
     NEXT: Fix the edit component.
+     Finished: The sets input and the reps, mass and variation inputs.
+     Next: Fix the add lift fieldset...
 
     ->> Auto-fill for add session. It really needs templating, manual data-entry makes it unusable.
     
