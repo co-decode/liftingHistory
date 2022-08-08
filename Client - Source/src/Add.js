@@ -221,9 +221,6 @@ function ExerciseFieldSets({ exerciseRefs, exArr }) {
             e.target.value >= 0 && e.target.value <= 20
               ? setFields(
                   {...fields, [exercise]: parseInt(e.target.value)}
-                  // [...fields].map((val, ind) =>
-                  //   ind === eInd ? parseInt(e.target.value) : val
-                  // )
                 )
               : null
           }
