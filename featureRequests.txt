@@ -8,19 +8,21 @@ DONE - I want the scheme to generate a tonnage data point.
     DONE by month
 
     !!! My mass tonnage formula is massively incorrect.
-     - Better to have manual input of tonnage, or to input average mass, average reps per set.
-     - But max Mass and actual reps per set is important...
-        - I have no accurate mass tonnage except when the scheme is exactly correct... and even then, it wrongly assumes max session weight is one rep max... it must be removed
-        
-
-    I want to visualise average quality with average max mass, and average reps/sets.
+     DONE Better to have manual input of tonnage, or to input average mass, average reps per set.
+    DONE Having to split interval and format multiplies the amount of manual coding, can I fix this?
+     
+    ? I want to visualise average quality with average max mass, and average reps/sets.
 
     ? by input interval
     
-    DONE Having to split interval and format multiplies the amount of manual coding, can I fix this?
 
-    Can I remove duplication between the tonnage functions?
+    ? Can I remove duplication between the tonnage functions?
         Done some. Probably can do more, but I'll leave them as they are at the moment
+        
+    NEXT: Fix the edit component.
+
+    ->> Auto-fill for add session. It really needs templating, manual data-entry makes it unusable.
+    
     Can I make the displays stackable?
 
     Visualise tonnage data as a graph?
@@ -30,7 +32,7 @@ DONE - I want the scheme to generate a tonnage data point.
 
     How to persist state preferences?
 
-    Auto-fill for add session.
+    
 
 
     Landing Page > Equiv Calculator > Chat and Friend systems

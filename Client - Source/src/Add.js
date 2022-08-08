@@ -3,14 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function TestAdd() {
-  /* 
-  const [create, setCreate] = useState({
-    lifts: {}
-      deadlift: { mass: null, reps: null, variation: null },
-      squat: { mass: null, reps: null, variation: null },
-      bench: { mass: null, reps: null, variation: null },
-    });
-   */  
   const dateRefs = useRef({ date: null, time: null });
   const exerciseRefs = useRef({  });
   const [exArr, setExArr] = useState([])
@@ -31,25 +23,33 @@ export default function TestAdd() {
     });
   }, [link]);
 
-  function post(clone) {
-    console.log(clone)
-    // axios({
-    //   method: "post",
-    //   data: {
-    //     lifts: clone.lifts,
-    //     date: clone.date,
-    //   },
-    //   withCredentials: true,
-    //   url: `http://localhost:3001/sessions/${user.uid}`,
-    // }).then((res) => {
-    //   console.log("something happened");
-    //   setResponse(res.data);
-    // });
+  useEffect(() => {
+    let timer
+    if (response) {
+      timer = setTimeout(()=>setResponse(null), 3000)
+    }
+    return () => clearTimeout(timer)
+    
+  },[response])
+
+  function post(submission) {
+    axios({
+      method: "post",
+      data: {
+        lifts: submission.lifts,
+        date: submission.date,
+      },
+      withCredentials: true,
+      url: `http://localhost:3001/sessions/${user.uid}`,
+    }).then((res) => {
+      console.log("something happened");
+      setResponse(res.data);
+    });
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const datePart = dateRefs.current.date.value;
     const timePart = dateRefs.current.time.value;
 
@@ -79,76 +79,28 @@ export default function TestAdd() {
       Object.keys(exerciseRefs.current[exercise].variation).forEach((val,i) => {
         varArray = [...varArray, exerciseRefs.current[exercise].variation[i].value]
       })
-      // console.log(repArray, massArray, varArray)
       lifts[exercise] = {mass: [...massArray], reps: [...repArray], variation: [...varArray] }
     })
 
-    // const liftsClone = create.lifts
     const submission = {date: time, lifts}
     console.log(submission)
 
 
-    // setCreate({...create, date: time})
-    // const dlClone = Object.assign({}, create.lifts.deadlift);
-    // const sqClone = Object.assign({}, create.lifts.squat);
-    // const bClone = Object.assign({}, create.lifts.bench);
-    // const clone = {
-    //   date: time,
-    //   lifts: { deadlift: dlClone, squat: sqClone, bench: bClone },
-    // };
-    // exArr.forEach(exercise => {
-    //   Object.values(clone.lifts[exercise]).some((val) => val.some(v=> !!v === false)) &&
-    //   delete clone.lifts[exercise];
-    // })
     if (Object.keys(submission.lifts).length > 0  ) {
       post(submission);
     }
   };
-/* 
-  function logRefs(exArr) {
-    const clone = {};
-    exArr.forEach(exercise => {
-      let repArray = []
-      let massArray = []
-      let varArray = []
 
-      Object.keys(exerciseRefs.current[exercise]).forEach(val => {
-        if (exerciseRefs.current[exercise][val].reps) {
-        repArray = [...repArray, parseInt(exerciseRefs.current[exercise][val].reps.value)]
-        massArray = [...massArray, parseFloat(exerciseRefs.current[exercise][val].mass.value)]}
-      })
-      Object.keys(exerciseRefs.current[exercise].variation).forEach((val,i) => {
-        varArray = [...varArray, exerciseRefs.current[exercise].variation[i].value]
-      })
-      console.log(repArray, massArray, varArray)
-      clone[exercise] = {mass: [...massArray], reps: [...repArray], variation: [...varArray] }
-    })
-    setCreate({...create, lifts: {...clone}})
-  }
- */
   if (!user) return <strong>Loading...</strong>;
 
   return (
     <div>
       <button onClick={() => link("/log")}>Go back</button>
-      {/* 
-      <button onClick={() => console.log(JSON.stringify(create))}>
-        log create
-      </button>
-      <button onClick={() => {
-       logRefs(exArr)}}>
-          log exrefs
-      </button> 
-        */}
-        <input type="checkbox" onClick={(e)=> exArr.includes("deadlift") ? setExArr([...exArr.filter(v=>v!=="deadlift")]) : setExArr([...exArr, "deadlift"])}/>
-        <input type="checkbox" onClick={(e)=> exArr.includes("squat") ? setExArr([...exArr.filter(v=>v!=="squat")]) : setExArr([...exArr, "squat"])}/>
-        <input type="checkbox" onClick={(e)=> exArr.includes("bench") ? setExArr([...exArr.filter(v=>v!=="bench")]) : setExArr([...exArr, "bench"])}/>
-
+        <ExerciseAdd exArr={exArr} setExArr={setExArr} />
       <form onSubmit={(e) => handleSubmit(e)}>
         <DateInput dateRefs={dateRefs} />
         <ExerciseFieldSets exerciseRefs={exerciseRefs} exArr={exArr} />
-        {/* <ExerciseFields create={create} setCreate={setCreate} /> */}
-        <button type="submit">Submit</button>
+        {exArr.length ? <button type="submit">Submit</button> : <div>Add some exercises!</div>}
       </form>
       {response && response}
     </div>
@@ -161,7 +113,7 @@ function variationOptions(exercise, array, exerciseRefs) {
     return (
       <div style={{display:"inline-block"}} key={`${exercise}VariationDiv${i}`}>
         <label htmlFor={`${exercise}Variation${i}`}>{i === 0 ? 'Variation ' : null}{i + 1}:</label>
-        <select id={`${exercise}Variation${i}`} 
+        <select id={`${exercise}Variation${i}`} required
           ref={(el) =>
             (exerciseRefs.current = {
               ...exerciseRefs.current,
@@ -178,8 +130,25 @@ function variationOptions(exercise, array, exerciseRefs) {
     )})}</div>)
 }
 
+function ExerciseAdd({exArr, setExArr}) {
+  return (
+    <>
+      {
+        ["deadlift", "squat", "bench"].map(exercise => {
+          return (
+            <div style={{display:"inline-block"}} key={`${exercise}Add`}>
+            <label htmlFor={`${exercise}Add`}>{exercise[0].toUpperCase() + exercise.slice(1)}: </label>
+            <input id={`${exercise}Add`} type="checkbox" onClick={()=> exArr.includes(exercise) ? setExArr([...exArr.filter(v=>v!==exercise)]) : setExArr([...exArr, exercise])}/>
+            </div>
+          )
+        })
+      }
+    </>
+  )
+}
+
 function ExerciseFieldSets({ exerciseRefs, exArr }) {
-  const [fields, setFields] = useState([0, 0, 0]);
+  const [fields, setFields] = useState({deadlift: 0, squat: 0, bench: 0});
 
   const lengthenArr = (number, exercise) => {
     const arr = Array(0);
@@ -192,6 +161,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr }) {
         <input
           id={`${"exercise"}Set${i + 1}Mass`}
           type="number"
+          step="0.25"
           required
           ref={(el) =>
             (exerciseRefs.current = {
@@ -207,6 +177,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr }) {
         <input
           id={`${"exercise"}Set${i + 1}Reps`}
           type="number"
+          step="0.25"
           required
           ref={(el) =>
             (exerciseRefs.current = {
@@ -222,19 +193,18 @@ function ExerciseFieldSets({ exerciseRefs, exArr }) {
     ));
   };
 
-  const variationArray = [
-    [
+  const variationObject = {
+    deadlift: [
       ["Conventional", "Sumo"],
       ["Double Overhand", "Mixed Grip", "Straps"],
     ],
-    [["High Bar", "Front", "Low Bar"]],
-    [
+    squat: [["High Bar", "Front", "Low Bar"]],
+    bench: [
       ["Close Grip", "Standard", "Wide Grip"],
       ["Flat", "Incline"],
     ],
-  ];
-  // return ["deadlift", "squat", "bench"].map((exercise, eInd) => {
-  return exArr.map((exercise, eInd) => {
+  };
+  return exArr.map(exercise => {
     return (
       <fieldset key={`${exercise}FieldSet`}>
         
@@ -250,15 +220,16 @@ function ExerciseFieldSets({ exerciseRefs, exArr }) {
           onChange={(e) =>
             e.target.value >= 0 && e.target.value <= 20
               ? setFields(
-                  [...fields].map((val, ind) =>
-                    ind === eInd ? parseInt(e.target.value) : val
-                  )
+                  {...fields, [exercise]: parseInt(e.target.value)}
+                  // [...fields].map((val, ind) =>
+                  //   ind === eInd ? parseInt(e.target.value) : val
+                  // )
                 )
               : null
           }
         />
-          {variationOptions(exercise, variationArray[eInd], exerciseRefs)}
-        {fields[eInd] ? lengthenArr(fields[eInd], exercise) : null}
+          {variationOptions(exercise, variationObject[exercise], exerciseRefs)}
+        {fields[exercise] ? lengthenArr(fields[exercise], exercise) : null}
       </fieldset>
     );
   });
