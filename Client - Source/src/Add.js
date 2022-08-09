@@ -121,16 +121,6 @@ export default function Add({ get }) {
           <div>Add some exercises!</div>
         )}
       </form>
-      <button
-        onClick={() =>
-          Object.keys(exerciseRefs.current.deadlift).forEach((key) => {
-            if (exerciseRefs.current.deadlift[key].mass)
-              exerciseRefs.current.deadlift[key].mass.value = 10;
-          })
-        }
-      >
-        Fill mass with 10
-      </button>
       {response && response}
     </div>
   );
@@ -261,40 +251,40 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
     ],
   };
   return exArr.map((exercise) => {
-    const mostRecentDeadliftSessionSID = get.date
-      .filter((val) => val.exercises.includes("deadlift"))
+    const mostRecentExerciseSessionSID = get.date
+      .filter((val) => val.exercises.includes(exercise))
       .reduce((acc, val) =>
         new Date(val.date) > new Date(acc.date) ? val : acc
       ).sid;
 
-    const sets = get.deadlift.filter(
-      (v) => v.sid === mostRecentDeadliftSessionSID
+    const sets = get[exercise].filter(
+      (v) => v.sid === mostRecentExerciseSessionSID
       )[0].mass.length
 
     function getPrevTemplate(e) {
       e.preventDefault();
         
       if (fields[exercise] < sets){
-        setFields({...fields, deadlift: sets})
+        setFields({...fields, [exercise]: sets})
         return
       }
 
       if (exerciseRefs.current.deadlift) {
-        Object.keys(exerciseRefs.current.deadlift).forEach((key) => {
-          if (exerciseRefs.current.deadlift[key].mass) {
-            exerciseRefs.current.deadlift[key].mass.value = get.deadlift.filter(
-              (v) => v.sid === mostRecentDeadliftSessionSID
+        Object.keys(exerciseRefs.current[exercise]).forEach((key) => {
+          if (exerciseRefs.current[exercise][key].mass) {
+            exerciseRefs.current[exercise][key].mass.value = get[exercise].filter(
+              (v) => v.sid === mostRecentExerciseSessionSID
             )[0].mass[key - 1];
-            exerciseRefs.current.deadlift[key].reps.value = get.deadlift.filter(
-              (v) => v.sid === mostRecentDeadliftSessionSID
+            exerciseRefs.current[exercise][key].reps.value = get[exercise].filter(
+              (v) => v.sid === mostRecentExerciseSessionSID
             )[0].reps[key - 1];
           }
         });
   
-        Object.keys(exerciseRefs.current.deadlift.variation).forEach((key) => {
-          exerciseRefs.current.deadlift.variation[key].value =
-            get.deadlift.filter(
-              (v) => v.sid === mostRecentDeadliftSessionSID
+        Object.keys(exerciseRefs.current[exercise].variation).forEach((key) => {
+          exerciseRefs.current[exercise].variation[key].value =
+            get[exercise].filter(
+              (v) => v.sid === mostRecentExerciseSessionSID
             )[0].variation[key];
         });
       }

@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 import Logout from "./Logout";
 import Tonnage from "./Tonnage";
 
-const LOG = "LOG";
-const EDIT = "EDIT";
-const TONS = "TONNAGE";
-const ADD = "ADD";
+const [LOG, EDIT, TONS, ADD] = ["LOG", "EDIT", "TONNAGE", "ADD"];
+// const EDIT = "EDIT";
+// const TONS = "TONNAGE";
+// const ADD = "ADD";
 
 export default function Log() {
   const [get, setGet] = useState(null);

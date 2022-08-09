@@ -11,29 +11,37 @@ DONE - I want the scheme to generate a tonnage data point.
      DONE Better to have manual input of tonnage, or to input average mass, average reps per set.
     DONE Having to split interval and format multiplies the amount of manual coding, can I fix this?
      
-
-    ? by input interval
-    
-
-    ? Can I remove duplication between the tonnage functions?
-        Done some. Probably can do more, but I'll leave them as they are at the moment
+    ARCHIVES
+        ?  - Pretty sure weekly and monthly is fine. 
+            Program cycle intervals might be interesting, but I'll leave a feature like that until I actually need it.
+        ? Limit date range of data fed to tonnage functions - Not sure I want to do that... it's a performance concern, but I don't see a problem right now. Did I want to limit the range of get data queried for in the Log component? No.
         
     Done: Fix the edit component.
      Finished: The sets input and the reps, mass and variation inputs.
      Finished: Fix the add lift fieldset...
 
-    ->> NEXT: Auto-fill for add session. It really needs templating, manual data-entry makes it unusable.
+    DONE: Auto-fill for add session. It really needs templating, manual data-entry makes it unusable.
     
-    ->> Fix Tonnage
+    DONE: Fix Tonnage
 
+    DONE: Aggregate tonnage data by custom interval
+
+    ->> Can I remove duplication between the tonnage functions?
+            Doing my best... feel more could be done, but I'd have to change the order of binning so that exercise list is mapped before the interval. The binning is readable for weeks and months with interval mapped first, but not single days; single days is readable with exercise mapped first, and I suspect that weeks and months would look good like this as well.
+            I'll look into this later
+
+        NEXT: Add another input to the tonnage component to allow for custom intervals and beginning reference date
+
+        Can I make the displays stackable?
+        
+
+    ->> Build a session breakdown component
         I want to visualise average quality with average max mass, and average reps/sets.
         
-        Can I make the displays stackable?
 
     Visualise tonnage data as a graph?
     Calendar widget.
 
-    ? Limit date range of data fed to tonnage functions.
 
     How to persist state preferences?
 
