@@ -11,7 +11,6 @@ DONE - I want the scheme to generate a tonnage data point.
      DONE Better to have manual input of tonnage, or to input average mass, average reps per set.
     DONE Having to split interval and format multiplies the amount of manual coding, can I fix this?
      
-    ? I want to visualise average quality with average max mass, and average reps/sets.
 
     ? by input interval
     
@@ -19,13 +18,17 @@ DONE - I want the scheme to generate a tonnage data point.
     ? Can I remove duplication between the tonnage functions?
         Done some. Probably can do more, but I'll leave them as they are at the moment
         
-    NEXT: Fix the edit component.
+    Done: Fix the edit component.
      Finished: The sets input and the reps, mass and variation inputs.
-     Next: Fix the add lift fieldset...
+     Finished: Fix the add lift fieldset...
 
-    ->> Auto-fill for add session. It really needs templating, manual data-entry makes it unusable.
+    ->> NEXT: Auto-fill for add session. It really needs templating, manual data-entry makes it unusable.
     
-    Can I make the displays stackable?
+    ->> Fix Tonnage
+
+        I want to visualise average quality with average max mass, and average reps/sets.
+        
+        Can I make the displays stackable?
 
     Visualise tonnage data as a graph?
     Calendar widget.

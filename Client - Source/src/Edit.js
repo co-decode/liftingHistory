@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const LOG = "LOG";
 
 function variationOptions(exercise, index, existing) {
   const variationObject = {
@@ -23,12 +26,24 @@ export default function Edit({
   setGet,
   edit,
   setEdit,
+  setPage,
   user,
   setDateFilter,
 }) {
   const [update, setUpdate] = useState(null);
   const [feedback, setFeedback] = useState(null);
-  const [fields, setFields] = useState({})
+  const [fields, setFields] = useState({});
+  const link = useNavigate();
+
+  useEffect(() => {
+    axios({
+      method: "get",
+      withCredentials: true,
+      url: "http://localhost:3001/authenticated",
+    }).then((res) => {
+      if (!res.data) link("/login");
+    });
+  }, [link]);
 
   useEffect(() => {
     const session = get.date.filter((v) => v.sid === edit)[0];
@@ -38,7 +53,7 @@ export default function Edit({
       lostLifts: [],
       date: session.date,
     };
-    const fieldsInitial = {}
+    const fieldsInitial = {};
     session.exercises.forEach((v) => {
       const filtered = get[v].filter((v) => v.sid === edit)[0];
       updateObject.lifts[v] = {
@@ -46,9 +61,9 @@ export default function Edit({
         reps: filtered.reps,
         variation: filtered.variation,
       };
-      fieldsInitial[v] = filtered.mass.length
+      fieldsInitial[v] = filtered.mass.length;
     });
-    setFields(fieldsInitial)
+    setFields(fieldsInitial);
     setUpdate(updateObject);
   }, [get, edit]);
 
@@ -97,7 +112,6 @@ export default function Edit({
                   }
                 />
               </>
-              {/* <button onClick={()=>setEdit(true)}>Edit this session</button> */}
               {exerciseCall.map((exercise) => {
                 const filtered = get[exercise].filter(
                   (v) => v.sid === sidVal
@@ -111,23 +125,50 @@ export default function Edit({
                       {exercise[0].toUpperCase() + exercise.slice(1)}
                     </button>{" "}
                     <br />
-                    {exercise[0].toUpperCase() + exercise.slice(1)}:
+                    <strong>
+                      {exercise[0].toUpperCase() + exercise.slice(1)}:
+                    </strong>
                     {update?.lostLifts.includes(exercise) ? null : (
-                      <>
-                        <input onChange={(e)=> {
+                      <div>
+                        <label htmlFor={`${exercise}Sets`}>Sets:</label>
+                        <input
+                          id={`${exercise}Sets`}
+                          onChange={(e) => {
                             if (e.target.value >= 1 && e.target.value <= 20) {
-                                setFields({...fields, [exercise]: parseInt(e.target.value)})
-                                setUpdate({
-                                    ...update,
-                                    lifts: {
-                                      ...update.lifts,
-                                      [exercise]: {
-                                        ...update.lifts[exercise],
-                                        mass: Array(parseInt(e.target.value)).fill(null).map((v,i)=> update.lifts[exercise].mass[i] ? update.lifts[exercise].mass[i] : filtered.mass[i] ? filtered.mass[i] : v ),
-                                        reps: Array(parseInt(e.target.value)).fill(null).map((v,i)=> update.lifts[exercise].reps[i] ? update.lifts[exercise].reps[i] : filtered.reps[i] ? filtered.reps[i] : v )
-                                        
-                                }}})
-                        }}}/>
+                              setFields({
+                                ...fields,
+                                [exercise]: parseInt(e.target.value),
+                              });
+                              setUpdate({
+                                ...update,
+                                lifts: {
+                                  ...update.lifts,
+                                  [exercise]: {
+                                    ...update.lifts[exercise],
+                                    mass: Array(parseInt(e.target.value))
+                                      .fill(null)
+                                      .map((v, i) =>
+                                        update.lifts[exercise].mass[i]
+                                          ? update.lifts[exercise].mass[i]
+                                          : filtered.mass[i]
+                                          ? filtered.mass[i]
+                                          : v
+                                      ),
+                                    reps: Array(parseInt(e.target.value))
+                                      .fill(null)
+                                      .map((v, i) =>
+                                        update.lifts[exercise].reps[i]
+                                          ? update.lifts[exercise].reps[i]
+                                          : filtered.reps[i]
+                                          ? filtered.reps[i]
+                                          : v
+                                      ),
+                                  },
+                                },
+                              });
+                            }
+                          }}
+                        />
                         {Array(fields[exercise])
                           .fill(null)
                           .map((set, setNo) => {
@@ -227,7 +268,7 @@ export default function Edit({
                             );
                           })}
                         </div>
-                      </>
+                      </div>
                     )}
                     {/* {JSON.stringify(get[v].filter(v => v.sid === sidVal)[0])} */}
                   </div>
@@ -243,11 +284,11 @@ export default function Edit({
 
   const submitUpdate = (update) => {
     if (
-      Object.keys(update.lifts).some((v) =>
-        Object.values(update.lifts[v]).some((v) => !!v === false)
+      Object.keys(update.lifts).some((exercise) =>
+        Object.keys(update.lifts[exercise]).some((arrayKey) => Object.values(update.lifts[exercise][arrayKey].some((v)=> !!v === false)))
       ) ||
-      Object.keys(update.newLifts).some((v) =>
-        Object.values(update.newLifts[v]).some((v) => !!v === false)
+      Object.keys(update.newLifts).some((exercise) =>
+        Object.values(update.newLifts[exercise]).some((arrayKey) => Object.values(update.newLifts[exercise][arrayKey].some((v)=> !!v === false)))
       )
     ) {
       setFeedback("Incomplete Forms");
@@ -287,61 +328,139 @@ export default function Edit({
   };
 
   function addFieldset(exercise) {
+    const variationObject = {
+      deadlift: ['',''],
+      squat: [''],
+      bench: ['', '']
+    }
     return (
       <fieldset>
-        {" "}
-        <div>{exercise}</div>
-        <label htmlFor={`${exercise}mass`}>Mass</label>
-        <input
-          id={`${exercise}mass`}
-          onChange={(e) =>
-            setUpdate({
-              ...update,
-              newLifts: {
-                ...update.newLifts,
-                [exercise]: {
-                  ...update.newLifts[exercise],
-                  mass: parseFloat(e.target.value),
-                },
-              },
-            })
-          }
-        />
-        <label htmlFor={`${exercise}reps`}>Reps</label>
-        <input
-          id={`${exercise}reps`}
-          onChange={(e) =>
-            setUpdate({
-              ...update,
-              newLifts: {
-                ...update.newLifts,
-                [exercise]: {
-                  ...update.newLifts[exercise],
-                  reps: parseInt(e.target.value),
-                },
-              },
-            })
-          }
-        />
-        <label htmlFor={`${exercise}variation`}>Variation</label>
-        <select
-          id={`${exercise}variation`}
-          onChange={(e) =>
-            setUpdate({
-              ...update,
-              newLifts: {
-                ...update.newLifts,
-                [exercise]: {
-                  ...update.newLifts[exercise],
-                  variation: e.target.value,
-                },
-              },
-            })
-          }
-        >
-          <option value="">---</option>
-          {variationOptions(exercise, "none")}
-        </select>
+        <div>
+          <label htmlFor={`${exercise}Sets`}>Sets:</label>
+          <input
+            id={`${exercise}Sets`}
+            onChange={(e) => {
+              if (e.target.value >= 1 && e.target.value <= 20) {
+                setFields({ ...fields, [exercise]: parseInt(e.target.value) });
+                setUpdate({
+                  ...update,
+                  newLifts: {
+                    ...update.newLifts,
+                    [exercise]: {
+                      ...update.newLifts[exercise],
+                      mass: Array(parseInt(e.target.value))
+                        .fill(null)
+                        .map((v, i) =>
+                          !update.newLifts[exercise].mass
+                            ? v
+                            : update.newLifts[exercise].mass[i]
+                            ? update.newLifts[exercise].mass[i]
+                            : v
+                        ),
+                      reps: Array(parseInt(e.target.value))
+                        .fill(null)
+                        .map((v, i) =>
+                        !update.newLifts[exercise].reps
+                          ? v
+                          : update.newLifts[exercise].reps[i]
+                          ? update.newLifts[exercise].reps[i]
+                          : v
+                        ),
+                    },
+                  },
+                });
+              }
+            }}
+          />
+          {Array(fields[exercise])
+            .fill(null)
+            .map((set, setNo) => {
+              return (
+                <div key={`${exercise}set${setNo}`}>
+                  {" "}
+                  Set {setNo + 1} -{" "}
+                  <label htmlFor={`${exercise}Set${setNo}mass`}>Mass:</label>
+                  <input
+                    id={`${exercise}Set${setNo}mass`}
+                    onChange={(e) => {
+                      setUpdate({
+                        ...update,
+                        newLifts: {
+                          ...update.newLifts,
+                          [exercise]: {
+                            ...update.newLifts[exercise],
+                            mass: [...update.newLifts[exercise].mass].map(
+                              (v, i) => {
+                                return i === setNo
+                                  ? parseFloat(e.target.value)
+                                  : v;
+                              }
+                            ),
+                          },
+                        },
+                      });
+                    }}
+                  />
+                  <label htmlFor={`${exercise}Set${setNo}reps`}>Reps:</label>
+                  <input
+                    id={`${exercise}Set${setNo}reps`}
+                    onChange={(e) => {
+                      setUpdate({
+                        ...update,
+                        newLifts: {
+                          ...update.newLifts,
+                          [exercise]: {
+                            ...update.newLifts[exercise],
+                            reps: [...update.newLifts[exercise].reps].map(
+                              (v, i) => {
+                                return i === setNo
+                                  ? parseInt(e.target.value)
+                                  : v;
+                              }
+                            ),
+                          },
+                        },
+                      });
+                    }}
+                  />
+                </div>
+              );
+            })}
+
+          <div>
+            {" "}
+            Variation
+            {variationObject[exercise].map((v, varNo) => {
+              return (
+                <div key={`${exercise}var${varNo}`}>
+                  <label htmlFor={`${exercise}variation`}>{varNo + 1}</label>
+                  <select
+                    id={`${exercise}variation`}
+                    onChange={(e) => {
+                      setUpdate({
+                        ...update,
+                        newLifts: {
+                          ...update.newLifts,
+                          [exercise]: {
+                            ...update.newLifts[exercise],
+                            variation: [
+                              ...variationObject[exercise],
+                            ].map((v, i) => {
+                              return i === varNo ? e.target.value : update.newLifts[exercise].variation[i];
+                            }),
+                          },
+                        },
+                      });
+                    }}
+                  >
+                    <option value=""> --- </option>
+                    {variationOptions(exercise, varNo, v)}
+                  </select>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </fieldset>
     );
   }
@@ -394,13 +513,10 @@ export default function Edit({
 
   return (
     <div>
-      <button onClick={() => setEdit(0)}>Cancel Changes</button>
-      <button onClick={() => console.log(update, typeof update.date)}>
+      <button onClick={() => {setEdit(0); setPage(LOG)}}>Cancel Changes</button>
+      {/* <button onClick={() => console.log(update, typeof update.date)}>
         log Update Object
-      </button>
-      <button onClick={() => console.log(fields)}>
-        log fields Object
-      </button>
+      </button> */}
       {/* <button onClick={() => console.log(get.date.filter(v=>v.sid === edit)[0].exercises)}>log get Object</button> */}
       <button onClick={() => submitUpdate(update)}>Submit Update</button>
       {!update
@@ -410,30 +526,30 @@ export default function Edit({
               (v) =>
                 !get.date.filter((v) => v.sid === edit)[0].exercises.includes(v)
             )
-            .map((val) => {
+            .map((exercise) => {
               return (
-                <div key={`missing${val}`}>
+                <div key={`missing${exercise}`}>
                   <button
                     onClick={() => {
-                      update.newLifts[val]
-                        ? removeExercise(val)
+                      update.newLifts[exercise]
+                        ? removeExercise(exercise)
                         : setUpdate({
                             ...update,
                             newLifts: {
                               ...update.newLifts,
-                              [val]: {
+                              [exercise]: {
                                 mass: null,
                                 reps: null,
-                                variation: null,
+                                variation: [],
                               },
                             },
                           });
                     }}
                   >
-                    {update.newLifts[val] ? `Cancel ` : `Add `}
-                    {val.replace(/^\w/, (c) => c.toUpperCase())}
+                    {update.newLifts[exercise] ? `Cancel ` : `Add `}
+                    {exercise.replace(/^\w/, (c) => c.toUpperCase())}
                   </button>
-                  {update.newLifts[val] ? addFieldset(val) : null}
+                  {update.newLifts[exercise] ? addFieldset(exercise) : null}
                 </div>
               );
             })}
@@ -441,86 +557,4 @@ export default function Edit({
       {feedback}
     </div>
   );
-}
-
-function ExerciseFieldSets({ exerciseRefs, exArr }) {
-  const [fields, setFields] = useState({ deadlift: 0, squat: 0, bench: 0 });
-
-  const lengthenArr = (number, exercise) => {
-    const arr = Array(0);
-    arr.length = number;
-    arr.fill(null);
-    return arr.map((v, i) => (
-      <div key={`${"exercise"}${i + 1}`}>
-        <strong>Set {i + 1}: </strong>
-        <label>Mass</label>
-        <input
-          id={`${"exercise"}Set${i + 1}Mass`}
-          type="number"
-          step="0.25"
-          required
-          ref={(el) =>
-            (exerciseRefs.current = {
-              ...exerciseRefs.current,
-              [exercise]: {
-                ...exerciseRefs.current[exercise],
-                [i + 1]: { ...exerciseRefs.current[exercise][i + 1], mass: el },
-              },
-            })
-          }
-        />
-        <label>Reps</label>
-        <input
-          id={`${"exercise"}Set${i + 1}Reps`}
-          type="number"
-          step="0.25"
-          required
-          ref={(el) =>
-            (exerciseRefs.current = {
-              ...exerciseRefs.current,
-              [exercise]: {
-                ...exerciseRefs.current[exercise],
-                [i + 1]: { ...exerciseRefs.current[exercise][i + 1], reps: el },
-              },
-            })
-          }
-        />
-      </div>
-    ));
-  };
-
-  const variationObject = {
-    deadlift: [
-      ["Conventional", "Sumo"],
-      ["Double Overhand", "Mixed Grip", "Straps"],
-    ],
-    squat: [["High Bar", "Front", "Low Bar"]],
-    bench: [
-      ["Close Grip", "Standard", "Wide Grip"],
-      ["Flat", "Incline"],
-    ],
-  };
-  return exArr.map((exercise) => {
-    return (
-      <fieldset key={`${exercise}FieldSet`}>
-        <div style={{ fontWeight: "bold" }}>
-          {exercise[0].toUpperCase() + exercise.slice(1)}
-        </div>
-        <label htmlFor={`${exercise}Sets`}>Sets</label>
-        <input
-          id={`${exercise}Sets`}
-          type="number"
-          min={0}
-          max={20}
-          onChange={(e) =>
-            e.target.value >= 0 && e.target.value <= 20
-              ? setFields({ ...fields, [exercise]: parseInt(e.target.value) })
-              : null
-          }
-        />
-        {variationOptions(exercise, variationObject[exercise], exerciseRefs)}
-        {fields[exercise] ? lengthenArr(fields[exercise], exercise) : null}
-      </fieldset>
-    );
-  });
 }
