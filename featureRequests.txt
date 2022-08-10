@@ -26,13 +26,14 @@ DONE - I want the scheme to generate a tonnage data point.
 
     DONE: Aggregate tonnage data by custom interval
 
-    ->> Can I remove duplication between the tonnage functions?
-            Doing my best... feel more could be done, but I'd have to change the order of binning so that exercise list is mapped before the interval. The binning is readable for weeks and months with interval mapped first, but not single days; single days is readable with exercise mapped first, and I suspect that weeks and months would look good like this as well.
-            I'll look into this later
+    DONE: Can I remove duplication between the tonnage functions?
 
-        NEXT: Add another input to the tonnage component to allow for custom intervals and beginning reference date
+    DONE: Add another input to the tonnage component to allow for custom intervals and beginning reference date
 
-        Can I make the displays stackable?
+    DONE: Can I make the displays stackable?
+
+    ? Can I filter the display of each exercise?
+    ?? Would I want to flip the mapping order to see interval then exercises?
         
 
     ->> Build a session breakdown component
@@ -40,13 +41,10 @@ DONE - I want the scheme to generate a tonnage data point.
         
 
     Visualise tonnage data as a graph?
+
     Calendar widget.
 
-
     How to persist state preferences?
-
-    
-
 
     Landing Page > Equiv Calculator > Chat and Friend systems
         
