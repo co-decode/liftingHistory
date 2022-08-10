@@ -8,31 +8,13 @@ const [session, custom, month, all, week] = [
   "WEEK",
 ];
 
-export default function returnTonnage(
+export default function intervalTon(
   get,
-  // tonFormat,
-  interval,
-  intervalLengthInDays,
-  beginning
-) {
-  // if (![reps, mass].includes(tonFormat)) return null;
-  if ([session, custom, month, all, week].includes(interval))
-    return intervalTon(
-      get,
-      // tonFormat,
-      interval,
-      intervalLengthInDays || 7,
-      beginning
-    );
-  // else if (interval === session) return sessionTon(get, tonFormat);
-}
-
-function intervalTon(
-  get,
-  // tonFormat,
   intervalFormat,
   intervalLengthInDays,
-  begin
+  begin,
+  showZeroes,
+  variationFilter
 ) {
   function getCustomInterval(date) {
     const time = new Date(date);
@@ -46,7 +28,7 @@ function intervalTon(
     return interval;
   }
   function returnInterval(date) {
-    if (intervalFormat === "CUSTOM") {
+    if (intervalFormat === custom) {
       return begin
         ? `${getCustomInterval(date)}`
         : `${getCustomInterval(date)}-${new Date(date).getFullYear()}`;
@@ -54,7 +36,7 @@ function intervalTon(
       return `${getCustomInterval(date)}-${new Date(date).getFullYear()}`;
     else if (intervalFormat === month)
       return `${new Date(date).getMonth() + 1}-${new Date(date).getFullYear()}`;
-    else if (intervalFormat === all) return `ALL`;
+    else if (intervalFormat === all) return all;
     else if (intervalFormat === session)
       return `${new Date(date).toDateString()}`;
   }
@@ -82,10 +64,21 @@ function intervalTon(
               const sidsByExercise = get.date
                 .filter((val) => sidsBinned[interval].includes(val.sid))
                 .filter((val) => val.exercises.includes(exercise));
-              if (sidsByExercise.length === 0) return null;
-              const exerciseObjectsForSid = sidsByExercise.map((sidV) =>
+
+              if (!showZeroes) {
+                if (sidsByExercise.length === 0) return null;
+              }
+
+              let exerciseObjectsForSid = sidsByExercise.map((sidV) =>
                 get[exercise].filter((val) => val.sid === sidV.sid)
               );
+
+              if (variationFilter[exercise]) {
+                exerciseObjectsForSid = exerciseObjectsForSid.filter((v) =>
+                  v[0].variation.includes(variationFilter[exercise])
+                );
+              }
+              
               const totalReps = exerciseObjectsForSid.reduce((acc, v) => {
                 return acc + v[0].reps.reduce((a, val) => a + val, 0);
               }, 0);
@@ -97,59 +90,43 @@ function intervalTon(
               }, 0);
               return (
                 <div key={`${interval}`}>
-                  {/* <div>{interval}</div> */}
                   <div>
-                    {/* {`${tonFormat[0]}: `} */}
                     {`R: `}
                     {totalReps}
                     {` | M: `}
                     {totalMass}
-                    {` kg`}
-                    {/* {sidsByExercise
-                      .map((sidV) =>
-                        get[exercise].filter((val) => val.sid === sidV.sid)
-                      )
-                      .reduce((acc, v) => {
-                        const session = v[0];
-                        if (tonFormat === reps) {
-                          return (
-                            acc + session.reps.reduce((a, val) => a + val, 0)
-                          );
-                        } else if (tonFormat === mass) {
-                          return (
-                            acc +
-                            session.reps.reduce(
-                              (a, val, ind) => a + val * session.mass[ind],
-                              0
-                            )
-                          );
-                        } else return acc;
-                      }, 0)} */}
-                    {/* {tonFormat === mass && ` kg`} */}
-                    {` | Q: `}
+                    {` kg | Q: `}
                     {(totalMass / totalReps).toFixed(2)}
                     {` kg / r | Max: `}
                     {exerciseObjectsForSid.reduce((intervalMax, v) => {
-                      const sessionMax = v[0].mass.reduce((a, val) => (val > a ? val : a), 0)
-                      return (
-                        sessionMax > intervalMax ? sessionMax : intervalMax
+                      const sessionMax = v[0].mass.reduce(
+                        (a, val) => (val > a ? val : a),
+                        0
                       );
+                      return sessionMax > intervalMax
+                        ? sessionMax
+                        : intervalMax;
                     }, 0)}
-                    {` kg | Av Max: `}
-                    {(exerciseObjectsForSid.reduce((sessionMaxes, v) => {
-                      const sessionMax = v[0].mass.reduce((a, val) => Math.max(a,val))
-                      return (
-                        sessionMaxes + sessionMax
-                      );
-                    }, 0) / exerciseObjectsForSid.length).toFixed(2)}
                     {` kg | `}
-                    {(exerciseObjectsForSid.reduce((acc, v) => {
-                      const sessionReps = v[0].reps.reduce((a, val) => a + val, 0)
-                      const sessionSets = v[0].reps.length
-                      return (
-                        acc + (sessionReps / sessionSets)
-                      );
-                    }, 0) / exerciseObjectsForSid.length).toFixed(2)}
+                    {intervalFormat !== session &&
+                      `Av Max: ${(
+                        exerciseObjectsForSid.reduce((sessionMaxes, v) => {
+                          const sessionMax = v[0].mass.reduce((a, val) =>
+                            Math.max(a, val)
+                          );
+                          return sessionMaxes + sessionMax;
+                        }, 0) / exerciseObjectsForSid.length
+                      ).toFixed(2)} kg | `}
+                    {(
+                      exerciseObjectsForSid.reduce((acc, v) => {
+                        const sessionReps = v[0].reps.reduce(
+                          (a, val) => a + val,
+                          0
+                        );
+                        const sessionSets = v[0].reps.length;
+                        return acc + sessionReps / sessionSets;
+                      }, 0) / exerciseObjectsForSid.length
+                    ).toFixed(2)}
                     {` r / s | `}
                     {interval}
                   </div>

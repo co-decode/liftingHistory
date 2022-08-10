@@ -34,13 +34,11 @@ DONE - I want the scheme to generate a tonnage data point.
 
     ? Can I filter the display of each exercise?
     ?? Would I want to flip the mapping order to see interval then exercises?
-    ->> Filter SIDS by variation tag.
-    ->> Add option to view intervals with zeroes.
-        
+    ->> Filter SIDS by variation tag. DONE FOR Tonnage... might like it for the LOG as well.
+    DONE: Add option to view intervals with zeroes.        
 
-    ->> Build a session breakdown component
-        DONE: I want to visualise average quality with average max mass, and average reps/sets.
-        
+    DONE: Build a session breakdown component
+    DONE: I want to visualise average quality with average max mass, and average reps/sets.   
 
     Visualise tonnage data as a graph?
 

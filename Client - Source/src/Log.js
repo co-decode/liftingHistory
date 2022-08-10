@@ -5,9 +5,15 @@ import Add from "./Add";
 import { useNavigate } from "react-router-dom";
 import Logout from "./Logout";
 import Tonnage from "./Tonnage";
-import Breakdown from "./Breakdown"
+import Breakdown from "./Breakdown";
 
-const [LOG, EDIT, TONS, ADD, BREAK] = ["LOG", "EDIT", "TONNAGE", "ADD", "BREAKDOWN"];
+const [LOG, EDIT, TONS, ADD, BREAK] = [
+  "LOG",
+  "EDIT",
+  "TONNAGE",
+  "ADD",
+  "BREAKDOWN",
+];
 
 export default function Log() {
   const [get, setGet] = useState(null);
@@ -21,8 +27,21 @@ export default function Log() {
   });
   const [user, setUser] = useState(null);
   const [exerciseFilter, setExerciseFilter] = useState([]);
+  const [varFilter, setVarFilter] = useState({});
   const editRefs = useRef({});
   const link = useNavigate();
+
+  const variationObject = {
+    deadlift: [
+      ["Conventional", "Sumo"],
+      ["Double Overhand", "Mixed Grip", "Straps"],
+    ],
+    squat: [["High Bar", "Front", "Low Bar"]],
+    bench: [
+      ["Close Grip", "Standard", "Wide Grip"],
+      ["Flat", "Incline"],
+    ],
+  };
 
   useEffect(() => {
     axios({
@@ -38,7 +57,6 @@ export default function Log() {
           withCredentials: true,
           url: `http://localhost:3001/sessions/${res.data.uid}`,
         }).then((res) => {
-          // console.log(res.data[0])
           if (res.data[0].date) {
             setGet(res.data[0]);
             const earliest = new Date(
@@ -103,7 +121,7 @@ export default function Log() {
         exerciseFilter.every((exercise) => !v.exercises.includes(exercise))
       )
       .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .map((v) => v.sid);
+      .map((v) => v.sid)
 
     if (!dateFilter.ascending) {
       sidList = sidList.reverse();
@@ -128,62 +146,55 @@ export default function Log() {
                 <button onClick={() => deleteSession(sidVal)}>
                   Delete this session
                 </button>
-                <button onClick={() => {setEdit(sidVal); setPage(EDIT)}}>
+                <button
+                  onClick={() => {
+                    setEdit(sidVal);
+                    setPage(EDIT);
+                  }}
+                >
                   Edit this session
                 </button>
-                <button onClick={() => {setEdit(sidVal); setPage(BREAK)}}>
+                <button
+                  onClick={() => {
+                    setEdit(sidVal);
+                    setPage(BREAK);
+                  }}
+                >
                   View Breakdown
                 </button>
               </div>
               {exerciseCall.map((v) => {
+                const exerciseData = get[v].filter((v) => v.sid === sidVal)[0];
+                if (varFilter[v]) if (!exerciseData.variation.includes(varFilter[v])) return null
                 return (
                   <div
-                    key={v}
-                    style={{ display: "inline-block", marginRight: "20px" }}
+                  key={v}
+                  style={{ display: "inline-block", marginRight: "20px" }}
                   >
                     <strong>{v[0].toUpperCase() + v.slice(1)}: </strong>
                     <div>
                       Max:{" "}
-                      {get[v]
-                        .filter((v) => v.sid === sidVal)[0]
-                        .mass.reduce((acc, item) => {
-                          return item > acc ? item : acc;
-                        })}{" "}
+                      {exerciseData.mass.reduce((acc, item) => {
+                        return item > acc ? item : acc;
+                      })}{" "}
                       kg
                     </div>
                     <div>
                       Reps:{" "}
-                      {get[v]
-                        .filter((v) => v.sid === sidVal)[0]
-                        .reps.reduce((acc, val) => {
-                          return val + acc;
-                        })}
+                      {exerciseData.reps.reduce((acc, val) => {
+                        return val + acc;
+                      })}
                     </div>
-                    <div>
-                      Sets:{" "}
-                      {get[v].filter((v) => v.sid === sidVal)[0].reps.length}
-                    </div>
+                    <div>Sets: {exerciseData.reps.length}</div>
                     <div>
                       Tonnage:{" "}
-                      {get[v]
-                        .filter((v) => v.sid === sidVal)[0]
-                        .reps.reduce((acc, rep, ind) => {
-                          return (
-                            parseInt(
-                              rep *
-                                get[v].filter((v) => v.sid === sidVal)[0].mass[
-                                  ind
-                                ]
-                            ) + acc
-                          );
-                        }, 0)}{" "}
+                      {exerciseData.reps.reduce((acc, rep, ind) => {
+                        return parseInt(rep * exerciseData.mass[ind]) + acc;
+                      }, 0)}{" "}
                       kg
                     </div>
                     <div>
-                      {get[v]
-                        .filter((v) => v.sid === sidVal)[0]
-                        .variation.toString()
-                        .replace(/,/, ", ")}
+                      {exerciseData.variation.toString().replace(/,/, ", ")}
                     </div>
                   </div>
                 );
@@ -196,13 +207,15 @@ export default function Log() {
     );
   }
   function pageButtons() {
-    if (page === LOG) {return (
-    <>
-        <button onClick={()=>setPage(ADD)}>Add an Entry</button>
-        <button onClick={()=>setPage(TONS)}>View Tonnage</button>
-    </>
-    )}
-    else if (page) return <button onClick={()=>setPage(LOG)}>Go Back</button>
+    if (page === LOG) {
+      return (
+        <>
+          <button onClick={() => setPage(ADD)}>Add an Entry</button>
+          <button onClick={() => setPage(TONS)}>View Tonnage</button>
+        </>
+      );
+    } else if (page)
+      return <button onClick={() => setPage(LOG)}>Go Back</button>;
   }
   function returnDateFilter() {
     return (
@@ -262,6 +275,34 @@ export default function Log() {
     );
   }
 
+  function returnVarFilter() {
+    return (
+      <>
+        {["bench", "deadlift", "squat"].map((exercise) => (
+          <div key={`${exercise}VarFilter`} style={{ display: "inline-block" }}>
+            <label htmlFor={`${exercise}VarFilter`}>
+              {exercise[0].toUpperCase() + exercise.slice(1)}:
+            </label>
+            <select
+              id={`${exercise}VarFilter`}
+              onChange={(e) =>
+                setVarFilter({
+                  ...varFilter,
+                  [exercise]: e.target.value,
+                })
+              }
+            >
+              <option value=""> -- </option>
+              {variationObject[exercise].flat().map((value) => {
+                return <option key={`${value}`}>{value}</option>;
+              })}
+            </select>
+          </div>
+        ))}
+      </>
+    );
+  }
+
   function returnComponent() {
     if (page === LOG) {
       return (
@@ -271,6 +312,7 @@ export default function Log() {
               <fieldset>
                 {returnDateFilter()}
                 {returnExFilter()}
+                {returnVarFilter()}
               </fieldset>
               {returnSid()}
             </>
@@ -279,8 +321,7 @@ export default function Log() {
           )}
         </>
       );
-    }
-    else if (page === EDIT)
+    } else if (page === EDIT)
       return (
         <Edit
           get={get}
@@ -292,7 +333,10 @@ export default function Log() {
           setDateFilter={setDateFilter}
         />
       );
-    else if (page === BREAK) return <Breakdown get={get} edit={edit}/>
+    else if (page === BREAK)
+      return (
+        <Breakdown get={get} edit={edit} setEdit={setEdit} setPage={setPage} />
+      );
     else if (page === ADD) return <Add get={get} />;
     else if (page === TONS) return <Tonnage get={get} />;
   }
