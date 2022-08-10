@@ -285,10 +285,14 @@ export default function Edit({
   const submitUpdate = (update) => {
     if (
       Object.keys(update.lifts).some((exercise) =>
-        Object.keys(update.lifts[exercise]).some((arrayKey) => Object.values(update.lifts[exercise][arrayKey].some((v)=> !!v === false)))
+        Object.keys(update.lifts[exercise]).some((arrayKey) =>
+          Object.values(update.lifts[exercise][arrayKey]).some((v) => !v)
+        )
       ) ||
       Object.keys(update.newLifts).some((exercise) =>
-        Object.values(update.newLifts[exercise]).some((arrayKey) => Object.values(update.newLifts[exercise][arrayKey].some((v)=> !!v === false)))
+        Object.values(update.newLifts[exercise]).some((arrayKey) =>
+          Object.values(update.newLifts[exercise][arrayKey]).some((v) => !v)
+        )
       )
     ) {
       setFeedback("Incomplete Forms");
@@ -308,6 +312,7 @@ export default function Edit({
       }).then((res) => {
         setGet(res.data[0]);
         setEdit(0);
+        setPage(LOG)
         const earliest = new Date(
           res.data[0].date.map((v) => new Date(v.date)).sort((a, b) => a - b)[0]
         );
@@ -329,10 +334,10 @@ export default function Edit({
 
   function addFieldset(exercise) {
     const variationObject = {
-      deadlift: ['',''],
-      squat: [''],
-      bench: ['', '']
-    }
+      deadlift: ["", ""],
+      squat: [""],
+      bench: ["", ""],
+    };
     return (
       <fieldset>
         <div>
@@ -360,11 +365,11 @@ export default function Edit({
                       reps: Array(parseInt(e.target.value))
                         .fill(null)
                         .map((v, i) =>
-                        !update.newLifts[exercise].reps
-                          ? v
-                          : update.newLifts[exercise].reps[i]
-                          ? update.newLifts[exercise].reps[i]
-                          : v
+                          !update.newLifts[exercise].reps
+                            ? v
+                            : update.newLifts[exercise].reps[i]
+                            ? update.newLifts[exercise].reps[i]
+                            : v
                         ),
                     },
                   },
@@ -443,11 +448,13 @@ export default function Edit({
                           ...update.newLifts,
                           [exercise]: {
                             ...update.newLifts[exercise],
-                            variation: [
-                              ...variationObject[exercise],
-                            ].map((v, i) => {
-                              return i === varNo ? e.target.value : update.newLifts[exercise].variation[i];
-                            }),
+                            variation: [...variationObject[exercise]].map(
+                              (v, i) => {
+                                return i === varNo
+                                  ? e.target.value
+                                  : update.newLifts[exercise].variation[i];
+                              }
+                            ),
                           },
                         },
                       });
@@ -513,10 +520,17 @@ export default function Edit({
 
   return (
     <div>
-      <button onClick={() => {setEdit(0); setPage(LOG)}}>Cancel Changes</button>
-      {/* <button onClick={() => console.log(update, typeof update.date)}>
+      <button
+        onClick={() => {
+          setEdit(0);
+          setPage(LOG);
+        }}
+      >
+        Cancel Changes
+      </button>
+      <button onClick={() => console.log(update, typeof update.date)}>
         log Update Object
-      </button> */}
+      </button>
       {/* <button onClick={() => console.log(get.date.filter(v=>v.sid === edit)[0].exercises)}>log get Object</button> */}
       <button onClick={() => submitUpdate(update)}>Submit Update</button>
       {!update

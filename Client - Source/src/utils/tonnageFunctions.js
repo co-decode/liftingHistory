@@ -135,6 +135,13 @@ function intervalTon(
                         sessionMax > intervalMax ? sessionMax : intervalMax
                       );
                     }, 0)}
+                    {` kg | Av Max: `}
+                    {(exerciseObjectsForSid.reduce((sessionMaxes, v) => {
+                      const sessionMax = v[0].mass.reduce((a, val) => Math.max(a,val))
+                      return (
+                        sessionMaxes + sessionMax
+                      );
+                    }, 0) / exerciseObjectsForSid.length).toFixed(2)}
                     {` kg | `}
                     {(exerciseObjectsForSid.reduce((acc, v) => {
                       const sessionReps = v[0].reps.reduce((a, val) => a + val, 0)

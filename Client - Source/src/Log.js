@@ -5,11 +5,9 @@ import Add from "./Add";
 import { useNavigate } from "react-router-dom";
 import Logout from "./Logout";
 import Tonnage from "./Tonnage";
+import Breakdown from "./Breakdown"
 
-const [LOG, EDIT, TONS, ADD] = ["LOG", "EDIT", "TONNAGE", "ADD"];
-// const EDIT = "EDIT";
-// const TONS = "TONNAGE";
-// const ADD = "ADD";
+const [LOG, EDIT, TONS, ADD, BREAK] = ["LOG", "EDIT", "TONNAGE", "ADD", "BREAKDOWN"];
 
 export default function Log() {
   const [get, setGet] = useState(null);
@@ -132,6 +130,9 @@ export default function Log() {
                 </button>
                 <button onClick={() => {setEdit(sidVal); setPage(EDIT)}}>
                   Edit this session
+                </button>
+                <button onClick={() => {setEdit(sidVal); setPage(BREAK)}}>
+                  View Breakdown
                 </button>
               </div>
               {exerciseCall.map((v) => {
@@ -291,6 +292,7 @@ export default function Log() {
           setDateFilter={setDateFilter}
         />
       );
+    else if (page === BREAK) return <Breakdown get={get} edit={edit}/>
     else if (page === ADD) return <Add get={get} />;
     else if (page === TONS) return <Tonnage get={get} />;
   }
