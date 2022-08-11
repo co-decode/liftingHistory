@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Graph from "./Graph";
 import returnTonnage from "./utils/tonnageFunctions";
 
 export default function Tonnage({ get }) {
@@ -30,18 +31,19 @@ export default function Tonnage({ get }) {
           id="tonnageInterval"
           onChange={(e) => setInterval(e.target.value)}
         >
-          <option value="">___</option>
-          <option value="SESSION">session</option>
-          <option value="WEEK">week</option>
-          <option value="MONTH">month</option>
-          <option value="ALL">all</option>
-          <option value="CUSTOM">custom</option>
+          {/* <option value="">___</option> */}
+          <option value="ALL">All Time</option>
+          <option value="WEEK">Week</option>
+          <option value="MONTH">Month</option>
+          <option value="SESSION">Session</option>
+          <option value="CUSTOM">Custom</option>
         </select>
         {interval === "CUSTOM" && (
           <>
             <label htmlFor={`IntervalLength`}>Interval Length</label>
             <input
               id={`IntervalLength`}
+              placeholder={intervalLength[1] === "WEEKS" ? "1" : "7"}
               onChange={(e) =>
                 intervalLength[1] === "WEEKS"
                   ? setIntervalLength([
@@ -61,7 +63,6 @@ export default function Tonnage({ get }) {
                 setIntervalLength([intervalLength[0], e.target.value])
               }
             >
-              <option value=""> --- </option>
               <option value="DAYS">DAYS</option>
               <option value="WEEKS">WEEKS</option>
             </select>
@@ -74,13 +75,15 @@ export default function Tonnage({ get }) {
               onChange={(e) => setReferenceDate(e.target.value)}
             />
           </>
-        )}
+        )}{ interval !== "SESSION" &&
+        <>
         <label htmlFor="showZeroes">Show Zeroes</label>
         <input
           type="checkbox"
           id="showZeroes"
           onChange={(e) => setShowZeroes(e.target.checked)}
         />
+        </>}
         {["deadlift", "squat", "bench"].map((exercise) => {
           return (
             <div key={`${exercise}VariationFilter`} style={{display: "inline-block"}}>
@@ -96,7 +99,7 @@ export default function Tonnage({ get }) {
                   })
                 }
               >
-                <option value=""> -- </option>
+                <option value=""> Use All </option>
                 {variationObject[exercise].flat().map((value) => {
                   return <option key={`${value}`}>{value}</option>;
                 })}
@@ -113,6 +116,7 @@ export default function Tonnage({ get }) {
         showZeroes,
         variationFilter
       )}
+      <Graph get={get}/>
     </>
   );
 }

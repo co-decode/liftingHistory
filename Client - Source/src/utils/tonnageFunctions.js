@@ -1,4 +1,4 @@
-import { exerciseArray } from "./variables";
+import { exerciseArray as exerciseList } from "./variables";
 
 const [session, custom, month, all, week] = [
   "SESSION",
@@ -48,11 +48,17 @@ export default function intervalTon(
         interval: returnInterval(v.date),
       };
     });
+
   const sidsBinned = sidsTagged.reduce((acc, v) => {
     return Object.keys(acc).includes(v.interval)
       ? { ...acc, [v.interval]: [...acc[v.interval], v.sid] }
       : { ...acc, [v.interval]: [v.sid] };
   }, {});
+
+  const exerciseArray = exerciseList.filter((exercise) =>
+    get.date.some((sess) => sess.exercises.includes(exercise))
+  );
+
   return (
     <>
       {exerciseArray.map((exercise) => {
@@ -78,7 +84,7 @@ export default function intervalTon(
                   v[0].variation.includes(variationFilter[exercise])
                 );
               }
-              
+
               const totalReps = exerciseObjectsForSid.reduce((acc, v) => {
                 return acc + v[0].reps.reduce((a, val) => a + val, 0);
               }, 0);

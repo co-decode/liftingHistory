@@ -32,15 +32,17 @@ DONE - I want the scheme to generate a tonnage data point.
 
     DONE: Can I make the displays stackable?
 
-    ? Can I filter the display of each exercise?
-    ?? Would I want to flip the mapping order to see interval then exercises?
-    ->> Filter SIDS by variation tag. DONE FOR Tonnage... might like it for the LOG as well.
+    DONE: Can I filter the display of each exercise?
+    ?? NO... Would I want to flip the mapping order to see interval then exercises?
     DONE: Add option to view intervals with zeroes.        
-
     DONE: Build a session breakdown component
     DONE: I want to visualise average quality with average max mass, and average reps/sets.   
 
-    Visualise tonnage data as a graph?
+    DONE: Filter SIDS by variation tag. DONE FOR Tonnage... might like it for the LOG as well.
+
+    !! Show Zeroes has problems, it doesn't add zeroes to display all intervals, it only shows zeroes where a session id exists, but that exercise does not. It may be better to eliminate it, and seek to display time continuity with the graphs.
+
+    Visualise tonnage data as a graph? Using D3...
 
     Calendar widget.
 

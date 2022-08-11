@@ -26,7 +26,7 @@ export default function Log() {
     ascending: true,
   });
   const [user, setUser] = useState(null);
-  const [exerciseFilter, setExerciseFilter] = useState([]);
+  // const [exerciseFilter, setExerciseFilter] = useState([]);
   const [varFilter, setVarFilter] = useState({});
   const editRefs = useRef({});
   const link = useNavigate();
@@ -97,6 +97,11 @@ export default function Log() {
     }
   }, [edit, prevEdit]);
 
+  useEffect(()=>{
+    if (page === LOG)
+      setVarFilter({})
+  },[page])
+
   function deleteSession(sid) {
     console.log("clicked");
     axios({
@@ -117,11 +122,11 @@ export default function Log() {
   function returnSid() {
     let sidList = get.date
       .filter((v) => v.date >= dateFilter.from && v.date <= dateFilter.to)
-      .filter((v) =>
+      /* .filter((v) =>
         exerciseFilter.every((exercise) => !v.exercises.includes(exercise))
-      )
+      ) */
       .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .map((v) => v.sid)
+      .map((v) => v.sid);
 
     if (!dateFilter.ascending) {
       sidList = sidList.reverse();
@@ -132,6 +137,17 @@ export default function Log() {
         {sidList.map((sidVal) => {
           let exerciseCall = get.date.filter((v) => v.sid === sidVal)[0]
             .exercises;
+          if (
+            exerciseCall.every((exercise) => {
+              if (varFilter[exercise]) {
+                return !get[exercise]
+                  .filter((v) => v.sid === sidVal)[0]
+                  .variation.includes(varFilter[exercise]);
+              }
+              else return false
+            })
+          )
+            return null;
           return (
             <div
               key={sidVal}
@@ -143,6 +159,7 @@ export default function Log() {
                 {new Date(
                   get.date.filter((v) => v.sid === sidVal)[0].date
                 ).toLocaleString()}
+                <div>
                 <button onClick={() => deleteSession(sidVal)}>
                   Delete this session
                 </button>
@@ -162,14 +179,17 @@ export default function Log() {
                 >
                   View Breakdown
                 </button>
+                </div>
               </div>
               {exerciseCall.map((v) => {
                 const exerciseData = get[v].filter((v) => v.sid === sidVal)[0];
-                if (varFilter[v]) if (!exerciseData.variation.includes(varFilter[v])) return null
+                if (varFilter[v])
+                  if (!exerciseData.variation.includes(varFilter[v]))
+                    return null;
                 return (
                   <div
-                  key={v}
-                  style={{ display: "inline-block", marginRight: "20px" }}
+                    key={v}
+                    style={{ display: "inline-block", marginRight: "20px" }}
                   >
                     <strong>{v[0].toUpperCase() + v.slice(1)}: </strong>
                     <div>
@@ -249,6 +269,7 @@ export default function Log() {
       </>
     );
   }
+  /* 
   function returnExFilter() {
     return (
       <>
@@ -274,7 +295,7 @@ export default function Log() {
       </>
     );
   }
-
+ */
   function returnVarFilter() {
     return (
       <>
@@ -292,7 +313,8 @@ export default function Log() {
                 })
               }
             >
-              <option value=""> -- </option>
+              <option value=""> Show All </option>
+              <option value="HIDE"> Hide All </option>
               {variationObject[exercise].flat().map((value) => {
                 return <option key={`${value}`}>{value}</option>;
               })}
@@ -311,7 +333,7 @@ export default function Log() {
             <>
               <fieldset>
                 {returnDateFilter()}
-                {returnExFilter()}
+                {/* returnExFilter() */}
                 {returnVarFilter()}
               </fieldset>
               {returnSid()}
@@ -337,7 +359,7 @@ export default function Log() {
       return (
         <Breakdown get={get} edit={edit} setEdit={setEdit} setPage={setPage} />
       );
-    else if (page === ADD) return <Add get={get} />;
+    else if (page === ADD) return <Add get={get} setPage={setPage} setGet={setGet} setDateFilter={setDateFilter}/>;
     else if (page === TONS) return <Tonnage get={get} />;
   }
 

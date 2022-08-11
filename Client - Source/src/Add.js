@@ -2,12 +2,13 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function Add({ get }) {
+export default function Add({ get, setPage, setGet, setDateFilter}) {
   const dateRefs = useRef({ date: null, time: null });
   const exerciseRefs = useRef({});
   const [exArr, setExArr] = useState([]);
   const [response, setResponse] = useState(null);
   const [user, setUser] = useState(null);
+  const [redirect, setRedirect] = useState(false);
   const link = useNavigate();
 
   useEffect(() => {
@@ -41,9 +42,32 @@ export default function Add({ get }) {
       withCredentials: true,
       url: `http://localhost:3001/sessions/${user.uid}`,
     }).then((res) => {
-      console.log("something happened");
       setResponse(res.data);
-    });
+    }).then((res) =>
+    axios({
+      method: "get",
+      withCredentials: true,
+      url: `http://localhost:3001/sessions/${user.uid}`,
+    }).then((res) => {
+      setGet(res.data[0]);
+      redirect && setPage("LOG")
+      const earliest = new Date(
+        res.data[0].date.map((v) => new Date(v.date)).sort((a, b) => a - b)[0]
+      );
+      const latest = new Date(
+        res.data[0].date.map((v) => new Date(v.date)).sort((a, b) => b - a)[0]
+      );
+      setDateFilter({
+        from: new Date(earliest.setTime(earliest.getTime()))
+          .toISOString()
+          .slice(0, 10),
+        to: new Date(latest.setTime(latest.getTime() + 34 * 60 * 60 * 1000))
+          .toISOString()
+          .slice(0, 10),
+        ascending: true,
+      });
+    })
+  );
   }
 
   const handleSubmit = async (e) => {
@@ -112,6 +136,9 @@ export default function Add({ get }) {
       {/* <button onClick={() => link("/log")}>Go back</button> */}
       {/* <button onClick={() => console.log(JSON.stringify(get))}>Get</button> */}
       <ExerciseAdd exArr={exArr} setExArr={setExArr} />
+      <label>Redirect on submit
+        <input type="checkbox" onChange={(e)=>setRedirect(e.target.checked)} />
+      </label>
       <form onSubmit={(e) => handleSubmit(e)}>
         <DateInput dateRefs={dateRefs} />
         <ExerciseFieldSets exerciseRefs={exerciseRefs} exArr={exArr} get={get}/>
@@ -251,17 +278,25 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
     ],
   };
   return exArr.map((exercise) => {
-    const mostRecentExerciseSessionSID = get.date
-      .filter((val) => val.exercises.includes(exercise))
-      .reduce((acc, val) =>
-        new Date(val.date) > new Date(acc.date) ? val : acc
-      ).sid;
+    
+    function returnTemplateButton() {
+      if (get.date.every(v=>!v.exercises.includes(exercise))) return null
 
-    const sets = get[exercise].filter(
-      (v) => v.sid === mostRecentExerciseSessionSID
-      )[0].mass.length
+      const mostRecentExerciseSessionSID = get.date
+        .filter((val) => val.exercises.includes(exercise))
+        .reduce((acc, val) =>
+          new Date(val.date) > new Date(acc.date) ? val : acc).sid;
+  
+      const sets = get[exercise].filter(
+        (v) => v.sid === mostRecentExerciseSessionSID
+        )[0].mass.length
 
-    function getPrevTemplate(e) {
+      return (
+        <button onClick={(e)=>getPrevTemplate(e, mostRecentExerciseSessionSID, sets)}>{fields[exercise] < sets ? "Use Previous Template" : "Fill with Previous Session"}</button>
+      )
+    }
+    
+    function getPrevTemplate(e, mostRecentExerciseSessionSID, sets) {
       e.preventDefault();
         
       if (fields[exercise] < sets){
@@ -269,7 +304,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
         return
       }
 
-      if (exerciseRefs.current.deadlift) {
+      if (exerciseRefs.current[exercise]) {
         Object.keys(exerciseRefs.current[exercise]).forEach((key) => {
           if (exerciseRefs.current[exercise][key].mass) {
             exerciseRefs.current[exercise][key].mass.value = get[exercise].filter(
@@ -309,7 +344,8 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
         />
         {variationOptions(exercise, variationObject[exercise], exerciseRefs)}
         {fields[exercise] ? lengthenArr(fields[exercise], exercise) : null}
-        <button onClick={(e)=>getPrevTemplate(e)}>{fields[exercise] < sets ? "Use Previous Template" : "Fill with Previous Session"}</button>
+        {/* <button onClick={(e)=>getPrevTemplate(e)}>{fields[exercise] < sets ? "Use Previous Template" : "Fill with Previous Session"}</button> */}
+        {returnTemplateButton()}
       </fieldset>
     );
   });

@@ -133,6 +133,7 @@ export default function Edit({
                         <label htmlFor={`${exercise}Sets`}>Sets:</label>
                         <input
                           id={`${exercise}Sets`}
+                          placeholder={filtered.mass.length}
                           onChange={(e) => {
                             if (e.target.value >= 1 && e.target.value <= 20) {
                               setFields({
@@ -528,9 +529,9 @@ export default function Edit({
       >
         Cancel Changes
       </button>
-      <button onClick={() => console.log(update, typeof update.date)}>
+      {/* <button onClick={() => console.log(update, typeof update.date)}>
         log Update Object
-      </button>
+      </button> */}
       {/* <button onClick={() => console.log(get.date.filter(v=>v.sid === edit)[0].exercises)}>log get Object</button> */}
       <button onClick={() => submitUpdate(update)}>Submit Update</button>
       {!update
