@@ -40,11 +40,21 @@ DONE - I want the scheme to generate a tonnage data point.
 
     DONE: Filter SIDS by variation tag. DONE FOR Tonnage... might like it for the LOG as well.
 
-    !! Show Zeroes has problems, it doesn't add zeroes to display all intervals, it only shows zeroes where a session id exists, but that exercise does not. It may be better to eliminate it, and seek to display time continuity with the graphs.
+    !! Show Zeroes has problems, it doesn't add zeroes to display all intervals, it only shows zeroes where a session id exists, but that exercise does not. It may be better to eliminate it, and seek to display time continuity with the graphs. 
+    I have fixed this for the graphs... I think that zeroes can be thrown out now.
 
-    Visualise tonnage data as a graph? Using D3...
+    Visualise tonnage data as a graph? 
+        Using D3... No, I've ended up going for chartJS. Better to start small.
+    
+        ->> I want a custom interval option. That will do it for the charts, move on to the heatmap next, see if you can turn it into a calendar thingo.
+        ->> I should refactor a lot of my functions to make them more space efficient, if possible.
+    
+
+
+
 
     Calendar widget.
+        I'll use d3 for this
 
     How to persist state preferences?
 
