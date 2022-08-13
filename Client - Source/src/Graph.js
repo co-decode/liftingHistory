@@ -145,19 +145,6 @@ export default function Graph({ get }) {
             else throw Error;
           });
       else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
-        function getTagInterval(date) {
-          if (input.interval === "MONTH") {
-            const time = new Date(date);
-            return parseInt(
-              `${time.getFullYear()}${(time.getMonth() + 1)
-                .toString()
-                .padStart(2, "0")}`
-            );
-          }
-          if ([["WEEK", "CUSTOM"].includes(input.interval)]) {
-            return getCustomInterval(date);
-          }
-        }
         const sidsTagged = get.date
           .filter((sess) => sess.exercises.includes(input.exercise))
           .sort(
@@ -166,20 +153,72 @@ export default function Graph({ get }) {
           .map((v) => {
             return {
               sid: v.sid,
-              interval: getTagInterval(v.date),
+              interval: v.date,
             };
           });
 
-        const difference = sidsTagged.at(-1).interval - sidsTagged[0].interval;
-        // difference is being calc ed incorrectly.
+        function getDifference() {
+          if (input.interval === "MONTH") {
+            const first = new Date(sidsTagged[0].interval);
+            const latest = new Date(sidsTagged.at(-1).interval);
+            const yearDifference = latest.getFullYear() - first.getFullYear();
+            const monthsBetween =
+              latest.getMonth() - first.getMonth() + yearDifference * 12;
+            return monthsBetween;
+          } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
+            const yearDifference =
+              new Date(sidsTagged.at(-1).interval).getFullYear() -
+              new Date(sidsTagged[0].interval).getFullYear();
+            const intervalDifference =
+              getCustomInterval(sidsTagged.at(-1).interval) -
+              getCustomInterval(sidsTagged[0].interval);
+            const intervalsPerYear = 365.25 / (intervalLength[0] || 7);
+
+            return (
+              intervalDifference + parseInt(yearDifference * intervalsPerYear)
+            );
+          }
+        }
+        const difference = getDifference();
         const categoryObject = {};
         const categoryArray = Array(difference + 1)
           .fill(null)
-          .map((v, i) => sidsTagged[0].interval + i);
+          .map((v, i) =>
+            input.interval === "MONTH"
+              ? i
+              : getCustomInterval(sidsTagged[0].interval) + i
+          );
         categoryArray.forEach(
           (key) =>
             (categoryObject[key] = sidsTagged
-              .filter((val) => val.interval === key)
+              .filter((val) => {
+                if (["WEEK", "CUSTOM"].includes(input.interval)) {
+                  const yearDifference =
+                    new Date(val.interval).getFullYear() -
+                    new Date(sidsTagged[0].interval).getFullYear();
+                  const intervalDifference =
+                    getCustomInterval(val.interval) -
+                    getCustomInterval(sidsTagged[0].interval);
+                  const intervalsPerYear = 365.25 / (intervalLength[0] || 7);
+                  const intervalsFromStart =
+                    intervalDifference +
+                    parseInt(yearDifference * intervalsPerYear);
+                  return (
+                    getCustomInterval(sidsTagged[0].interval) +
+                      intervalsFromStart ===
+                    key
+                  );
+                } else if (input.interval === "MONTH") {
+                  const yearDifference =
+                    new Date(val.interval).getFullYear() -
+                    new Date(sidsTagged[0].interval).getFullYear();
+                  const monthDifference =
+                    new Date(val.interval).getMonth() -
+                    new Date(sidsTagged[0].interval).getMonth();
+                  const monthsFromStart = monthDifference + yearDifference * 12;
+                  return monthsFromStart === key;
+                } else throw Error;
+              })
               .map((val) => val.sid))
         );
         return Object.values(categoryObject).map((array) =>
@@ -210,7 +249,11 @@ export default function Graph({ get }) {
           .filter((sess) => sess.exercises.includes(input.exercise))
           .map((sess) => new Date(sess.date).toISOString());
       } else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
-        const sorted = get.date.sort((a, b) => new Date(a) - new Date(b));
+        const toBeSorted =
+          input.exercise === "ALL"
+            ? get.date
+            : get.date.filter((v) => v.exercises.includes(input.exercise));
+        const sorted = toBeSorted.sort((a, b) => new Date(a) - new Date(b));
         const initialDate = new Date(sorted[0].date);
         function getDifference() {
           if (input.interval === "MONTH") {
@@ -221,10 +264,16 @@ export default function Graph({ get }) {
               latest.getMonth() - initialDate.getMonth() + yearDifference * 12;
             return monthsBetween;
           } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
-            // Doesn't take into account the year IF referenceDate is not set
-            return (
+            const yearDifference =
+              new Date(sorted.at(-1).date).getFullYear() -
+              initialDate.getFullYear();
+            const intervalDifference =
               getCustomInterval(sorted.at(-1).date) -
-              getCustomInterval(sorted[0].date)
+              getCustomInterval(sorted[0].date);
+            const intervalsPerYear = 365.25 / (intervalLength[0] || 7);
+
+            return (
+              intervalDifference + parseInt(yearDifference * intervalsPerYear)
             );
           }
         }
