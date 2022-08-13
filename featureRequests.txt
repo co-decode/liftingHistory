@@ -47,13 +47,12 @@ DONE - I want the scheme to generate a tonnage data point.
         Using D3... No, I've ended up going for chartJS. Better to start small.
     
         ->> DONE I want a custom interval option.
-        ->> Filter date range for the graph entry, so that I don't have 6 million points on the graph.
-        ->> All exercises choice for all interval options.
-        ->> Difference in totalling function is incorrect
-                My call to getCustomInterval is not working.
+        ->> DONE All exercises choice for all interval options.
+        ->> DONE Difference in totalling function is incorrect
         ->> DONE getLabels function does not take into account exercise for visualisation
-         That will do it for the charts, move on to the heatmap next, see if you can turn it into a calendar thingo.
+        ->> Filter date range for the graph entry, so that I don't have 6 million points on the graph.
         ->> I should refactor a lot of my functions to make them more space efficient, if possible.
+         That will do it for the charts, move on to the heatmap next, see if you can turn it into a calendar thingo.
     
 
 
