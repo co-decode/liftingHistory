@@ -95,11 +95,15 @@ export default function Graph({ get }) {
   const dataInitialiser = useMemo(() => {
     function getCustomInterval(date) {
       const time = new Date(date);
-      const referenceDatum = referenceDate && input.interval === "CUSTOM" ? new Date(referenceDate) : new Date(time.getFullYear(), 0, 1);;
+      const referenceDatum =
+        referenceDate && input.interval === "CUSTOM"
+          ? new Date(referenceDate)
+          : new Date(time.getFullYear(), 0, 1);
       const intervalLengthInDays = intervalLength[0] || 7;
       const interval = Math.ceil(
         (time.getTime() - referenceDatum.getTime()) /
-          86400000 / intervalLengthInDays
+          86400000 /
+          intervalLengthInDays
       );
       return interval;
     }
@@ -139,58 +143,21 @@ export default function Graph({ get }) {
             else if (what === "reps") return item.reps.reduce((a, v) => a + v);
             else if (what === "sets") return item.reps.length;
             else throw Error;
-          });/* 
-      else if (input.interval === "MONTH") {
-        const sidsTagged = get.date
-          .filter((sess) => sess.exercises.includes(input.exercise))
-          .sort(
-            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-          )
-          .map((v) => {
-            const time = new Date(v.date)
-            return {
-              sid: v.sid,
-              interval: parseInt(`${time.getFullYear()}${(time.getMonth() + 1).toString().padStart(2, '0')}`),
-            };
           });
-
-        const sidsBinned = sidsTagged.reduce((acc, v) => {
-          const stringValue = v.interval.toString()
-          return Object.keys(acc).includes(stringValue)
-            ? { ...acc, [stringValue]: [...acc[stringValue], v.sid] }
-            : { ...acc, [stringValue]: [v.sid] };
-        }, {});
-        return Object.keys(sidsBinned).map((interval) =>
-          sidsBinned[interval].reduce((acc, sid) => {
-            const exerciseObject = get[input.exercise].find(
-              (entry) => entry.sid === sid
-            );
-            if (what === "mass")
-              return (
-                acc +
-                exerciseObject.reps.reduce(
-                  (a, v, i) => a + v * exerciseObject.mass[i]
-                )
-              );
-            else if (what === "reps")
-              return acc + exerciseObject.reps.reduce((a, v) => a + v);
-            else if (what === "sets") return acc + exerciseObject.reps.length;
-            else throw Error;
-          }, 0)
-        );
-      } */ else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
+      else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
         function getTagInterval(date) {
           if (input.interval === "MONTH") {
-            const time = new Date(date)
-            return parseInt(`${time.getFullYear()}${(time.getMonth() + 1).toString().padStart(2, '0')}`)
+            const time = new Date(date);
+            return parseInt(
+              `${time.getFullYear()}${(time.getMonth() + 1)
+                .toString()
+                .padStart(2, "0")}`
+            );
           }
           if ([["WEEK", "CUSTOM"].includes(input.interval)]) {
-
-            return getCustomInterval(date)
+            return getCustomInterval(date);
           }
         }
-
-
         const sidsTagged = get.date
           .filter((sess) => sess.exercises.includes(input.exercise))
           .sort(
@@ -204,6 +171,7 @@ export default function Graph({ get }) {
           });
 
         const difference = sidsTagged.at(-1).interval - sidsTagged[0].interval;
+        // difference is being calc ed incorrectly.
         const categoryObject = {};
         const categoryArray = Array(difference + 1)
           .fill(null)
@@ -243,22 +211,36 @@ export default function Graph({ get }) {
           .map((sess) => new Date(sess.date).toISOString());
       } else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
         const sorted = get.date.sort((a, b) => new Date(a) - new Date(b));
+        const initialDate = new Date(sorted[0].date);
         function getDifference() {
           if (input.interval === "MONTH") {
-            return (
-              new Date(sorted.at(-1).date).getMonth() -
-              new Date(sorted[0].date).getMonth()
-            );
+            const latest = new Date(sorted.at(-1).date);
+            const yearDifference =
+              latest.getFullYear() - initialDate.getFullYear();
+            const monthsBetween =
+              latest.getMonth() - initialDate.getMonth() + yearDifference * 12;
+            return monthsBetween;
           } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
+            // Doesn't take into account the year IF referenceDate is not set
             return (
               getCustomInterval(sorted.at(-1).date) -
               getCustomInterval(sorted[0].date)
             );
           }
         }
-        return Array(getDifference() + 1)
+        const output = Array(getDifference() + 1)
           .fill(null)
-          .map((v, i) => getCustomInterval(sorted[0].date) + i);
+          .map((v, i) => {
+            if (input.interval === "MONTH") {
+              return `${((initialDate.getMonth() + i) % 12) + 1} - ${(
+                initialDate.getFullYear() +
+                Math.floor((initialDate.getMonth() + i) / 12)
+              )
+                .toString()
+                .slice(2)}`;
+            } else return getCustomInterval(sorted[0].date) + i;
+          });
+        return output;
       }
     };
     return {
