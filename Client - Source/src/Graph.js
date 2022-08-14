@@ -28,6 +28,35 @@ export default function Graph({ get }) {
   const [input, setInput] = useState({ interval: "SESSION", exercise: "ALL" });
   const [intervalLength, setIntervalLength] = useState([null, null]);
   const [referenceDate, setReferenceDate] = useState(null);
+  const [dataRange, setDataRange] = useState({
+    earliest: get.date
+      .map((v) => new Date(v.date))
+      .reduce((a, v) => (a <= v ? a : v))
+      .toISOString()
+      .slice(0, 10),
+    latest: new Date(
+      get.date
+        .map((v) => new Date(v.date))
+        .reduce((a, v) => (a >= v ? a : v))
+        .setTime(
+          get.date
+            .map((v) => new Date(v.date))
+            .reduce((a, v) => (a >= v ? a : v))
+            .getTime() +
+            34 * 60 * 60 * 1000
+        )
+    )
+      .toISOString()
+      .slice(0, 10),
+    apply: false,
+  });
+
+  // const earliestSession = get.date
+  //   .map((v) => new Date(v.date))
+  //   .reduce((a, v) => (a <= v ? a : v));
+  // const recentSession = get.date
+  //   .map((v) => new Date(v.date))
+  //   .reduce((a, v) => (a >= v ? a : v));
 
   function optionsInitialiser(interval) {
     let x;
@@ -107,10 +136,19 @@ export default function Graph({ get }) {
       );
       return interval;
     }
-    const totalWhateverIWant = (what, input) => {
+    const getDataset = (what, input) => {
       if (input.exercise === "ALL") {
         if (input.interval === "SESSION") {
-          const output = get.date
+          const sessionList =
+            dataRange.apply
+              ? get.date.filter(
+                  (sess) =>
+                    new Date(sess.date) >= new Date(dataRange.earliest) &&
+                    new Date(sess.date) <= new Date(dataRange.latest)
+                )
+              : get.date;
+
+          const output = sessionList
             .map((sess) => sess.sid)
             .map((sid) => {
               const exerciseCall = get.date
@@ -137,7 +175,15 @@ export default function Graph({ get }) {
             });
           return output;
         } else if (["MONTH", "WEEK", "CUSTOM"].includes(input.interval)) {
-          const sidsTagged = get.date
+          const sessionList =
+            dataRange.apply
+              ? get.date.filter(
+                  (sess) =>
+                    new Date(sess.date) >= new Date(dataRange.earliest) &&
+                    new Date(sess.date) <= new Date(dataRange.latest)
+                )
+              : get.date;
+          const sidsTagged = sessionList
             .sort(
               (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
             )
@@ -244,20 +290,37 @@ export default function Graph({ get }) {
             }, 0)
           );
         }
-      } else if (input.interval === "SESSION")
-        return get.date
+      } else if (input.interval === "SESSION") {
+        const sessionList =
+          dataRange.apply
+            ? get.date.filter(
+                (sess) =>
+                  new Date(sess.date) >= new Date(dataRange.earliest) &&
+                  new Date(sess.date) <= new Date(dataRange.latest)
+              )
+            : get.date;
+        return sessionList
           .filter((sess) => sess.exercises.includes(input.exercise))
           .map((sess) => sess.sid)
           .map((sid) => {
             const item = get[input.exercise].find((entry) => entry.sid === sid);
             if (what === "mass")
-              return item.reps.reduce((a, v, i) => a + v * item.mass[i]);
-            else if (what === "reps") return item.reps.reduce((a, v) => a + v);
+              return item.reps.reduce((a, v, i) => a + v * item.mass[i], 0);
+            else if (what === "reps")
+              return item.reps.reduce((a, v) => a + v, 0);
             else if (what === "sets") return item.reps.length;
             else throw Error;
           });
-      else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
-        const sidsTagged = get.date
+      } else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
+        const sessionList =
+          dataRange.apply
+            ? get.date.filter(
+                (sess) =>
+                  new Date(sess.date) >= new Date(dataRange.earliest) &&
+                  new Date(sess.date) <= new Date(dataRange.latest)
+              )
+            : get.date;
+        const sidsTagged = sessionList
           .filter((sess) => sess.exercises.includes(input.exercise))
           .sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -355,16 +418,40 @@ export default function Graph({ get }) {
     };
     const getLabels = (input) => {
       if (input.exercise === "ALL" && input.interval === "SESSION") {
-        return get.date.map((sess) => new Date(sess.date).toISOString());
+        const sessionList =
+          dataRange.apply
+            ? get.date.filter(
+                (sess) =>
+                  new Date(sess.date) >= new Date(dataRange.earliest) &&
+                  new Date(sess.date) <= new Date(dataRange.latest)
+              )
+            : get.date;
+        return sessionList.map((sess) => new Date(sess.date).toISOString());
       } else if (input.exercise !== "ALL" && input.interval === "SESSION") {
-        return get.date
+        const sessionList =
+          dataRange.apply
+            ? get.date.filter(
+                (sess) =>
+                  new Date(sess.date) >= new Date(dataRange.earliest) &&
+                  new Date(sess.date) <= new Date(dataRange.latest)
+              )
+            : get.date;
+        return sessionList
           .filter((sess) => sess.exercises.includes(input.exercise))
           .map((sess) => new Date(sess.date).toISOString());
       } else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
+        const sessionList =
+          dataRange.apply
+            ? get.date.filter(
+                (sess) =>
+                  new Date(sess.date) >= new Date(dataRange.earliest) &&
+                  new Date(sess.date) <= new Date(dataRange.latest)
+              )
+            : get.date;
         const toBeSorted =
           input.exercise === "ALL"
-            ? get.date
-            : get.date.filter((v) => v.exercises.includes(input.exercise));
+            ? sessionList
+            : sessionList.filter((v) => v.exercises.includes(input.exercise));
         const sorted = toBeSorted.sort((a, b) => new Date(a) - new Date(b));
         const initialDate = new Date(sorted[0].date);
         function getDifference() {
@@ -411,7 +498,7 @@ export default function Graph({ get }) {
           yAxisID: "y",
           xAxisID: "x",
           label: "Tonnage (kg)",
-          data: totalWhateverIWant("mass", input),
+          data: getDataset("mass", input),
           borderColor: "rgb(75, 192, 192)",
           backgroundColor: "rgb(75, 192, 192)",
           fill: false,
@@ -419,7 +506,7 @@ export default function Graph({ get }) {
         {
           yAxisID: "y1",
           label: "Reps",
-          data: totalWhateverIWant("reps", input),
+          data: getDataset("reps", input),
           borderColor: "rgb(255, 192, 192)",
           backgroundColor: "rgb(255, 192, 192)",
           fill: false,
@@ -427,14 +514,14 @@ export default function Graph({ get }) {
         {
           yAxisID: "y1",
           label: "Sets",
-          data: totalWhateverIWant("sets", input),
+          data: getDataset("sets", input),
           borderColor: "rgb(70, 255, 192)",
           backgroundColor: "rgb(70, 255, 192)",
           fill: false,
         },
       ],
     };
-  }, [input, get, referenceDate, intervalLength]);
+  }, [input, get, referenceDate, intervalLength, dataRange]);
 
   const [data, setData] = useState(dataInitialiser);
   const [options, setOptions] = useState(optionsInitialiser(input.interval));
@@ -443,6 +530,8 @@ export default function Graph({ get }) {
     setData(dataInitialiser);
     setOptions(optionsInitialiser(input.interval));
   }, [input, dataInitialiser]);
+
+  
 
   return (
     <div>
@@ -508,6 +597,39 @@ export default function Graph({ get }) {
             />
           </>
         )}
+        <>
+          <label>
+            From:
+            <input
+              type="date"
+              defaultValue={dataRange.earliest}
+              onChange={(e) =>
+                setDataRange({ ...dataRange, earliest: e.target.value })
+              }
+            />
+          </label>
+          <label>
+            To:
+            <input
+              type="date"
+              defaultValue={dataRange.latest}
+              onChange={(e) =>
+                setDataRange({ ...dataRange, latest: e.target.value })
+              }
+            />
+          </label>
+          <label>
+            {" "}
+            Apply Date Range
+            <input
+              type="checkbox"
+              onClick={() =>
+                setDataRange({ ...dataRange, apply: !dataRange.apply })
+              }
+            />
+          </label>
+          <button onClick={() => console.log(dataRange)}>log range</button>
+        </>
       </fieldset>
       <Line options={options} data={data} />
     </div>
