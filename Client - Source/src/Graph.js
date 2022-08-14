@@ -136,53 +136,55 @@ export default function Graph({ get }) {
       );
       return interval;
     }
-    const getDataset = (what, input) => {
-      if (input.exercise === "ALL") {
-        if (input.interval === "SESSION") {
-          const sessionList =
-            dataRange.apply
-              ? get.date.filter(
-                  (sess) =>
-                    new Date(sess.date) >= new Date(dataRange.earliest) &&
-                    new Date(sess.date) <= new Date(dataRange.latest)
-                )
-              : get.date;
 
-          const output = sessionList
+    const sessionList = dataRange.apply
+      ? get.date.filter(
+          (sess) =>
+            new Date(sess.date) >= new Date(dataRange.earliest) &&
+            new Date(sess.date) <= new Date(dataRange.latest)
+        )
+      : get.date;
+
+    const getDataset = (what, input) => {
+      // if (input.exercise === "ALL") {
+        /* if (input.interval === "SESSION") {
+          //+
+          return sessionList
             .map((sess) => sess.sid)
             .map((sid) => {
-              const exerciseCall = get.date
-                .filter((sess) => sess.sid === sid)
-                .map((v) => v.exercises)[0];
-              return exerciseCall
-                .map((exercise) => {
-                  const item = get[exercise].find((entry) => entry.sid === sid);
-                  if (what === "mass") {
-                    return item.reps.reduce(
-                      (a, v, i) => a + v * item.mass[i],
-                      0
-                    );
-                  } else if (what === "reps")
-                    return item.reps.reduce((a, v) => {
-                      return a + v;
-                    }, 0);
-                  else if (what === "sets") return item.reps.length;
-                  else throw Error;
-                })
-                .reduce((a, v) => {
-                  return a + v;
-                }, 0);
+              function returnExerciseObject(getWhat) {
+                return get[getWhat].find((entry) => entry.sid === sid);
+              }
+              function whatSwitch(exerciseObject) {
+                if (what === "mass") {
+                  return exerciseObject.reps.reduce(
+                    (a, v, i) => a + v * exerciseObject.mass[i],
+                    0
+                  );
+                } else if (what === "reps")
+                  return exerciseObject.reps.reduce((a, v) => {
+                    return a + v;
+                  }, 0);
+                else if (what === "sets") return exerciseObject.reps.length;
+                else throw Error;
+              }
+              if (input.exercise === "ALL") {
+                const exerciseCall = sessionList.find(
+                  (sess) => sess.sid === sid
+                ).exercises;
+                return exerciseCall
+                  .map((exercise) => {
+                    return whatSwitch(returnExerciseObject(exercise));
+                  })
+                  .reduce((a, v) => {
+                    return a + v;
+                  }, 0);
+              } else {
+                return whatSwitch(returnExerciseObject(input.exercise));
+              }
             });
-          return output;
-        } else if (["MONTH", "WEEK", "CUSTOM"].includes(input.interval)) {
-          const sessionList =
-            dataRange.apply
-              ? get.date.filter(
-                  (sess) =>
-                    new Date(sess.date) >= new Date(dataRange.earliest) &&
-                    new Date(sess.date) <= new Date(dataRange.latest)
-                )
-              : get.date;
+        } else */ if (["MONTH", "WEEK", "CUSTOM"].includes(input.interval) && input.exercise === 'ALL') {
+          //
           const sidsTagged = sessionList
             .sort(
               (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -195,6 +197,7 @@ export default function Graph({ get }) {
             });
 
           function getDifference() {
+            //> ALL
             if (input.interval === "MONTH") {
               const first = new Date(sidsTagged[0].interval);
               const latest = new Date(sidsTagged.at(-1).interval);
@@ -229,6 +232,7 @@ export default function Graph({ get }) {
             (key) =>
               (categoryObject[key] = sidsTagged
                 .filter((val) => {
+                  //
                   if (["WEEK", "CUSTOM"].includes(input.interval)) {
                     const yearDifference =
                       new Date(val.interval).getFullYear() -
@@ -289,37 +293,63 @@ export default function Graph({ get }) {
               );
             }, 0)
           );
-        }
+        // }
       } else if (input.interval === "SESSION") {
-        const sessionList =
-          dataRange.apply
-            ? get.date.filter(
-                (sess) =>
-                  new Date(sess.date) >= new Date(dataRange.earliest) &&
-                  new Date(sess.date) <= new Date(dataRange.latest)
-              )
-            : get.date;
-        return sessionList
+        const sessionListFiltered = input.exercise === 'ALL' ? sessionList : sessionList.filter((sess) => sess.exercises.includes(input.exercise))
+        //+
+        return sessionListFiltered
+            .map((sess) => sess.sid)
+            .map((sid) => {
+              function returnExerciseObject(getWhat) {
+                return get[getWhat].find((entry) => entry.sid === sid);
+              }
+              function whatSwitch(exerciseObject) {
+                if (what === "mass") {
+                  return exerciseObject.reps.reduce(
+                    (a, v, i) => a + v * exerciseObject.mass[i],
+                    0
+                  );
+                } else if (what === "reps")
+                  return exerciseObject.reps.reduce((a, v) => {
+                    return a + v;
+                  }, 0);
+                else if (what === "sets") return exerciseObject.reps.length;
+                else throw Error;
+              }
+              if (input.exercise === "ALL") {
+                const exerciseCall = /* get.date */ sessionList.find(
+                  (sess) => sess.sid === sid
+                ).exercises;
+                return exerciseCall
+                  .map((exercise) => {
+                    return whatSwitch(returnExerciseObject(exercise));
+                  })
+                  .reduce((a, v) => {
+                    return a + v;
+                  }, 0);
+              } else {
+                return whatSwitch(returnExerciseObject(input.exercise));
+              }
+            })
+        /* return sessionList
           .filter((sess) => sess.exercises.includes(input.exercise))
           .map((sess) => sess.sid)
           .map((sid) => {
-            const item = get[input.exercise].find((entry) => entry.sid === sid);
+            const exerciseObject = get[input.exercise].find(
+              (entry) => entry.sid === sid
+            );
             if (what === "mass")
-              return item.reps.reduce((a, v, i) => a + v * item.mass[i], 0);
+              return exerciseObject.reps.reduce(
+                (a, v, i) => a + v * exerciseObject.mass[i],
+                0
+              );
             else if (what === "reps")
-              return item.reps.reduce((a, v) => a + v, 0);
-            else if (what === "sets") return item.reps.length;
+              return exerciseObject.reps.reduce((a, v) => a + v, 0);
+            else if (what === "sets") return exerciseObject.reps.length;
             else throw Error;
-          });
+          }); */
       } else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
-        const sessionList =
-          dataRange.apply
-            ? get.date.filter(
-                (sess) =>
-                  new Date(sess.date) >= new Date(dataRange.earliest) &&
-                  new Date(sess.date) <= new Date(dataRange.latest)
-              )
-            : get.date;
+        //
         const sidsTagged = sessionList
           .filter((sess) => sess.exercises.includes(input.exercise))
           .sort(
@@ -333,6 +363,7 @@ export default function Graph({ get }) {
           });
 
         function getDifference() {
+          //> Not all
           if (input.interval === "MONTH") {
             const first = new Date(sidsTagged[0].interval);
             const latest = new Date(sidsTagged.at(-1).interval);
@@ -367,6 +398,7 @@ export default function Graph({ get }) {
           (key) =>
             (categoryObject[key] = sidsTagged
               .filter((val) => {
+                //
                 if (["WEEK", "CUSTOM"].includes(input.interval)) {
                   const yearDifference =
                     new Date(val.interval).getFullYear() -
@@ -417,44 +449,25 @@ export default function Graph({ get }) {
       }
     };
     const getLabels = (input) => {
-      if (input.exercise === "ALL" && input.interval === "SESSION") {
-        const sessionList =
-          dataRange.apply
-            ? get.date.filter(
-                (sess) =>
-                  new Date(sess.date) >= new Date(dataRange.earliest) &&
-                  new Date(sess.date) <= new Date(dataRange.latest)
-              )
-            : get.date;
-        return sessionList.map((sess) => new Date(sess.date).toISOString());
-      } else if (input.exercise !== "ALL" && input.interval === "SESSION") {
-        const sessionList =
-          dataRange.apply
-            ? get.date.filter(
-                (sess) =>
-                  new Date(sess.date) >= new Date(dataRange.earliest) &&
-                  new Date(sess.date) <= new Date(dataRange.latest)
-              )
-            : get.date;
-        return sessionList
-          .filter((sess) => sess.exercises.includes(input.exercise))
-          .map((sess) => new Date(sess.date).toISOString());
+      //
+      if (input.interval === "SESSION") {
+        if (input.exercise === "ALL") {
+          return sessionList.map((sess) => new Date(sess.date).toISOString());
+        } else if (["deadlift", "squat", "bench"].includes(input.exercise)) {
+          return sessionList
+            .filter((sess) => sess.exercises.includes(input.exercise))
+            .map((sess) => new Date(sess.date).toISOString());
+        }
       } else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
-        const sessionList =
-          dataRange.apply
-            ? get.date.filter(
-                (sess) =>
-                  new Date(sess.date) >= new Date(dataRange.earliest) &&
-                  new Date(sess.date) <= new Date(dataRange.latest)
-              )
-            : get.date;
+        //
         const toBeSorted =
           input.exercise === "ALL"
             ? sessionList
             : sessionList.filter((v) => v.exercises.includes(input.exercise));
         const sorted = toBeSorted.sort((a, b) => new Date(a) - new Date(b));
-        const initialDate = new Date(sorted[0].date);
+        const initialDate = new Date(sorted[0].date); //> labels
         function getDifference() {
+          //
           if (input.interval === "MONTH") {
             const latest = new Date(sorted.at(-1).date);
             const yearDifference =
@@ -531,8 +544,6 @@ export default function Graph({ get }) {
     setOptions(optionsInitialiser(input.interval));
   }, [input, dataInitialiser]);
 
-  
-
   return (
     <div>
       <button onClick={() => console.log(input)}>input</button>
@@ -593,11 +604,16 @@ export default function Graph({ get }) {
             <input
               id={`BeginReferenceDate`}
               type="date"
-              onChange={(e) => setReferenceDate(e.target.value)}
+              max={dataRange.earliest}
+              onChange={(e) =>
+                e.target.value <= dataRange.earliest &&
+                e.target.value.length === 10 &&
+                setReferenceDate(e.target.value)
+              }
             />
           </>
         )}
-        <>
+        <div>
           <label>
             From:
             <input
@@ -628,8 +644,7 @@ export default function Graph({ get }) {
               }
             />
           </label>
-          <button onClick={() => console.log(dataRange)}>log range</button>
-        </>
+        </div>
       </fieldset>
       <Line options={options} data={data} />
     </div>
