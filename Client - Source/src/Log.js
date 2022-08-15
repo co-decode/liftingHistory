@@ -1,18 +1,20 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Edit from "./Edit";
 import Add from "./Add";
-import { useNavigate } from "react-router-dom";
 import Logout from "./Logout";
 import Tonnage from "./Tonnage";
 import Breakdown from "./Breakdown";
+import Calendar from "./Calendar";
 
-const [LOG, EDIT, TONS, ADD, BREAK] = [
+const [LOG, EDIT, TONS, ADD, BREAK, CAL] = [
   "LOG",
   "EDIT",
   "TONNAGE",
   "ADD",
   "BREAKDOWN",
+  "CALENDAR"
 ];
 
 export default function Log() {
@@ -26,7 +28,6 @@ export default function Log() {
     ascending: true,
   });
   const [user, setUser] = useState(null);
-  // const [exerciseFilter, setExerciseFilter] = useState([]);
   const [varFilter, setVarFilter] = useState({});
   const editRefs = useRef({});
   const link = useNavigate();
@@ -232,6 +233,7 @@ export default function Log() {
         <>
           <button onClick={() => setPage(ADD)}>Add an Entry</button>
           <button onClick={() => setPage(TONS)}>View Tonnage</button>
+          <button onClick={() => setPage(CAL)}>View Calendar</button>
         </>
       );
     } else if (page)
@@ -269,33 +271,6 @@ export default function Log() {
       </>
     );
   }
-  /* 
-  function returnExFilter() {
-    return (
-      <>
-        {["bench", "deadlift", "squat"].map((val) => (
-          <div key={`${val}Check`} style={{ display: "inline-block" }}>
-            <label htmlFor={`${val}Check`}>
-              {val[0].toUpperCase() + val.slice(1)}
-            </label>
-            <input
-              type={`checkbox`}
-              id={`${val}Check`}
-              defaultChecked
-              onClick={(e) => {
-                e.target.checked
-                  ? setExerciseFilter(
-                      exerciseFilter.filter((v) => v !== `${val}`)
-                    )
-                  : setExerciseFilter([...exerciseFilter, `${val}`]);
-              }}
-            />
-          </div>
-        ))}
-      </>
-    );
-  }
- */
   function returnVarFilter() {
     return (
       <>
@@ -333,7 +308,6 @@ export default function Log() {
             <>
               <fieldset>
                 {returnDateFilter()}
-                {/* returnExFilter() */}
                 {returnVarFilter()}
               </fieldset>
               {returnSid()}
@@ -361,6 +335,7 @@ export default function Log() {
       );
     else if (page === ADD) return <Add get={get} setPage={setPage} setGet={setGet} setDateFilter={setDateFilter}/>;
     else if (page === TONS) return <Tonnage get={get} />;
+    else if (page === CAL) return <Calendar get={get} />
   }
 
   if (get === null) return <strong>Loading...</strong>;

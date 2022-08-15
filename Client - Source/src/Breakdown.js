@@ -21,7 +21,7 @@ export default function Breakdown({get, edit, setEdit, setPage}) {
             {show.map(exercise => {
                 const {mass, reps, variation} = get[exercise].filter(v => v.sid === edit)[0]
                 const totalReps = reps.reduce((a,v)=> a+v)
-                const tonnage = mass.reduce((a,v,i)=>a + v * reps[i])
+                const tonnage = mass.reduce((a,v,i)=>a + v * reps[i], 0)
                 return (
                     <div key={`${exercise}`}>
                     <strong>{exercise[0].toUpperCase() + exercise.slice(1)}{`: `}</strong> <br/>
