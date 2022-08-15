@@ -29,34 +29,32 @@ export default function Graph({ get }) {
   const [intervalLength, setIntervalLength] = useState([null, null]);
   const [referenceDate, setReferenceDate] = useState(null);
   const [dataRange, setDataRange] = useState({
-    earliest: get.date
-      .map((v) => new Date(v.date))
-      .reduce((a, v) => (a <= v ? a : v))
-      .toISOString()
-      .slice(0, 10),
-    latest: new Date(
-      get.date
-        .map((v) => new Date(v.date))
-        .reduce((a, v) => (a >= v ? a : v))
-        .setTime(
-          get.date
-            .map((v) => new Date(v.date))
-            .reduce((a, v) => (a >= v ? a : v))
-            .getTime() +
-            34 * 60 * 60 * 1000
-        )
-    )
-      .toISOString()
-      .slice(0, 10),
+    earliest: dateInitialiser("EARLIEST"),
+    latest: dateInitialiser("LATEST"),
     apply: false,
   });
 
-  // const earliestSession = get.date
-  //   .map((v) => new Date(v.date))
-  //   .reduce((a, v) => (a <= v ? a : v));
-  // const recentSession = get.date
-  //   .map((v) => new Date(v.date))
-  //   .reduce((a, v) => (a >= v ? a : v));
+  function dateInitialiser(date) {
+    const stringsToDates = get.date.map((v) => new Date(v.date));
+
+    function isoSlicer(dateObject) {
+      return dateObject.toISOString().slice(0, 10);
+    }
+
+    if (date === "EARLIEST") {
+      return isoSlicer(stringsToDates.reduce((a, v) => (a <= v ? a : v)));
+    } else if (date === "LATEST") {
+      const latest = stringsToDates.reduce((a, v) => (a >= v ? a : v));
+      return isoSlicer(
+        new Date(
+          latest.setTime(
+            latest.getTime() +
+              (24 - latest.getTimezoneOffset() / 60) * 60 * 60 * 1000
+          )
+        )
+      );
+    }
+  }
 
   function optionsInitialiser(interval) {
     let x;
@@ -138,27 +136,21 @@ export default function Graph({ get }) {
     }
 
     function getDifference(first, last) {
-      const firstDate = new Date(first)
+      const firstDate = new Date(first);
       const lastDate = new Date(last);
       if (input.interval === "MONTH") {
-        const yearDifference =
-        lastDate.getFullYear() - firstDate.getFullYear();
+        const yearDifference = lastDate.getFullYear() - firstDate.getFullYear();
         const monthsBetween =
-        lastDate.getMonth() - firstDate.getMonth() + yearDifference * 12;
+          lastDate.getMonth() - firstDate.getMonth() + yearDifference * 12;
         return monthsBetween;
         //
       } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
-        const yearDifference =
-          lastDate.getFullYear() -
-          firstDate.getFullYear();
+        const yearDifference = lastDate.getFullYear() - firstDate.getFullYear();
         const intervalDifference =
-          getCustomInterval(last) -
-          getCustomInterval(first);
+          getCustomInterval(last) - getCustomInterval(first);
         const intervalsPerYear = 365.25 / (intervalLength[0] || 7);
 
-        return (
-          intervalDifference + parseInt(yearDifference * intervalsPerYear)
-        );
+        return intervalDifference + parseInt(yearDifference * intervalsPerYear);
       }
     }
 
@@ -174,6 +166,7 @@ export default function Graph({ get }) {
       input.exercise === "ALL"
         ? sessionList
         : sessionList.filter((sess) => sess.exercises.includes(input.exercise));
+
     const getDataset = (what, input) => {
       function returnExerciseObject(getWhat, sid) {
         return get[getWhat].find((entry) => entry.sid === sid);
@@ -222,32 +215,11 @@ export default function Graph({ get }) {
               interval: v.date,
             };
           });
-/* 
-        function getDifference() {
-          if (input.interval === "MONTH") {
-            const first = new Date(sidsTagged[0].interval);
-            const latest = new Date(sidsTagged.at(-1).interval);
-            const yearDifference = latest.getFullYear() - first.getFullYear();
-            const monthsBetween =
-            latest.getMonth() - first.getMonth() + yearDifference * 12;
-            return monthsBetween;
-            //
-          } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
-            const yearDifference =
-              new Date(sidsTagged.at(-1).interval).getFullYear() -
-              new Date(sidsTagged[0].interval).getFullYear();
-            const intervalDifference =
-              getCustomInterval(sidsTagged.at(-1).interval) -
-              getCustomInterval(sidsTagged[0].interval);
-            const intervalsPerYear = 365.25 / (intervalLength[0] || 7);
 
-            return (
-              intervalDifference + parseInt(yearDifference * intervalsPerYear)
-            );
-          }
-        } */
         const categoryObject = {};
-        const categoryArray = Array(getDifference(sidsTagged[0].interval, sidsTagged.at(-1).interval) + 1)
+        const categoryArray = Array(
+          getDifference(sidsTagged[0].interval, sidsTagged.at(-1).interval) + 1
+        )
           .fill(null)
           .map((v, i) =>
             input.interval === "MONTH"
@@ -276,12 +248,12 @@ export default function Graph({ get }) {
                     key
                   );
                 } else if (input.interval === "MONTH") {
+                  const intervalDate = new Date(val.interval);
+                  const firstDate = new Date(sidsTagged[0].interval);
                   const yearDifference =
-                    new Date(val.interval).getFullYear() -
-                    new Date(sidsTagged[0].interval).getFullYear();
+                    intervalDate.getFullYear() - firstDate.getFullYear();
                   const monthDifference =
-                    new Date(val.interval).getMonth() -
-                    new Date(sidsTagged[0].interval).getMonth();
+                    intervalDate.getMonth() - firstDate.getMonth();
                   const monthsFromStart = monthDifference + yearDifference * 12;
                   return monthsFromStart === key;
                 } else throw Error;
@@ -306,34 +278,11 @@ export default function Graph({ get }) {
         const sorted = sessionListFiltered.sort(
           (a, b) => new Date(a) - new Date(b)
         );
-        const initialDate = new Date(sorted[0].date);
-        /* function getDifference() {
-          if (input.interval === "MONTH") {
-            const latest = new Date(sorted.at(-1).date);
-            const yearDifference =
-            latest.getFullYear() - initialDate.getFullYear();
-            const monthsBetween =
-            latest.getMonth() - initialDate.getMonth() + yearDifference * 12;
-            return monthsBetween;
-            //
-          } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
-            const yearDifference =
-              new Date(sorted.at(-1).date).getFullYear() -
-              initialDate.getFullYear();
-            const intervalDifference =
-              getCustomInterval(sorted.at(-1).date) -
-              getCustomInterval(sorted[0].date);
-            const intervalsPerYear = 365.25 / (intervalLength[0] || 7);
-
-            return (
-              intervalDifference + parseInt(yearDifference * intervalsPerYear)
-            );
-          }
-        } */
-        const output = Array(getDifference(sorted[0].date, sorted.at(-1).date) + 1)
+        return Array(getDifference(sorted[0].date, sorted.at(-1).date) + 1)
           .fill(null)
           .map((v, i) => {
             if (input.interval === "MONTH") {
+              const initialDate = new Date(sorted[0].date);
               return `${((initialDate.getMonth() + i) % 12) + 1} - ${(
                 initialDate.getFullYear() +
                 Math.floor((initialDate.getMonth() + i) / 12)
@@ -342,7 +291,6 @@ export default function Graph({ get }) {
                 .slice(2)}`;
             } else return getCustomInterval(sorted[0].date) + i;
           });
-        return output;
       }
     };
     return {
@@ -385,9 +333,9 @@ export default function Graph({ get }) {
     setOptions(optionsInitialiser(input.interval));
   }, [input, dataInitialiser]);
 
-  return (
-    <div>
-      <fieldset>
+  function returnInputControls() {
+    return (
+      <>
         <label>
           Interval
           <select
@@ -410,81 +358,99 @@ export default function Graph({ get }) {
             <option value="bench">Bench</option>
           </select>
         </label>
-        {input.interval === "CUSTOM" && (
-          <>
-            <label htmlFor={`IntervalLength`}>Interval Length</label>
-            <input
-              id={`IntervalLength`}
-              placeholder={intervalLength[1] === "WEEKS" ? "1" : "7"}
-              onChange={(e) =>
-                intervalLength[1] === "WEEKS"
-                  ? setIntervalLength([
-                      parseInt(e.target.value) * 7,
-                      intervalLength[1],
-                    ])
-                  : setIntervalLength([
-                      parseInt(e.target.value),
-                      intervalLength[1],
-                    ])
-              }
-            />
-            <label htmlFor={`intervalLengthIn...`}>in...</label>
-            <select
-              id={`intervalLengthIn...`}
-              onChange={(e) =>
-                setIntervalLength([intervalLength[0], e.target.value])
-              }
-            >
-              <option value="DAYS">DAYS</option>
-              <option value="WEEKS">WEEKS</option>
-            </select>
-            <label htmlFor={`BeginReferenceDate`}>
-              Beginning Reference Date
-            </label>
-            <input
-              id={`BeginReferenceDate`}
-              type="date"
-              max={dataRange.earliest}
-              onChange={(e) =>
-                e.target.value <= dataRange.earliest &&
-                e.target.value.length === 10 &&
-                setReferenceDate(e.target.value)
-              }
-            />
-          </>
-        )}
+      </>
+    );
+  }
+
+  function returnCustomControls() {
+    if (input.interval !== "CUSTOM") return null;
+    else
+      return (
         <div>
-          <label>
-            From:
-            <input
-              type="date"
-              defaultValue={dataRange.earliest}
-              onChange={(e) =>
-                setDataRange({ ...dataRange, earliest: e.target.value })
-              }
-            />
-          </label>
-          <label>
-            To:
-            <input
-              type="date"
-              defaultValue={dataRange.latest}
-              onChange={(e) =>
-                setDataRange({ ...dataRange, latest: e.target.value })
-              }
-            />
-          </label>
-          <label>
-            {" "}
-            Apply Date Range
-            <input
-              type="checkbox"
-              onClick={() =>
-                setDataRange({ ...dataRange, apply: !dataRange.apply })
-              }
-            />
-          </label>
+          <label htmlFor={`IntervalLength`}>Interval Length</label>
+          <input
+            id={`IntervalLength`}
+            placeholder={intervalLength[1] === "WEEKS" ? "1" : "7"}
+            onChange={(e) =>
+              intervalLength[1] === "WEEKS"
+                ? setIntervalLength([
+                    parseInt(e.target.value) * 7,
+                    intervalLength[1],
+                  ])
+                : setIntervalLength([
+                    parseInt(e.target.value),
+                    intervalLength[1],
+                  ])
+            }
+          />
+          <label htmlFor={`intervalLengthIn...`}>in...</label>
+          <select
+            id={`intervalLengthIn...`}
+            onChange={(e) =>
+              setIntervalLength([intervalLength[0], e.target.value])
+            }
+          >
+            <option value="DAYS">DAYS</option>
+            <option value="WEEKS">WEEKS</option>
+          </select>
+          <label htmlFor={`BeginReferenceDate`}>Beginning Reference Date</label>
+          <input
+            id={`BeginReferenceDate`}
+            type="date"
+            max={dataRange.earliest}
+            onChange={(e) =>
+              e.target.value <= dataRange.earliest &&
+              e.target.value.length === 10 &&
+              setReferenceDate(e.target.value)
+            }
+          />
         </div>
+      );
+  }
+
+  function returnDataRange() {
+    return (
+      <div>
+        <label>
+          From:
+          <input
+            type="date"
+            defaultValue={dataRange.earliest}
+            onChange={(e) =>
+              setDataRange({ ...dataRange, earliest: e.target.value })
+            }
+          />
+        </label>
+        <label>
+          To:
+          <input
+            type="date"
+            defaultValue={dataRange.latest}
+            onChange={(e) =>
+              setDataRange({ ...dataRange, latest: e.target.value })
+            }
+          />
+        </label>
+        <label>
+          {" "}
+          Apply Date Range
+          <input
+            type="checkbox"
+            onClick={() =>
+              setDataRange({ ...dataRange, apply: !dataRange.apply })
+            }
+          />
+        </label>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <fieldset>
+        {returnInputControls()}
+        {returnCustomControls()}
+        {returnDataRange()}
       </fieldset>
       <Line options={options} data={data} />
     </div>
