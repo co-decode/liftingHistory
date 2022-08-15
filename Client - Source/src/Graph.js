@@ -137,6 +137,31 @@ export default function Graph({ get }) {
       return interval;
     }
 
+    function getDifference(first, last) {
+      const firstDate = new Date(first)
+      const lastDate = new Date(last);
+      if (input.interval === "MONTH") {
+        const yearDifference =
+        lastDate.getFullYear() - firstDate.getFullYear();
+        const monthsBetween =
+        lastDate.getMonth() - firstDate.getMonth() + yearDifference * 12;
+        return monthsBetween;
+        //
+      } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
+        const yearDifference =
+          lastDate.getFullYear() -
+          firstDate.getFullYear();
+        const intervalDifference =
+          getCustomInterval(last) -
+          getCustomInterval(first);
+        const intervalsPerYear = 365.25 / (intervalLength[0] || 7);
+
+        return (
+          intervalDifference + parseInt(yearDifference * intervalsPerYear)
+        );
+      }
+    }
+
     const sessionList = dataRange.apply
       ? get.date.filter(
           (sess) =>
@@ -173,44 +198,19 @@ export default function Graph({ get }) {
           ).exercises;
           return exerciseCall
             .map((exercise) => {
-              return totalMassRepsSets(
-                returnExerciseObject(exercise, sid)
-              );
+              return totalMassRepsSets(returnExerciseObject(exercise, sid));
             })
             .reduce((a, v) => {
               return a + v;
             }, 0);
         } else {
-          return totalMassRepsSets(
-            returnExerciseObject(input.exercise, sid)
-          );
+          return totalMassRepsSets(returnExerciseObject(input.exercise, sid));
         }
       }
       if (input.interval === "SESSION") {
         return sessionListFiltered
           .map((sess) => sess.sid)
-          .map((sid) => {
-            return returnTotalSwitch(sid)
-/* 
-            if (input.exercise === "ALL") {
-              const exerciseCall = sessionList.find(
-                (sess) => sess.sid === sid
-              ).exercises;
-              //+
-              return exerciseCall
-                .map((exercise) => {
-                  return totalMassRepsSets(returnExerciseObject(exercise, sid));
-                })
-                .reduce((a, v) => {
-                  return a + v;
-                }, 0);
-            } else {
-              return totalMassRepsSets(
-                returnExerciseObject(input.exercise, sid)
-              );
-            }
-             */
-          });
+          .map((sid) => returnTotalSwitch(sid));
       } else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
         const sidsTagged = sessionListFiltered
           .sort(
@@ -222,15 +222,16 @@ export default function Graph({ get }) {
               interval: v.date,
             };
           });
-
+/* 
         function getDifference() {
           if (input.interval === "MONTH") {
             const first = new Date(sidsTagged[0].interval);
             const latest = new Date(sidsTagged.at(-1).interval);
             const yearDifference = latest.getFullYear() - first.getFullYear();
             const monthsBetween =
-              latest.getMonth() - first.getMonth() + yearDifference * 12;
+            latest.getMonth() - first.getMonth() + yearDifference * 12;
             return monthsBetween;
+            //
           } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
             const yearDifference =
               new Date(sidsTagged.at(-1).interval).getFullYear() -
@@ -244,9 +245,9 @@ export default function Graph({ get }) {
               intervalDifference + parseInt(yearDifference * intervalsPerYear)
             );
           }
-        }
+        } */
         const categoryObject = {};
-        const categoryArray = Array(getDifference() + 1)
+        const categoryArray = Array(getDifference(sidsTagged[0].interval, sidsTagged.at(-1).interval) + 1)
           .fill(null)
           .map((v, i) =>
             input.interval === "MONTH"
@@ -258,7 +259,6 @@ export default function Graph({ get }) {
           (key) =>
             (categoryObject[key] = sidsTagged
               .filter((val) => {
-                //
                 if (["WEEK", "CUSTOM"].includes(input.interval)) {
                   const yearDifference =
                     new Date(val.interval).getFullYear() -
@@ -289,68 +289,33 @@ export default function Graph({ get }) {
               .map((val) => val.sid))
         );
         return Object.values(categoryObject).map((array) =>
-          array.reduce((acc, sid) => {
-            
-            return acc + returnTotalSwitch(sid)
-            /* 
-            if (input.exercise === "ALL") {
-              const exerciseCall = sessionList.find(
-                (sess) => sess.sid === sid
-              ).exercises;
-              //+
-              return (
-                acc +
-                exerciseCall
-                  .map((exercise) => {
-                    return totalMassRepsSets(
-                      returnExerciseObject(exercise, sid)
-                    );
-                  })
-                  .reduce((a, v) => {
-                    return a + v;
-                  }, 0)
-              );
-            } else {
-              return (
-                acc +
-                totalMassRepsSets(returnExerciseObject(input.exercise, sid))
-              );
-            } 
-             */
-            /* acc + fn() */
-          }, 0)
+          array.reduce((acc, sid) => acc + returnTotalSwitch(sid), 0)
         );
       }
     };
     const getLabels = (input) => {
-      //
       if (input.interval === "SESSION") {
         if (input.exercise === "ALL") {
           return sessionList.map((sess) => new Date(sess.date).toISOString());
         } else if (["deadlift", "squat", "bench"].includes(input.exercise)) {
-          return sessionList
-            .filter((sess) => sess.exercises.includes(input.exercise))
-            .map((sess) => new Date(sess.date).toISOString());
+          return sessionListFiltered.map((sess) =>
+            new Date(sess.date).toISOString()
+          );
         }
       } else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
-        /* 
-        const toBeSorted =
-          input.exercise === "ALL"
-            ? sessionList
-            : sessionList.filter((v) => v.exercises.includes(input.exercise));
-             */
         const sorted = sessionListFiltered.sort(
           (a, b) => new Date(a) - new Date(b)
         );
         const initialDate = new Date(sorted[0].date);
-        function getDifference() {
+        /* function getDifference() {
           if (input.interval === "MONTH") {
             const latest = new Date(sorted.at(-1).date);
             const yearDifference =
-              latest.getFullYear() - initialDate.getFullYear();
+            latest.getFullYear() - initialDate.getFullYear();
             const monthsBetween =
-              latest.getMonth() - initialDate.getMonth() + yearDifference * 12;
+            latest.getMonth() - initialDate.getMonth() + yearDifference * 12;
             return monthsBetween;
+            //
           } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
             const yearDifference =
               new Date(sorted.at(-1).date).getFullYear() -
@@ -364,8 +329,8 @@ export default function Graph({ get }) {
               intervalDifference + parseInt(yearDifference * intervalsPerYear)
             );
           }
-        }
-        const output = Array(getDifference() + 1)
+        } */
+        const output = Array(getDifference(sorted[0].date, sorted.at(-1).date) + 1)
           .fill(null)
           .map((v, i) => {
             if (input.interval === "MONTH") {
