@@ -1,0 +1,4 @@
+.rectangle:hover {
+    stroke-width: 2px;
+    stroke: black;
+}

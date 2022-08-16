@@ -43,9 +43,7 @@ DONE - I want the scheme to generate a tonnage data point.
     !! Show Zeroes has problems, it doesn't add zeroes to display all intervals, it only shows zeroes where a session id exists, but that exercise does not. It may be better to eliminate it, and seek to display time continuity with the graphs. 
     I have fixed this for the graphs... I think that zeroes can be thrown out now.
 
-    Visualise tonnage data as a graph? 
-        Using D3... No, I've ended up going for chartJS. Better to start small.
-    
+    DONE Tonnage Line Graphs with ChartJS:    
         DONE I want a custom interval option.
         DONE All exercises choice for all interval options.
         DONE Difference in totalling function is incorrect
@@ -53,7 +51,12 @@ DONE - I want the scheme to generate a tonnage data point.
         DONE Filter date range for the graph entry, so that I don't have 6 million points on the graph.
         DONE I should refactor a lot of my functions to make them more space efficient, if possible.
 
-    ->> That will do it for the charts, move on to the heatmap next, see if you can turn it into a calendar thingo.
+    ->> Calendar HeatMap
+        DONE Calendar correctly displays 42 days, with the current month being correctly offset to its starting day, having the correct amount of days, and displaying the previous and next months, correctly displaying their dates.
+        ->> I want the squares to fill based on which exercises were performed on that day.
+        I want to be able to click on a filled square, and be taken to its breakdown page.
+        Going back to the calendar from the breakdown page will bring you to the correct month that that session was recorded on.
+
     
 
 

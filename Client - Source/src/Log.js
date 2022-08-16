@@ -234,10 +234,12 @@ export default function Log() {
           <button onClick={() => setPage(ADD)}>Add an Entry</button>
           <button onClick={() => setPage(TONS)}>View Tonnage</button>
           <button onClick={() => setPage(CAL)}>View Calendar</button>
+          <button onClick={()=>console.log(edit)}>log edit</button>
         </>
       );
     } else if (page)
-      return <button onClick={() => setPage(LOG)}>Go Back</button>;
+      return           <><button onClick={()=>console.log(edit)}>log edit</button>
+      <button onClick={() => setPage(LOG)}>Go Back</button></>;
   }
   function returnDateFilter() {
     return (
@@ -335,7 +337,7 @@ export default function Log() {
       );
     else if (page === ADD) return <Add get={get} setPage={setPage} setGet={setGet} setDateFilter={setDateFilter}/>;
     else if (page === TONS) return <Tonnage get={get} />;
-    else if (page === CAL) return <Calendar get={get} />
+    else if (page === CAL) return <Calendar get={get} setPage={setPage} setEdit={setEdit} />
   }
 
   if (get === null) return <strong>Loading...</strong>;
