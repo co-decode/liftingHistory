@@ -122,9 +122,13 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
     });
 
     const submission = { date: time, lifts };
-    console.log(submission);
 
-    if (Object.keys(submission.lifts).length > 0) {
+    if (get.date.some(session =>session.date === submission.date.slice(0,19))) {
+      setResponse("A session has already been recorded for this Timestamp")
+      return
+    }
+
+    if (Object.keys(submission.lifts).length > 0 ) {
       post(submission);
     }
   };

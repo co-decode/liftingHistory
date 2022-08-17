@@ -14,7 +14,7 @@ const [LOG, EDIT, TONS, ADD, BREAK, CAL] = [
   "TONNAGE",
   "ADD",
   "BREAKDOWN",
-  "CALENDAR"
+  "CALENDAR",
 ];
 
 export default function Log() {
@@ -25,10 +25,11 @@ export default function Log() {
   const [dateFilter, setDateFilter] = useState({
     from: null,
     to: null,
-    ascending: true,
+    ascending: sessionStorage.getItem("WeightLiftingLogAscending") || true,
   });
   const [user, setUser] = useState(null);
   const [varFilter, setVarFilter] = useState({});
+  const [goToMonthYear, setGoToMonthYear] = useState(null)
   const editRefs = useRef({});
   const link = useNavigate();
 
@@ -98,13 +99,13 @@ export default function Log() {
     }
   }, [edit, prevEdit]);
 
-  useEffect(()=>{
-    if (page === LOG)
-      setVarFilter({})
-  },[page])
+  useEffect(() => {
+    if (page === LOG) setVarFilter({});
+  }, [page]);
 
   function deleteSession(sid) {
-    console.log("clicked");
+    // console.log("clicked");
+    if (!window.confirm("Are you sure you want to delete this session?")) return
     axios({
       method: "delete",
       withCredentials: true,
@@ -144,8 +145,7 @@ export default function Log() {
                 return !get[exercise]
                   .filter((v) => v.sid === sidVal)[0]
                   .variation.includes(varFilter[exercise]);
-              }
-              else return false
+              } else return false;
             })
           )
             return null;
@@ -161,25 +161,25 @@ export default function Log() {
                   get.date.filter((v) => v.sid === sidVal)[0].date
                 ).toLocaleString()}
                 <div>
-                <button onClick={() => deleteSession(sidVal)}>
-                  Delete this session
-                </button>
-                <button
-                  onClick={() => {
-                    setEdit(sidVal);
-                    setPage(EDIT);
-                  }}
-                >
-                  Edit this session
-                </button>
-                <button
-                  onClick={() => {
-                    setEdit(sidVal);
-                    setPage(BREAK);
-                  }}
-                >
-                  View Breakdown
-                </button>
+                  <button onClick={() => deleteSession(sidVal)}>
+                    Delete this session
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEdit(sidVal);
+                      setPage(EDIT);
+                    }}
+                  >
+                    Edit this session
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEdit(sidVal);
+                      setPage(BREAK);
+                    }}
+                  >
+                    View Breakdown
+                  </button>
                 </div>
               </div>
               {exerciseCall.map((v) => {
@@ -234,12 +234,11 @@ export default function Log() {
           <button onClick={() => setPage(ADD)}>Add an Entry</button>
           <button onClick={() => setPage(TONS)}>View Tonnage</button>
           <button onClick={() => setPage(CAL)}>View Calendar</button>
-          <button onClick={()=>console.log(edit)}>log edit</button>
         </>
       );
-    } else if (page)
-      return           <><button onClick={()=>console.log(edit)}>log edit</button>
-      <button onClick={() => setPage(LOG)}>Go Back</button></>;
+    } else if (page) {
+      return <button onClick={() => setPage(LOG)}>Go Back</button>;
+    }
   }
   function returnDateFilter() {
     return (
@@ -261,11 +260,13 @@ export default function Log() {
           onChange={(e) => setDateFilter({ ...dateFilter, to: e.target.value })}
         />
         <button
-          onClick={() =>
+          onClick={() =>{
             setDateFilter({
               ...dateFilter,
               ascending: !dateFilter.ascending,
-            })
+            }); 
+            sessionStorage.setItem("WeightLiftingLogAscending", !dateFilter.ascending)
+          }
           }
         >
           Reverse Order
@@ -275,7 +276,7 @@ export default function Log() {
   }
   function returnVarFilter() {
     return (
-      <>
+      <div>
         {["bench", "deadlift", "squat"].map((exercise) => (
           <div key={`${exercise}VarFilter`} style={{ display: "inline-block" }}>
             <label htmlFor={`${exercise}VarFilter`}>
@@ -298,7 +299,7 @@ export default function Log() {
             </select>
           </div>
         ))}
-      </>
+      </div>
     );
   }
 
@@ -333,11 +334,20 @@ export default function Log() {
       );
     else if (page === BREAK)
       return (
-        <Breakdown get={get} edit={edit} setEdit={setEdit} setPage={setPage} />
+        <Breakdown get={get} edit={edit} setEdit={setEdit} setPage={setPage} setGoToMonthYear={setGoToMonthYear} />
       );
-    else if (page === ADD) return <Add get={get} setPage={setPage} setGet={setGet} setDateFilter={setDateFilter}/>;
+    else if (page === ADD)
+      return (
+        <Add
+          get={get}
+          setPage={setPage}
+          setGet={setGet}
+          setDateFilter={setDateFilter}
+        />
+      );
     else if (page === TONS) return <Tonnage get={get} />;
-    else if (page === CAL) return <Calendar get={get} setPage={setPage} setEdit={setEdit} />
+    else if (page === CAL)
+      return <Calendar get={get} setPage={setPage} setEdit={setEdit} goToMonthYear={goToMonthYear} />;
   }
 
   if (get === null) return <strong>Loading...</strong>;

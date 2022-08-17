@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-export default function Breakdown({get, edit, setEdit, setPage}) {
-    const session = get.date.filter(v=> v.sid === edit)[0]
+export default function Breakdown({get, edit, setEdit, setPage, setGoToMonthYear}) {
+    const session = get.date.find(v=> v.sid === edit)
     const [show, setShow] = useState(session.exercises)
+    useEffect(() => {
+        setGoToMonthYear(new Date(session.date))        
+    },[session, setGoToMonthYear])
     return (
         <div>
-            <button onClick={()=>{setEdit(0); setPage("LOG")}}>Return at Position</button>
+            <button onClick={()=>{setPage("EDIT")}}>Edit this Session</button>
+            <button onClick={()=>{setEdit(0); setPage("LOG")}}>Return to Log at Position</button>
+            <button onClick={()=>{setEdit(0); setPage("CALENDAR")}}>Return to Calendar at Month</button>
             <br/>
             {new Date(session.date).toLocaleString()}
             <fieldset style={{display:"inline-block"}}>

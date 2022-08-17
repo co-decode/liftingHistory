@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Graph from "./Graph";
 import returnTonnage from "./utils/tonnageFunctions";
+import "./Tonnage.css"
 
 export default function Tonnage({ get }) {
   const [page, setPage] = useState("TABLE");
@@ -127,6 +128,15 @@ export default function Tonnage({ get }) {
             );
           })}
         </fieldset>
+        <div className="tableGridContainer">
+          <span className="tableInterval">Interval</span>
+          <span className="tableTotalReps">Total Reps</span>
+          <span className="tableTotalMass">Total Mass</span>
+          <span className="tableMassPerRep">Mass Per Reps</span>
+          <span className="tableMax">Max</span>
+          {interval === "SESSION" ? null : <span className="tableAvMax">Average Max</span>}
+          <span className="tableRepsPerSet">Reps Per Set</span>
+        </div>
         {returnTonnage(
           get,
           interval || "ALL",

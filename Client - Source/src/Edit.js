@@ -527,7 +527,14 @@ export default function Edit({
           setPage(LOG);
         }}
       >
-        Cancel Changes
+        Cancel and go to Log
+      </button>
+      <button
+        onClick={() => {
+          setPage("BREAKDOWN");
+        }}
+      >
+        Cancel and view Breakdown
       </button>
       {/* <button onClick={() => console.log(update, typeof update.date)}>
         log Update Object

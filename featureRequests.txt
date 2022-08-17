@@ -51,21 +51,28 @@ DONE - I want the scheme to generate a tonnage data point.
         DONE Filter date range for the graph entry, so that I don't have 6 million points on the graph.
         DONE I should refactor a lot of my functions to make them more space efficient, if possible.
 
-    ->> Calendar HeatMap
+    DONE for now... Calendar HeatMap
         DONE Calendar correctly displays 42 days, with the current month being correctly offset to its starting day, having the correct amount of days, and displaying the previous and next months, correctly displaying their dates.
-        ->> I want the squares to fill based on which exercises were performed on that day.
-        I want to be able to click on a filled square, and be taken to its breakdown page.
-        Going back to the calendar from the breakdown page will bring you to the correct month that that session was recorded on.
+        DONE I want the squares to fill based on which exercises were performed on that day.
+        DONE I want to be able to click on a filled square, and be taken to its breakdown page.
+        DONE Going back to the calendar from the breakdown page will bring you to the correct month that that session was recorded on.
+        The Calendar needs to be improved in terms of looks, but I might just keep it like this... I don't really wish to care that much.
 
-    
+    DONE Go to Edit from Breakdown Page
 
+    DONE Fix the double Date entry.
 
+    How to persist state preferences? Learn about cookies, look this questions up in relation to react and react router.
+        use SessionStorage and LocalStorage
+        on What? 
+        
+        DONE Reverse order of Log
 
+    DONE Put the Tonnage table into a gridbox
 
-    Calendar widget.
-        I'll use d3 for this
+    DONE password should be in a password type input, so that the plain text is hidden. Hideable is probably nice. 
 
-    How to persist state preferences?
+    Profile Page for Changing password
 
     Landing Page > Equiv Calculator > Chat and Friend systems
         
@@ -74,15 +81,4 @@ DONE - I want the scheme to generate a tonnage data point.
 
 
 
-
-
-
-
-
-
-Tonnage:
-scheme === linear: reps * sets * mass
-scheme === pyramid: mass * 0.8 * 10 + mass * 0.85 * 6 + mass * 0.9 * 3 + mass * 0.95 * 1
-reps / sets = 20 / 8 = 2.5  is default, percentage deviation from this ratio is multiplied into the tonnage to approximate mass tonnage. ie Lower rep/set is assumed to mean higher mass, and therefore increases mass tonnage, higher decreases it. Also, reps / 20 multiplies in as well, to reward higher rep tonnage.
-Therefore, rep tonnage is accurate, standard pyramid scheme is accurate, tonnage quality is accurate, and mass tonnage is approximate. AND all values are used fruitfully in calculations.
 

@@ -65,7 +65,9 @@ export default function intervalTon(
         return (
           <div key={`${exercise}`}>
             {" "}
-            {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
+            <strong>
+              {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
+            </strong>
             {Object.keys(sidsBinned).map((interval) => {
               const sidsByExercise = get.date
                 .filter((val) => sidsBinned[interval].includes(val.sid))
@@ -96,45 +98,54 @@ export default function intervalTon(
               }, 0);
               return (
                 <div key={`${interval}`}>
-                  <div>
-                    {`R: `}
-                    {totalReps}
-                    {` | M: `}
-                    {totalMass}
-                    {` kg | Q: `}
-                    {(totalMass / totalReps).toFixed(2)}
-                    {` kg / r | Max: `}
-                    {exerciseObjectsForSid.reduce((intervalMax, v) => {
-                      const sessionMax = v[0].mass.reduce(
-                        (a, val) => (val > a ? val : a),
-                        0
-                      );
-                      return sessionMax > intervalMax
-                        ? sessionMax
-                        : intervalMax;
-                    }, 0)}
-                    {` kg | `}
-                    {intervalFormat !== session &&
-                      `Av Max: ${(
-                        exerciseObjectsForSid.reduce((sessionMaxes, v) => {
-                          const sessionMax = v[0].mass.reduce((a, val) =>
-                            Math.max(a, val)
-                          );
-                          return sessionMaxes + sessionMax;
-                        }, 0) / exerciseObjectsForSid.length
-                      ).toFixed(2)} kg | `}
-                    {(
-                      exerciseObjectsForSid.reduce((acc, v) => {
-                        const sessionReps = v[0].reps.reduce(
-                          (a, val) => a + val,
+                  <div className="tableGridContainer">
+                    <span className="tableInterval">{interval}</span>
+                    <span className="tableTotalReps">{totalReps}</span>
+                    <span className="tableTotalMass">
+                      {totalMass}
+                      {` kg`}
+                    </span>
+                    <span className={`tableMassPerRep`}>
+                      {(totalMass / totalReps).toFixed(2)}
+                      {` kg / r`}
+                    </span>
+                    <span className={`tableMax`}>
+                      {exerciseObjectsForSid.reduce((intervalMax, v) => {
+                        const sessionMax = v[0].mass.reduce(
+                          (a, val) => (val > a ? val : a),
                           0
                         );
-                        const sessionSets = v[0].reps.length;
-                        return acc + sessionReps / sessionSets;
-                      }, 0) / exerciseObjectsForSid.length
-                    ).toFixed(2)}
-                    {` r / s | `}
-                    {interval}
+                        return sessionMax > intervalMax
+                          ? sessionMax
+                          : intervalMax;
+                      }, 0)}
+                      {` kg`}
+                    </span>
+                    {intervalFormat !== session ? (
+                      <span className={`tableAvMax`}>
+                        {`${(
+                          exerciseObjectsForSid.reduce((sessionMaxes, v) => {
+                            const sessionMax = v[0].mass.reduce((a, val) =>
+                              Math.max(a, val)
+                            );
+                            return sessionMaxes + sessionMax;
+                          }, 0) / exerciseObjectsForSid.length
+                        ).toFixed(2)} kg`}
+                      </span>
+                    ) : null}
+                    <span className={`tableRepsPerSet`}>
+                      {(
+                        exerciseObjectsForSid.reduce((acc, v) => {
+                          const sessionReps = v[0].reps.reduce(
+                            (a, val) => a + val,
+                            0
+                          );
+                          const sessionSets = v[0].reps.length;
+                          return acc + sessionReps / sessionSets;
+                        }, 0) / exerciseObjectsForSid.length
+                      ).toFixed(2)}
+                      {` r / s`}
+                    </span>
                   </div>
                 </div>
               );
