@@ -72,9 +72,9 @@ DONE - I want the scheme to generate a tonnage data point.
 
     DONE password should be in a password type input, so that the plain text is hidden. Hideable is probably nice. 
 
-    Profile Page for Changing password
+    ->> Profile Page for Changing password
 
-    Landing Page > Equiv Calculator > Chat and Friend systems
+    NO Landing Page > DONE Equiv Calculator > NO Chat and Friend systems
         
 
 

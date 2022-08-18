@@ -7,14 +7,17 @@ import Logout from "./Logout";
 import Tonnage from "./Tonnage";
 import Breakdown from "./Breakdown";
 import Calendar from "./Calendar";
+import Equivalence from "./Equivalence/Equivalence"
 
-const [LOG, EDIT, TONS, ADD, BREAK, CAL] = [
+const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
+  "PROFILE",
   "LOG",
   "EDIT",
   "TONNAGE",
   "ADD",
   "BREAKDOWN",
   "CALENDAR",
+  "EQUIVALENCE"
 ];
 
 export default function Log() {
@@ -234,6 +237,7 @@ export default function Log() {
           <button onClick={() => setPage(ADD)}>Add an Entry</button>
           <button onClick={() => setPage(TONS)}>View Tonnage</button>
           <button onClick={() => setPage(CAL)}>View Calendar</button>
+          <button onClick={() => setPage(EQUIV)}>View Calculator</button>
         </>
       );
     } else if (page) {
@@ -304,7 +308,16 @@ export default function Log() {
   }
 
   function returnComponent() {
-    if (page === LOG) {
+    if (page === PROFILE) {
+      return (
+        <>
+          <h1> Welcome {user.username}</h1>
+          <button onClick={()=>setPage(LOG)}>Go to your Log</button>
+          <button>Go to the Equivalence Calculator</button>
+        </>
+      )
+    }
+    else if (page === LOG) {
       return (
         <>
           {get ? (
@@ -348,6 +361,7 @@ export default function Log() {
     else if (page === TONS) return <Tonnage get={get} />;
     else if (page === CAL)
       return <Calendar get={get} setPage={setPage} setEdit={setEdit} goToMonthYear={goToMonthYear} />;
+    else if (page === EQUIV) return <Equivalence />
   }
 
   if (get === null) return <strong>Loading...</strong>;
@@ -355,7 +369,6 @@ export default function Log() {
   return (
     <div>
       <h1>Lifting Log</h1>
-      {/* <button onClick={() => console.log(JSON.stringify(get), edit)}>show get</button> */}
       {pageButtons()}
       <Logout />
       {returnComponent()}

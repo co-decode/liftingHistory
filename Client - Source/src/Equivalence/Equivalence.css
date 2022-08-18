@@ -1,0 +1,208 @@
+div#appDiv {
+  position: relative;
+  height: 100% /* 740px */;
+  width: 100%;
+  display: grid;
+  justify-content: center;
+  grid-template-rows: max-content auto;
+  grid-template-columns: 99%;
+}
+div#wrapper {
+  position: absolute;
+  height: auto;
+  width: 100%;
+  min-height: 550px;
+  display: grid;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  justify-content: center;
+  /* grid-template-columns:20% 60% 20%; */
+  /* grid-template-rows: 20% 10% 15% 50% 40%; */
+  margin: auto;
+  margin-left: 0;
+  left: 0;
+  z-index: 1;
+  background-color: white;
+  transition: transform 0.3s;
+}
+#wrapper > h1 {
+  margin: auto;
+  /* grid-column: 2 / 3; */
+}
+#wrapper > h4 {
+  margin: auto;
+  /* grid-column: 2 / 3; */
+}
+#wrapper > p {
+  margin: auto;
+  /* grid-column: 2 / 3; */
+}
+#wrapper > aside {
+  margin: auto;
+}
+aside {
+  text-align: center;
+}
+
+div#tableContainer {
+  height: 100%;
+  width: 100%;
+  /* overflow-y: scroll; */
+  /* scrollbar-width: none; */
+  margin-top: 8px;
+
+  display: grid;
+}
+table {
+  display: table;
+  border-collapse: collapse;
+  margin: 0;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  /* border:1px black solid; */
+}
+td {
+  vertical-align: middle;
+  text-align: center;
+}
+/* form {
+    position:relative;
+    width:100%;
+    margin: 5px auto auto;
+    display:grid;
+    grid-template-areas: "parameters parameters" "options highlight" "filter filter";
+} */
+#parameters {
+  position: relative;
+  grid-area: "parameters";
+  grid-column: 1 / 3;
+  display: grid;
+  grid-template-areas: "min min max max reps reps  step step stepVal";
+  /* border:1px black solid; */
+}
+#parameters > * {
+  margin: auto;
+  border: none;
+  border-radius: none;
+}
+#highlightDiv {
+  grid-area: "highlight";
+  grid-column: 1 /3;
+  display: none;
+  grid-template-areas: "tar tar bin bin";
+  grid-template-columns:auto;
+}
+#highlightDiv > * {
+  margin: auto auto auto 18%;
+}
+#highlightDiv > label {
+  margin: auto auto auto 30%;
+}
+
+#highlightDiv > #highlightRange {
+  margin: auto auto auto 2.5%;
+}
+
+button {
+  cursor: pointer;
+  margin: 2px;
+  box-sizing: border-box;
+}
+/* label, input {
+    margin:0px;
+}
+label {
+    margin-right: 5px;
+} */
+/* input {
+    max-width: 50px;
+    border: none;    outline: none;
+}
+input[type=checkbox]:focus {} */
+
+#options {
+  grid-area: "options";
+  grid-column: 1/3;
+  display: none;
+  grid-template-areas: "convert invert reverse display";
+  grid-template-columns: auto;
+}
+
+#options > #convert {
+  margin: auto auto auto 11.5%;
+}
+
+#options > #inverter {
+  margin: auto;
+  margin-left: 17%;
+}
+
+#options > #reverserDiv {
+  margin: auto;
+  margin-left: 18.7%;
+}
+
+#options > #reverserDiv > input {
+  margin-left: 11px;
+}
+
+#options > * {
+  margin: auto;
+  margin-left: 4.5%;
+}
+
+#filter {
+  grid-column: 1 / 3;
+  display: none;
+  grid-template-areas: "row column restore";
+}
+
+#formDisplay {
+  position: absolute;
+  box-sizing: border-box;
+  height: 100%;
+  width: 4%;
+  right: 101%;
+  top: 0%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+#formDisplay > div {
+  font-size: xx-small;
+  text-align: center;
+  font-weight: bold;
+  height: 60%;
+  width: 55%;
+  display: grid;
+  margin: auto;
+  cursor: pointer;
+}
+
+#formDisplay > div > * {
+  margin: auto;
+}
+
+#filter > div {
+  display: grid;
+  grid-template-areas: "label input toggle";
+}
+#filter > div > * {
+  margin: auto;
+}
+#filter > #filterColDiv {
+  margin-left: 1.4%;
+}
+#filter > #filterRowDiv {
+  margin-left: 3.15%;
+}
+#filter > #restoreAll {
+  grid-template-areas: "button";
+  margin-left: 31%;
+}
+
+#filter > #filterRowDiv {
+  grid-template-columns: auto;
+}
+#filterRowDiv > input {
+  margin-left: 0;
+}

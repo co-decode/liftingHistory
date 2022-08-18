@@ -1,13 +1,9 @@
-// import Main from "./Main";
 import Login from "./Login";
 import Register from "./Register";
 import Log from "./Log";
-import Add from "./Add"
 import axios from "axios";
 import React, { useCallback } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Graph from "./Graph";
-// export const UserContext = createContext();
 
 export default function App() {
   const callServer = useCallback( async () => {
@@ -21,10 +17,7 @@ export default function App() {
   }, [])
   return (
       <Routes>
-        {/* <Route path="/main" element={<Main />} /> */}
-        <Route path="/graph" element={<Graph />}/>
         <Route path="/log" element={<Log />}/>
-        <Route path="/add" element={<Add />}/>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<Navigate to={callServer ? "/log" : "/login"} replace/>} />

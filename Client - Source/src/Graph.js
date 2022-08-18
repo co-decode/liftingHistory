@@ -113,6 +113,7 @@ export default function Graph({ get }) {
             callback: function (value, index, ticks) {
               return value + ` kg`;
             },
+            stepSize: 1,
           },
         },
       },
@@ -393,7 +394,7 @@ export default function Graph({ get }) {
             <option value="DAYS">DAYS</option>
             <option value="WEEKS">WEEKS</option>
           </select>
-          <label htmlFor={`BeginReferenceDate`}>Beginning Reference Date</label>
+          <label htmlFor={`BeginReferenceDate`}>Reference Date</label>
           <input
             id={`BeginReferenceDate`}
             type="date"
