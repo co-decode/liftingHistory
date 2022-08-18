@@ -43,3 +43,12 @@ Content-Type: application/json
     "lostLifts": [],
     "date": "2022-07-19T04:51:31.790Z"
 }
+
+###
+
+PUT http://localhost:3001/change/1
+Content-Type: application/json
+
+{
+    "password": "howaboutnow"
+}

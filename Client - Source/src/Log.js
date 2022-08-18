@@ -7,7 +7,8 @@ import Logout from "./Logout";
 import Tonnage from "./Tonnage";
 import Breakdown from "./Breakdown";
 import Calendar from "./Calendar";
-import Equivalence from "./Equivalence/Equivalence"
+import Equivalence from "./Equivalence/Equivalence";
+import Profile from "./Profile";
 
 const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
   "PROFILE",
@@ -17,7 +18,7 @@ const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
   "ADD",
   "BREAKDOWN",
   "CALENDAR",
-  "EQUIVALENCE"
+  "EQUIVALENCE",
 ];
 
 export default function Log() {
@@ -32,7 +33,7 @@ export default function Log() {
   });
   const [user, setUser] = useState(null);
   const [varFilter, setVarFilter] = useState({});
-  const [goToMonthYear, setGoToMonthYear] = useState(null)
+  const [goToMonthYear, setGoToMonthYear] = useState(null);
   const editRefs = useRef({});
   const link = useNavigate();
 
@@ -108,7 +109,8 @@ export default function Log() {
 
   function deleteSession(sid) {
     // console.log("clicked");
-    if (!window.confirm("Are you sure you want to delete this session?")) return
+    if (!window.confirm("Are you sure you want to delete this session?"))
+      return;
     axios({
       method: "delete",
       withCredentials: true,
@@ -235,9 +237,14 @@ export default function Log() {
       return (
         <>
           <button onClick={() => setPage(ADD)}>Add an Entry</button>
-          <button onClick={() => setPage(TONS)}>View Tonnage</button>
-          <button onClick={() => setPage(CAL)}>View Calendar</button>
-          <button onClick={() => setPage(EQUIV)}>View Calculator</button>
+          {get && (
+            <>
+              <button onClick={() => setPage(TONS)}>View Tonnage</button>
+              <button onClick={() => setPage(CAL)}>View Calendar</button>
+            </>
+          )}
+          <button onClick={() => setPage(EQUIV)}>View Calculator</button> <br />
+          <button onClick={() => setPage(PROFILE)}>Change Password</button>
         </>
       );
     } else if (page) {
@@ -264,14 +271,16 @@ export default function Log() {
           onChange={(e) => setDateFilter({ ...dateFilter, to: e.target.value })}
         />
         <button
-          onClick={() =>{
+          onClick={() => {
             setDateFilter({
               ...dateFilter,
               ascending: !dateFilter.ascending,
-            }); 
-            sessionStorage.setItem("WeightLiftingLogAscending", !dateFilter.ascending)
-          }
-          }
+            });
+            sessionStorage.setItem(
+              "WeightLiftingLogAscending",
+              !dateFilter.ascending
+            );
+          }}
         >
           Reverse Order
         </button>
@@ -308,16 +317,7 @@ export default function Log() {
   }
 
   function returnComponent() {
-    if (page === PROFILE) {
-      return (
-        <>
-          <h1> Welcome {user.username}</h1>
-          <button onClick={()=>setPage(LOG)}>Go to your Log</button>
-          <button>Go to the Equivalence Calculator</button>
-        </>
-      )
-    }
-    else if (page === LOG) {
+    if (page === LOG) {
       return (
         <>
           {get ? (
@@ -347,7 +347,13 @@ export default function Log() {
       );
     else if (page === BREAK)
       return (
-        <Breakdown get={get} edit={edit} setEdit={setEdit} setPage={setPage} setGoToMonthYear={setGoToMonthYear} />
+        <Breakdown
+          get={get}
+          edit={edit}
+          setEdit={setEdit}
+          setPage={setPage}
+          setGoToMonthYear={setGoToMonthYear}
+        />
       );
     else if (page === ADD)
       return (
@@ -360,8 +366,17 @@ export default function Log() {
       );
     else if (page === TONS) return <Tonnage get={get} />;
     else if (page === CAL)
-      return <Calendar get={get} setPage={setPage} setEdit={setEdit} goToMonthYear={goToMonthYear} />;
-    else if (page === EQUIV) return <Equivalence />
+      return (
+        <Calendar
+          get={get}
+          setPage={setPage}
+          setEdit={setEdit}
+          goToMonthYear={goToMonthYear}
+        />
+      );
+    else if (page === EQUIV) return <Equivalence />;
+    else if (page === PROFILE) return <Profile user={user} />
+    
   }
 
   if (get === null) return <strong>Loading...</strong>;
