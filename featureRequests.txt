@@ -72,9 +72,15 @@ DONE - I want the scheme to generate a tonnage data point.
 
     DONE password should be in a password type input, so that the plain text is hidden. Hideable is probably nice. 
 
-    ->> Profile Page for Changing password
+    DONE Profile Page for Changing password
 
     NO Landing Page > DONE Equiv Calculator > NO Chat and Friend systems
+
+    PACKAGE UP IN DOCKER AND DEPLOY.
+
+    Get the database and the server up on google servers or something.
+
+    Netlify again for the front side I guess.
         
 
 

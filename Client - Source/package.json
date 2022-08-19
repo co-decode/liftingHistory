@@ -2,7 +2,7 @@
   "name": "liftinghistory-client",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://localhost:3000/login/",
+  "homepage": ".",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
