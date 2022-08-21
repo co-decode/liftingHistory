@@ -20,7 +20,7 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      origin: ["http://localhost:3000", "http://localhost:3001"], //This'll need to change...
+      origin: "*" /* ["http://localhost:3000", "http://localhost:3001"] */, //This'll need to change...
       credentials: true,
     })
   );
@@ -43,6 +43,10 @@ function makeApp(database,  ) {
   app.use(passport.session());
 
   // -- CRUD Endpoints --
+
+  app.get("/", (req, res) => {
+    res.send("Hello, world!")
+  })
 
   app.get("/sessions/:id", (req, res, next) => {
     const id = parseInt(req.params.id);
