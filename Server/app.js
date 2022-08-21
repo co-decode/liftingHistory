@@ -13,14 +13,14 @@ const {
   createDeleteFromArray,
 } = require("./utils");
 
-function makeApp(database, sessionRoutes) {
+function makeApp(database,  ) {
   const app = express();
   const initializePassport = require("./passport-config");
   initializePassport(passport);
 
   app.use(
     cors({
-      origin: ["http://localhost:3000", "http://localhost:3001"],
+      origin: ["http://localhost:3000", "http://localhost:3001"], //This'll need to change...
       credentials: true,
     })
   );
