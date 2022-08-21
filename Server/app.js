@@ -46,18 +46,23 @@ function makeApp(database,  ) {
 
   app.get("/sessions/:id", (req, res, next) => {
     const id = parseInt(req.params.id);
-    userPool.connect((err, client, release) => {
+    userPool.query(`select json_agg(distinct dl) deadlift, json_agg(distinct sq) squat, json_agg(distinct bp) bench, json_agg(DISTINCT sessions) date FROM deadlift dl FULL JOIN bench bp USING (uid) FULL JOIN squat sq USING (uid) FULL JOIN sessions USING (uid) WHERE uid = ${id};`, (err, result) => {
+      // console.log(result.rows)
       if (err) throw err;
-      client.query(
-        `select json_agg(distinct dl) deadlift, json_agg(distinct sq) squat, json_agg(distinct bp) bench, json_agg(DISTINCT sessions) date FROM deadlift dl FULL JOIN bench bp USING (uid) FULL JOIN squat sq USING (uid) FULL JOIN sessions USING (uid) WHERE uid = ${id};`,
-        (err, result) => {
-          release();
-          // console.log(result.rows)
-          if (err) throw err;
-          res.status(200).json(result.rows);
-        }
-      );
-    });
+      res.status(200).json(result.rows);
+    } )
+    // userPool.connect((err, client, release) => {
+    //   if (err) throw err;
+    //   client.query(
+    //     `select json_agg(distinct dl) deadlift, json_agg(distinct sq) squat, json_agg(distinct bp) bench, json_agg(DISTINCT sessions) date FROM deadlift dl FULL JOIN bench bp USING (uid) FULL JOIN squat sq USING (uid) FULL JOIN sessions USING (uid) WHERE uid = ${id};`,
+    //     (err, result) => {
+    //       release();
+    //       // console.log(result.rows)
+    //       if (err) throw err;
+    //       res.status(200).json(result.rows);
+    //     }
+    //   );
+    // });
   });
 
   app.post("/sessions/:id", (req, res, next) => {
