@@ -44,4 +44,4 @@ const configHEROKU = {
 // const userPool = new Pool(userDB)
 const userPool = new Pool(configHEROKU)
 
-module.exports = {pool, userPool};
+module.exports = {userPool};
