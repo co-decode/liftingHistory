@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { backend } from "./utils/variables";
 
 const LOG = "LOG";
 
@@ -39,7 +40,7 @@ export default function Edit({
     axios({
       method: "get",
       withCredentials: true,
-      url: "http://localhost:3001/authenticated",
+      url: `${backend}/authenticated`,
     }).then((res) => {
       if (!res.data) link("/login");
     });
@@ -304,12 +305,12 @@ export default function Edit({
       method: "PUT",
       data: update,
       withCredentials: true,
-      url: `http://localhost:3001/sessions/${user.uid}/${edit}`,
+      url: `${backend}/sessions/${user.uid}/${edit}`,
     }).then((res) =>
       axios({
         method: "get",
         withCredentials: true,
-        url: `http://localhost:3001/sessions/${user.uid}`,
+        url: `${backend}/sessions/${user.uid}`,
       }).then((res) => {
         setGet(res.data[0]);
         setEdit(0);

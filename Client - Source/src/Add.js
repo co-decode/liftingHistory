@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { backend } from "./utils/variables";
 
 export default function Add({ get, setPage, setGet, setDateFilter}) {
   const dateRefs = useRef({ date: null, time: null });
@@ -15,7 +16,7 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
     axios({
       method: "get",
       withCredentials: true,
-      url: "http://localhost:3001/authenticated",
+      url: `${backend}/authenticated`,
     }).then((res) => {
       if (!res.data) link("/login");
       else if (res.data) {
@@ -40,14 +41,14 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
         date: submission.date,
       },
       withCredentials: true,
-      url: `http://localhost:3001/sessions/${user.uid}`,
+      url: `${backend}/sessions/${user.uid}`,
     }).then((res) => {
       setResponse(res.data);
     }).then((res) =>
     axios({
       method: "get",
       withCredentials: true,
-      url: `http://localhost:3001/sessions/${user.uid}`,
+      url: `${backend}/sessions/${user.uid}`,
     }).then((res) => {
       setGet(res.data[0]);
       redirect && setPage("LOG")
@@ -138,7 +139,6 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
   return (
     <div>
       {/* <button onClick={() => link("/log")}>Go back</button> */}
-      {/* <button onClick={() => console.log(JSON.stringify(get))}>Get</button> */}
       <ExerciseAdd exArr={exArr} setExArr={setExArr} />
       <label>Redirect on submit
         <input type="checkbox" onChange={(e)=>setRedirect(e.target.checked)} />

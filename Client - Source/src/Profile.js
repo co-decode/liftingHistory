@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { backend } from "./utils/variables";
 
 export default function Profile({user}) {
     const [response, setResponse] = useState(null)
@@ -11,7 +12,7 @@ export default function Profile({user}) {
         axios({
           method: "get",
           withCredentials: true,
-          url: "http://localhost:3001/authenticated",
+          url: `${backend}/authenticated`,
         }).then((res) => {
           if (!res.data) link("/login");
         });
@@ -30,7 +31,7 @@ export default function Profile({user}) {
         axios({
             method: "PUT",
             withCredentials: true,
-            url: `http://localhost:3001/change/${user.uid}`,
+            url: `${backend}/change/${user.uid}`,
             data: {password: input[1]}
         }).then(res=> setResponse(res.data))
     }

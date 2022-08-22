@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { backend } from "./utils/variables";
 
 export default function Logout() {
     const link = useNavigate();
@@ -8,7 +9,7 @@ export default function Logout() {
         axios({
             method:"post",
             withCredentials: true,
-            url:"http://localhost:3001/logout"
+            url:`${backend}/logout`
           }).then((res)=>link('/login'));
     }
 

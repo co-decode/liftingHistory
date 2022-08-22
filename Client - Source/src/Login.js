@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
-import { authenticatedKick } from "./utils/variables";
+import { authenticatedKick, backend } from "./utils/variables";
 
 
 export default function Login() {
@@ -18,7 +18,7 @@ export default function Login() {
     return Axios({
       method:"get",
       withCredentials: true,
-      url: "http://localhost:3001/authenticated"
+      url: `${backend}/authenticated`
     }).then(res => {
       !!res.data && link(authenticatedKick);
     })
@@ -47,7 +47,7 @@ export default function Login() {
         password
       },
       withCredentials: true,
-      url:"http://localhost:3001/login"
+      url:`${backend}/login`
     }).then(res=>setResponse(res.data?.message)).then(callServer)
   }
 

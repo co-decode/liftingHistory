@@ -9,6 +9,7 @@ import Breakdown from "./Breakdown";
 import Calendar from "./Calendar";
 import Equivalence from "./Equivalence/Equivalence";
 import Profile from "./Profile";
+import { backend } from "./utils/variables";
 
 const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
   "PROFILE",
@@ -53,7 +54,7 @@ export default function Log() {
     axios({
       method: "get",
       withCredentials: true,
-      url: "http://localhost:3001/authenticated",
+      url: `${backend}/authenticated`,
     }).then((res) => {
       if (!res.data) link("/login");
       else {
@@ -61,7 +62,7 @@ export default function Log() {
         axios({
           method: "get",
           withCredentials: true,
-          url: `http://localhost:3001/sessions/${res.data.uid}`,
+          url: `${backend}/sessions/${res.data.uid}`,
         }).then((res) => {
           if (res.data[0].date) {
             setGet(res.data[0]);
@@ -114,12 +115,12 @@ export default function Log() {
     axios({
       method: "delete",
       withCredentials: true,
-      url: `http://localhost:3001/sessions/${sid}`,
+      url: `${backend}/sessions/${sid}`,
     }).then((res) => {
       axios({
         method: "get",
         withCredentials: true,
-        url: `http://localhost:3001/sessions/${user.uid}`,
+        url: `${backend}/sessions/${user.uid}`,
       }).then((res) => {
         setGet(res.data[0]);
       });

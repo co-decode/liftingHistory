@@ -4,13 +4,14 @@ import Log from "./Log";
 import axios from "axios";
 import React, { useCallback } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { backend } from "./utils/variables";
 
 export default function App() {
   const callServer = useCallback( async () => {
     return axios({
       method:"get",
       withCredentials: true,
-      url: "http://localhost:3001/authenticated"
+      url: `${backend}/authenticated`
     }).then(res => {
       return !!res.data
     })

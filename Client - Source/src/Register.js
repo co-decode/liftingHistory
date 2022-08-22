@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import { authenticatedKick } from "./utils/variables";
+import { authenticatedKick, backend } from "./utils/variables";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -15,7 +15,7 @@ export default function Register() {
     Axios({
       method: "get",
       withCredentials: true,
-      url: "http://localhost:3001/authenticated",
+      url: `${backend}/authenticated`,
     })
       .then((res) => {
         !!res.data && link(authenticatedKick);
@@ -40,7 +40,7 @@ export default function Register() {
         password,
       },
       withCredentials: true,
-      url: "http://localhost:3001/register",
+      url: `${backend}/register`,
     }).then((res) => {
       res.data === "Registration Successful"
         ? link("/login")
