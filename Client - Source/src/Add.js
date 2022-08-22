@@ -124,7 +124,7 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
 
     const submission = { date: time, lifts };
 
-    if (get.date.some(session =>session.date === submission.date.slice(0,19))) {
+    if (get.date?.some(session =>session.date === submission.date.slice(0,19))) {
       setResponse("A session has already been recorded for this Timestamp")
       return
     }
