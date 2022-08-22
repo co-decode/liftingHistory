@@ -20,7 +20,7 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      origin: "*" /* ["http://localhost:3000", "http://localhost:3001"] */, //This'll need to change...
+      origin: ["https://node-lifting-history2.herokuapp.com", "https://lifting-log.netlify.app"],
       credentials: true,
     })
   );
