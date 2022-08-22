@@ -284,6 +284,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
   return exArr.map((exercise) => {
     
     function returnTemplateButton() {
+      if (!get.date) return null
       if (get.date.every(v=>!v.exercises.includes(exercise))) return null
 
       const mostRecentExerciseSessionSID = get.date
