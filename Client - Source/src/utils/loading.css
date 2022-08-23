@@ -1,0 +1,15 @@
+.spinner {
+    border: 2px transparent solid;
+    border-top-color: grey;
+    border-right-color: grey;
+    height: 20px;
+    width: 20px;
+    border-radius:50%;
+    animation: loading infinite 0.5s linear
+}
+
+@keyframes loading {
+    to {
+        transform: rotate(1turn);
+    }
+}
