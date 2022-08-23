@@ -2,7 +2,7 @@ import React, {useEffect, useState, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
 import { authenticatedKick, backend } from "./utils/variables";
-import Spinner from "./utils/spinner";
+import Spinner from "./utils/Spinner";
 
 
 export default function Login() {
@@ -20,6 +20,7 @@ export default function Login() {
       withCredentials: true,
       url: `${backend}/authenticated`
     }).then(res => {
+      setLoading(false)
       !!res.data && link(authenticatedKick);
     })
   }, [link])
@@ -29,7 +30,6 @@ export default function Login() {
   // On mount, page should check whether the server has a session already running.
   useEffect(()=> {
     callServer()
-    .then(()=>setLoading(false))
   },[callServer])
 
   const handleChangeUser = (e) => {

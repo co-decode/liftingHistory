@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Spinner from "./utils/spinner";
+import Spinner from "./utils/Spinner";
 import { backend } from "./utils/variables";
 
 export default function Profile({user}) {

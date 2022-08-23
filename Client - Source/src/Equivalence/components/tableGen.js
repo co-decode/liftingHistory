@@ -1,5 +1,5 @@
 import React from "react";
-import FormDisplay from './subcomponents/formDisplay';
+// import FormDisplay from './subcomponents/formDisplay';
 
 
 const TableGen = ({ reps, setReps, min, step, max, handleMin, handleMax, handleStep }) => {

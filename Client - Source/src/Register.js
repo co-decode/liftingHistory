@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { authenticatedKick, backend } from "./utils/variables";
-import Spinner from "./utils/spinner";
+import Spinner from "./utils/Spinner";
 
 export default function Register() {
   const [username, setUsername] = useState("");

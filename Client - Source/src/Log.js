@@ -10,7 +10,7 @@ import Calendar from "./Calendar";
 import Equivalence from "./Equivalence/Equivalence";
 import Profile from "./Profile";
 import { backend } from "./utils/variables";
-import Spinner from "./utils/spinner";
+import Spinner from "./utils/Spinner";
 
 const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
   "PROFILE",

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { backend } from "./utils/variables";
-import Spinner from "./utils/spinner";
+import Spinner from "./utils/Spinner";
 
 export default function Add({ get, setPage, setGet, setDateFilter}) {
   const dateRefs = useRef({ date: null, time: null });
