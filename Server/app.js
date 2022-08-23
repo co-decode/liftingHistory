@@ -134,7 +134,7 @@ function makeApp(database,  ) {
 
   app.post("/register", async (req, res) => {
     try {
-      if (!req.body.username || !req.body.password) {
+      if (!req.body.username || req.body.password.length < 1) {
         return res.send("Missing Credentials");
       } else {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
