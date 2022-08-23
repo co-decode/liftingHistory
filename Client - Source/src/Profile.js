@@ -1,19 +1,23 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Spinner from "./utils/spinner";
 import { backend } from "./utils/variables";
 
 export default function Profile({user}) {
     const [response, setResponse] = useState(null)
     const [input, setInput] = useState({1: null, 2: null})
+    const [loading, setLoading] = useState(false)
     const link = useNavigate();
 
     useEffect(() => {
+      setLoading(true)
         axios({
           method: "get",
           withCredentials: true,
           url: `${backend}/authenticated`,
         }).then((res) => {
+          setLoading(false)
           if (!res.data) link("/login");
         });
       }, [link]);
@@ -28,12 +32,13 @@ export default function Profile({user}) {
             setResponse("Cannot submit an empty field")
             return
         }
+        setLoading(true)
         axios({
             method: "PUT",
             withCredentials: true,
             url: `${backend}/change/${user.uid}`,
             data: {password: input[1]}
-        }).then(res=> setResponse(res.data))
+        }).then(res=> {setResponse(res.data); setLoading(false)})
     }
   return (
     <>
@@ -50,6 +55,7 @@ export default function Profile({user}) {
         <button>Submit Change</button>
       </form>
       {response}
+      {loading && <Spinner/>}
     </>
   );
 }

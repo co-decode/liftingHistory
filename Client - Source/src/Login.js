@@ -2,6 +2,7 @@ import React, {useEffect, useState, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
 import { authenticatedKick, backend } from "./utils/variables";
+import Spinner from "./utils/spinner";
 
 
 export default function Login() {
@@ -12,7 +13,6 @@ export default function Login() {
   const link = useNavigate();
   const [loading, setLoading] = useState(true);
 
-  // Test below vv
   
   const callServer = useCallback( async () => {
     return Axios({
@@ -55,7 +55,7 @@ export default function Login() {
 
   return (
     <>
-    {loading ? <p>"Awaiting server response..."</p> :
+    {loading ? <><p>"Awaiting server response..."</p><Spinner/></> :
       <>
         <h1>Lifting Log</h1>
         <div>

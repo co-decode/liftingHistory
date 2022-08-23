@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { authenticatedKick, backend } from "./utils/variables";
+import Spinner from "./utils/spinner";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -48,7 +49,7 @@ export default function Register() {
     });
   };
 
-  if (loading) return <strong>Awaiting server response...</strong>;
+  if (loading) return <><strong>Awaiting server response...</strong><Spinner/></>;
 
   return (
     <>

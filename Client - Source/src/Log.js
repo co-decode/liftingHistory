@@ -10,6 +10,7 @@ import Calendar from "./Calendar";
 import Equivalence from "./Equivalence/Equivalence";
 import Profile from "./Profile";
 import { backend } from "./utils/variables";
+import Spinner from "./utils/spinner";
 
 const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
   "PROFILE",
@@ -109,7 +110,6 @@ export default function Log() {
   }, [page]);
 
   function deleteSession(sid) {
-    // console.log("clicked");
     if (!window.confirm("Are you sure you want to delete this session?"))
       return;
     axios({
@@ -130,9 +130,6 @@ export default function Log() {
   function returnSid() {
     let sidList = get.date
       .filter((v) => v.date >= dateFilter.from && v.date <= dateFilter.to)
-      /* .filter((v) =>
-        exerciseFilter.every((exercise) => !v.exercises.includes(exercise))
-      ) */
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .map((v) => v.sid);
 
@@ -380,7 +377,7 @@ export default function Log() {
     
   }
 
-  if (get === null) return <strong>Loading...</strong>;
+  if (get === null) return <><strong>Loading...</strong><Spinner/></>;
 
   return (
     <div>

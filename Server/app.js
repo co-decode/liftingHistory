@@ -37,8 +37,6 @@ function makeApp(database,  ) {
       saveUninitialized: false,
     })
   );
-  //Look up more about the secret ^^^, maybe heroku will provide an environment variable?
-  // Currently Bcrypt is generating a new secret each time the app is started.
   app.use(passport.initialize());
   app.use(passport.session());
 
@@ -52,7 +50,6 @@ function makeApp(database,  ) {
         `select json_agg(distinct dl) deadlift, json_agg(distinct sq) squat, json_agg(distinct bp) bench, json_agg(DISTINCT sessions) date FROM deadlift dl FULL JOIN bench bp USING (uid) FULL JOIN squat sq USING (uid) FULL JOIN sessions USING (uid) WHERE uid = ${id};`,
         (err, result) => {
           release();
-          // console.log(result.rows)
           if (err) throw err;
           res.status(200).json(result.rows);
         }
@@ -114,7 +111,7 @@ function makeApp(database,  ) {
   app.delete("/sessions/:sid", async (req, res, next) => {
     const { sid } = req.params;
     try {
-      const returned = await database.deleteQuery(sid);
+      await database.deleteQuery(sid);
       res.status(200).send("Session removed");
     } catch (error) {
       res.send("Failure");
@@ -129,12 +126,10 @@ function makeApp(database,  ) {
       }
       if (!user) {
         res.send(info);
-        // console.log(info)
       } else {
         req.logIn(user, (err) => {
           if (err) throw err;
           res.send("Successfully Authenticated");
-          // console.log(req.user, res.json(info))
         });
       }
     })(req, res, next);
@@ -209,7 +204,6 @@ function makeApp(database,  ) {
       }
       res.send("Logged Out");
     });
-    // console.log("Logged Out");
   });
 
   app.get("/authenticated", (req, res, next) => {
@@ -223,58 +217,3 @@ function makeApp(database,  ) {
   return app;
 }
 module.exports = makeApp;
-
-// 1 - DONE - Users should come from postgres now.
-// 2 - Sessions queries should be passed a user.
-// DONE - Get all sessions for user
-// DEFER... when I need it - Get single session for user by xdatex -> sid.
-// DONE - Post session from user, client needs to pass date.
-// DONE - Delete session by user and user id
-// DONE - Update session by user and user id, and lifts object
-
-// 2.5 = The client should deliver data in the form required by the server logic, also be sure to lock the passing of sensitive information to client logic, users should not be ablfe to delete random session ids, etc.
-// DONE - Receive and display all sessions for user
-// Add a session from the client
-// Needs to receive client ID from the authenticated check on the front end
-// DONE - Delete a session from the clienT
-// DONE - Update a sessions from the client - Need to add lifts and remove lifts from update object.
-
-// 3 - I should clean up the state of the front end, keep it as an object.
-
-// 4 - Testing after that? Ha, probably needs a start from the beginning. I need more tutorial experience.
-// Still should see if my current tests can be adapted to my new users table.
-// 5 - I would like to have a friending feature, along with instant messaging with sockets.
-// 6 - Should package it up with docker. Yes
-// 7 - Should set up Travis CI. XXX
-// 8 - Should implement redis, even if it doesn't improve anything... Okay... I want a use case though.
-
-//     (username) => {
-//         let user
-//         userPool.query(`SELECT * FROM users WHERE username = '${username}'`,
-//         (err, result) => {
-//             if (err) throw err
-//             user = result.rows[0]
-//         })
-
-//         return user
-//     },
-//     id => userPool.query(`SELECT uid FROM users`, (error, result) => {
-//         if (error) throw error
-//         return result.rows[0]
-//     })
-// )
-
-// const users = []
-
-// app.use('/sessions', sessionRoutes);
-
-// app.post('/users', async (req,res) => {
-//     const { password, username } = req.body
-//     if (!password || !username) {
-//         res.sendStatus(400);
-//         return
-//     }
-//     const userId = await database.createUser(username, password);
-
-//     res.send({userId})
-// })

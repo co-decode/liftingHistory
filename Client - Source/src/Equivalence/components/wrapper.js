@@ -9,7 +9,6 @@ const Wrapper = () => {
         e.preventDefault()
         e.stopImmediatePropagation()
         const options = document.getElementById("options");
-        console.log(options)
         options.style.getPropertyValue('display') === 'grid'
           ? options.style.setProperty('display', 'none')
           : options.style.setProperty('display', 'grid')

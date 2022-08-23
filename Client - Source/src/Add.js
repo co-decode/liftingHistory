@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { backend } from "./utils/variables";
+import Spinner from "./utils/spinner";
 
 export default function Add({ get, setPage, setGet, setDateFilter}) {
   const dateRefs = useRef({ date: null, time: null });
@@ -79,7 +80,7 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
 
     if (!datePart || !timePart) {
       setResponse("Timestamp is invalid");
-      return console.log("Timestamp is invalid");
+      return;
     }
     const time = new Date(
       new Date(datePart).setTime(
@@ -134,11 +135,10 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
     }
   };
 
-  if (!user) return <strong>Loading...</strong>;
+  if (!user) return (<><strong>Loading...</strong><Spinner/></>);
 
   return (
     <div>
-      {/* <button onClick={() => link("/log")}>Go back</button> */}
       <ExerciseAdd exArr={exArr} setExArr={setExArr} />
       <label>Redirect on submit
         <input type="checkbox" onChange={(e)=>setRedirect(e.target.checked)} />
@@ -349,7 +349,6 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
         />
         {variationOptions(exercise, variationObject[exercise], exerciseRefs)}
         {fields[exercise] ? lengthenArr(fields[exercise], exercise) : null}
-        {/* <button onClick={(e)=>getPrevTemplate(e)}>{fields[exercise] < sets ? "Use Previous Template" : "Fill with Previous Session"}</button> */}
         {returnTemplateButton()}
       </fieldset>
     );

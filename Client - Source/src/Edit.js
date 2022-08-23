@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { backend } from "./utils/variables";
+import Spinner from "./utils/spinner";
 
 const LOG = "LOG";
 
@@ -34,14 +35,17 @@ export default function Edit({
   const [update, setUpdate] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [fields, setFields] = useState({});
+  const [loading, setLoading] = useState(false)
   const link = useNavigate();
 
   useEffect(() => {
+    setLoading(true)
     axios({
       method: "get",
       withCredentials: true,
       url: `${backend}/authenticated`,
     }).then((res) => {
+      setLoading(false)
       if (!res.data) link("/login");
     });
   }, [link]);
@@ -301,6 +305,8 @@ export default function Edit({
       return;
     }
 
+    setLoading(true)
+
     axios({
       method: "PUT",
       data: update,
@@ -312,6 +318,7 @@ export default function Edit({
         withCredentials: true,
         url: `${backend}/sessions/${user.uid}`,
       }).then((res) => {
+        setLoading(false)
         setGet(res.data[0]);
         setEdit(0);
         setPage(LOG)
@@ -537,10 +544,6 @@ export default function Edit({
       >
         Cancel and view Breakdown
       </button>
-      {/* <button onClick={() => console.log(update, typeof update.date)}>
-        log Update Object
-      </button> */}
-      {/* <button onClick={() => console.log(get.date.filter(v=>v.sid === edit)[0].exercises)}>log get Object</button> */}
       <button onClick={() => submitUpdate(update)}>Submit Update</button>
       {!update
         ? null
@@ -578,6 +581,7 @@ export default function Edit({
             })}
       {returnSid(get, [edit])}
       {feedback}
+      {loading && <Spinner/>}
     </div>
   );
 }
