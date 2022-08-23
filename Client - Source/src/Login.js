@@ -40,6 +40,7 @@ export default function Login() {
   }
 
   const login = () => {
+    setLoading(true)
     Axios({
       method:"post",
       data: {
@@ -48,7 +49,7 @@ export default function Login() {
       },
       withCredentials: true,
       url:`${backend}/login`
-    }).then(res=>setResponse(res.data?.message)).then(callServer)
+    }).then(res=>{setLoading(false); setResponse(res.data?.message)}).then(callServer)
   }
 
   

@@ -34,6 +34,7 @@ export default function Register() {
   };
 
   const register = () => {
+    setLoading(true)
     Axios({
       method: "post",
       data: {
@@ -43,6 +44,7 @@ export default function Register() {
       withCredentials: true,
       url: `${backend}/register`,
     }).then((res) => {
+      setLoading(false);
       res.data === "Registration Successful"
         ? link("/login")
         : setResponse(res.data);

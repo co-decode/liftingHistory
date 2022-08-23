@@ -11,6 +11,7 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
   const [response, setResponse] = useState(null);
   const [user, setUser] = useState(null);
   const [redirect, setRedirect] = useState(false);
+  const [loading, setLoading] = useState(false)
   const link = useNavigate();
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
   }, [response]);
 
   function post(submission) {
+    setLoading(true)
     axios({
       method: "post",
       data: {
@@ -44,6 +46,7 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
       withCredentials: true,
       url: `${backend}/sessions/${user.uid}`,
     }).then((res) => {
+      setLoading(false)
       setResponse(res.data);
     }).then((res) =>
     axios({
