@@ -156,6 +156,7 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
         )}
       </form>
       {response && response}
+      {loading && <Spinner/>}
     </div>
   );
 }

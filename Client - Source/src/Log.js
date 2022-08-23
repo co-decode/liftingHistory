@@ -36,6 +36,7 @@ export default function Log() {
   const [user, setUser] = useState(null);
   const [varFilter, setVarFilter] = useState({});
   const [goToMonthYear, setGoToMonthYear] = useState(null);
+  const [loading, setLoading] = useState(false);
   const editRefs = useRef({});
   const link = useNavigate();
 
@@ -112,6 +113,7 @@ export default function Log() {
   function deleteSession(sid) {
     if (!window.confirm("Are you sure you want to delete this session?"))
       return;
+    setLoading(true)
     axios({
       method: "delete",
       withCredentials: true,
@@ -122,6 +124,7 @@ export default function Log() {
         withCredentials: true,
         url: `${backend}/sessions/${user.uid}`,
       }).then((res) => {
+        setLoading(false);
         setGet(res.data[0]);
       });
     });
@@ -382,6 +385,7 @@ export default function Log() {
   return (
     <div>
       <h1>Lifting Log</h1>
+      {loading && <Spinner/>}
       {pageButtons()}
       <Logout />
       {returnComponent()}
