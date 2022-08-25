@@ -20,7 +20,7 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      origin: ["http://localhost:3000", "http://localhost:3001"], //This'll need to change...
+      origin: ["https://node-lifting-history2.herokuapp.com", "https://lifting-log.netlify.app"],
       credentials: true,
     })
   );
@@ -42,19 +42,16 @@ function makeApp(database,  ) {
 
   // -- CRUD Endpoints --
 
+  app.get("/", (req, res) => {
+    res.send("Hello, world!")
+  })
+
   app.get("/sessions/:id", (req, res, next) => {
     const id = parseInt(req.params.id);
-    userPool.connect((err, client, release) => {
+    userPool.query(`select json_agg(distinct dl) deadlift, json_agg(distinct sq) squat, json_agg(distinct bp) bench, json_agg(DISTINCT sessions) date FROM deadlift dl FULL JOIN bench bp USING (uid) FULL JOIN squat sq USING (uid) FULL JOIN sessions USING (uid) WHERE uid = ${id};`, (err, result) => {
       if (err) throw err;
-      client.query(
-        `select json_agg(distinct dl) deadlift, json_agg(distinct sq) squat, json_agg(distinct bp) bench, json_agg(DISTINCT sessions) date FROM deadlift dl FULL JOIN bench bp USING (uid) FULL JOIN squat sq USING (uid) FULL JOIN sessions USING (uid) WHERE uid = ${id};`,
-        (err, result) => {
-          release();
-          if (err) throw err;
-          res.status(200).json(result.rows);
-        }
-      );
-    });
+      res.status(200).json(result.rows);
+    } )
   });
 
   app.post("/sessions/:id", (req, res, next) => {
@@ -111,7 +108,7 @@ function makeApp(database,  ) {
   app.delete("/sessions/:sid", async (req, res, next) => {
     const { sid } = req.params;
     try {
-      await database.deleteQuery(sid);
+      const returned = await database.deleteQuery(sid);
       res.status(200).send("Session removed");
     } catch (error) {
       res.send("Failure");
@@ -137,7 +134,7 @@ function makeApp(database,  ) {
 
   app.post("/register", async (req, res) => {
     try {
-      if (!req.body.username || !req.body.password) {
+      if (!req.body.username || req.body.password.length < 1) {
         return res.send("Missing Credentials");
       } else {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -147,7 +144,7 @@ function makeApp(database,  ) {
           else if (
             results.rows.some((user) => user.username === req.body.username)
           ) {
-            res.send("Registration failed");
+            res.send("Registration failed; the username is already in use");
             return;
           }
           userPool.query(
@@ -217,3 +214,4 @@ function makeApp(database,  ) {
   return app;
 }
 module.exports = makeApp;
+
