@@ -1,13 +1,14 @@
 # My Lifting Record
 
-_An application for recording weightlifting data and tracking progress_
+_An application for recording weightlifting data, tracking progress and planning programs_
 
 ## Technologies Used:
 
 **In the Back End:**
 
+- Evironment: Docker
 - Database: PostgreSQL
-- Server: NodeJS, Express, PG
+- Server: NodeJS, Express, PG, passportJS, bcrypt
 
 **In the Front End:**
 
@@ -19,9 +20,14 @@ _An application for recording weightlifting data and tracking progress_
 **Deployment:**
 
 - Database and Server: Heroku
-- Client: Github-Pages
+- Client: Netlify
+
+Testing: Jest, React Testing Library, Supertest
 
 Version Control: Git and Github
+
+## out of date, requires updating...
+VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
 ## Components and Features:
 
