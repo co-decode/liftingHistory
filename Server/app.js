@@ -52,19 +52,11 @@ function makeApp(database,  ) {
     try {
     const id = parseInt(req.params.id);
     const s = new Set()
-    
     const {rows:sessions} = await userPool.query(`select * from sessions where uid = ${id};`)
-    console.time('this')
+    if (sessions.length === 0) return res.status(200).send("There are no sessions yet")
     sessions.forEach((v)=> v.exercises.forEach(ex => s.add(ex)))
-    console.timeEnd('this')
-    
-    // console.log(s, "sess")
-    // console.log(createGetFromExercises(Array.from(s),id),"ex")
-    const {rows: exercises} = await userPool.query(createGetFromExercises(Array.from(s), id))
-
-    console.log(JSON.stringify( {sessions, exercises}))
-    
-    res.status(200).json({sessions, exercises});
+    const {rows:exercises} = await userPool.query(createGetFromExercises(Array.from(s), id))
+    return res.status(200).json({sessions, exercises});
     } catch {
       throw new Error('Something went wrong')
     }

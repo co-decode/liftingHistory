@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3001/sessions/3
+GET http://localhost:3001/sessions/2
 
 ###
 
