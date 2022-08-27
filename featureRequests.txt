@@ -17,8 +17,8 @@ VERSION 3:
             - Flies    - Back Extension    
 
             And if anything is important enough, I can just make another category...
-        ->> NEXT: Add these tables to the database.
-        Alter Add component to allow entries into the new tables
+        DONE: Add these tables to the database.
+        ->> NEXT: Alter Add component to allow entries into the new tables
         Fix the client side, so that it is looking into the sessions property, not the date
             AND fix the limited exercise call... use that global variable... or construct the array from exercise properties
             (could also send the unique array down from the server... but it shouldn't be too expensive to go Object.keys(get.exercises))
