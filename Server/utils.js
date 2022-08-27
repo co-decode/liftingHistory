@@ -1,4 +1,4 @@
-
+const log = (statement) => console.log(statement)
 
 const lifts =  {deadlift: {mass: [155, 160, 167.5, 160], reps: [1,1,1,1], variation: ["Conventional", "Mixed"]},
 bench: {mass: [80, 85, 90, 95, 90, 90], reps: [5,3,1,1,1,1], variation: ["Wide Grip", "Flat"]},
@@ -57,4 +57,17 @@ function createDeleteFromArray(sid, lostLifts) {
 
 // console.log(createDeleteFromArray(19, ["deadlift", "squat"]))
 
-module.exports = {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray}
+function createGetFromExercises(arrayFromSet, uid) {
+    let output = `select`
+    arrayFromSet.forEach((v, i, a) => i === a.length - 1 
+        ? output += (` json_agg(distinct ${v}) ${v}`) 
+        : output += (` json_agg(distinct ${v}) ${v},`))
+    arrayFromSet.forEach((v,i,a) => i === 0
+        ? output += (` FROM ${v}`)
+        : output += (` FULL JOIN ${v} USING (uid)`))
+    output += (` WHERE uid = ${uid};`)
+    return output
+}   
+// log(createGetFromExercises(['bench', 'deadlift'], 3))
+
+module.exports = {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray, createGetFromExercises}

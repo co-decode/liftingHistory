@@ -11,6 +11,7 @@ const {
   createInsertFromObject,
   createUpdateFromObject,
   createDeleteFromArray,
+  createGetFromExercises
 } = require("./utils");
 
 function makeApp(database,  ) {
@@ -47,12 +48,26 @@ function makeApp(database,  ) {
     res.send("Hello, world!")
   })
 
-  app.get("/sessions/:id", (req, res, next) => {
+  app.get("/sessions/:id", async (req, res, next) => {
+    try {
     const id = parseInt(req.params.id);
-    userPool.query(`select json_agg(distinct dl) deadlift, json_agg(distinct sq) squat, json_agg(distinct bp) bench, json_agg(DISTINCT sessions) date FROM deadlift dl FULL JOIN bench bp USING (uid) FULL JOIN squat sq USING (uid) FULL JOIN sessions USING (uid) WHERE uid = ${id};`, (err, result) => {
-      if (err) throw err;
-      res.status(200).json(result.rows);
-    } )
+    const s = new Set()
+    
+    const {rows:sessions} = await userPool.query(`select * from sessions where uid = ${id};`)
+    console.time('this')
+    sessions.forEach((v)=> v.exercises.forEach(ex => s.add(ex)))
+    console.timeEnd('this')
+    
+    // console.log(s, "sess")
+    // console.log(createGetFromExercises(Array.from(s),id),"ex")
+    const {rows: exercises} = await userPool.query(createGetFromExercises(Array.from(s), id))
+
+    console.log(JSON.stringify( {sessions, exercises}))
+    
+    res.status(200).json({sessions, exercises});
+    } catch {
+      throw new Error('Something went wrong')
+    }
   });
 
   app.post("/sessions/:id", (req, res, next) => {
