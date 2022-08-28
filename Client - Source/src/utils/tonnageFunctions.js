@@ -13,7 +13,7 @@ export default function intervalTon(
   intervalFormat,
   intervalLengthInDays,
   begin,
-  showZeroes,
+  // showZeroes,
   variationFilter
 ) {
   function getCustomInterval(date) {
@@ -40,7 +40,7 @@ export default function intervalTon(
     else if (intervalFormat === session)
       return `${new Date(date).toDateString()}`;
   }
-  const sidsTagged = get.date
+  const sidsTagged = get.sessions
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .map((v) => {
       return {
@@ -56,7 +56,7 @@ export default function intervalTon(
   }, {});
 
   const exerciseArray = exerciseList.filter((exercise) =>
-    get.date.some((sess) => sess.exercises.includes(exercise))
+    get.sessions.some((sess) => sess.exercises.includes(exercise))
   );
 
   return (
@@ -66,34 +66,34 @@ export default function intervalTon(
           <div key={`${exercise}`}>
             {" "}
             <strong>
-              {exercise[0].toUpperCase() + exercise.slice(1) + ": "}
+              {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ") + ": "}
             </strong>
             {Object.keys(sidsBinned).map((interval) => {
-              const sidsByExercise = get.date
+              const sidsByExercise = get.sessions
                 .filter((val) => sidsBinned[interval].includes(val.sid))
                 .filter((val) => val.exercises.includes(exercise));
 
-              if (!showZeroes) {
+              // if (!showZeroes) {
                 if (sidsByExercise.length === 0) return null;
-              }
+              // }
 
               let exerciseObjectsForSid = sidsByExercise.map((sidV) =>
-                get[exercise].filter((val) => val.sid === sidV.sid)
+                get[exercise].find((val) => val.sid === sidV.sid)
               );
 
               if (variationFilter[exercise]) {
                 exerciseObjectsForSid = exerciseObjectsForSid.filter((v) =>
-                  v[0].variation.includes(variationFilter[exercise])
+                  v.variation.includes(variationFilter[exercise])
                 );
               }
 
               const totalReps = exerciseObjectsForSid.reduce((acc, v) => {
-                return acc + v[0].reps.reduce((a, val) => a + val, 0);
+                return acc + v.reps.reduce((a, val) => a + val, 0);
               }, 0);
               const totalMass = exerciseObjectsForSid.reduce((acc, v) => {
                 return (
                   acc +
-                  v[0].reps.reduce((a, val, ind) => a + val * v[0].mass[ind], 0)
+                  v.reps.reduce((a, val, ind) => a + val * v.mass[ind], 0)
                 );
               }, 0);
               return (
@@ -111,7 +111,7 @@ export default function intervalTon(
                     </span>
                     <span className={`tableMax`}>
                       {exerciseObjectsForSid.reduce((intervalMax, v) => {
-                        const sessionMax = v[0].mass.reduce(
+                        const sessionMax = v.mass.reduce(
                           (a, val) => (val > a ? val : a),
                           0
                         );
@@ -125,7 +125,7 @@ export default function intervalTon(
                       <span className={`tableAvMax`}>
                         {`${(
                           exerciseObjectsForSid.reduce((sessionMaxes, v) => {
-                            const sessionMax = v[0].mass.reduce((a, val) =>
+                            const sessionMax = v.mass.reduce((a, val) =>
                               Math.max(a, val)
                             );
                             return sessionMaxes + sessionMax;
@@ -136,11 +136,11 @@ export default function intervalTon(
                     <span className={`tableRepsPerSet`}>
                       {(
                         exerciseObjectsForSid.reduce((acc, v) => {
-                          const sessionReps = v[0].reps.reduce(
+                          const sessionReps = v.reps.reduce(
                             (a, val) => a + val,
                             0
                           );
-                          const sessionSets = v[0].reps.length;
+                          const sessionSets = v.reps.length;
                           return acc + sessionReps / sessionSets;
                         }, 0) / exerciseObjectsForSid.length
                       ).toFixed(2)}

@@ -5,7 +5,7 @@ import * as d3 from "d3";
 export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
   const svgRef = useRef();
 
-  const sortedSessions = get.date.sort(
+  const sortedSessions = get.sessions.sort(
     (a, b) => new Date(a.date) - new Date(b.date)
   );
   const mostRecentSessionDate = new Date(sortedSessions.at(-1).date);

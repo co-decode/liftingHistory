@@ -252,7 +252,7 @@ ALTER TABLE ONLY public.sessions
 -- face_pull
 -- hip_thrust
 -- hip_abduction
--- hip_adduction
+-- adductors
 -- reverse_flies
 -- rotator_cuff
 -- pull_over
@@ -384,7 +384,7 @@ CREATE TABLE public.hip_abduction (
     reps integer[] NOT NULL,
     variation character varying(64)[] NOT NULL
 );
-CREATE TABLE public.hip_adduction (
+CREATE TABLE public.adductors (
     uid integer,
     sid integer,
     mass numeric(6,2)[] NOT NULL,
@@ -491,8 +491,8 @@ ALTER TABLE ONLY public.hip_thrust
     ADD CONSTRAINT sid_ukey_hip_thrust UNIQUE (sid);
 ALTER TABLE ONLY public.hip_abduction
     ADD CONSTRAINT sid_ukey_hip_abduction UNIQUE (sid);
-ALTER TABLE ONLY public.hip_adduction
-    ADD CONSTRAINT sid_ukey_hip_adduction UNIQUE (sid);
+ALTER TABLE ONLY public.adductors
+    ADD CONSTRAINT sid_ukey_adductors UNIQUE (sid);
 ALTER TABLE ONLY public.reverse_flies
     ADD CONSTRAINT sid_ukey_reverse_flies UNIQUE (sid);
 ALTER TABLE ONLY public.rotator_cuff
@@ -548,7 +548,7 @@ ALTER TABLE ONLY public.hip_thrust
     ADD CONSTRAINT fk_sid FOREIGN KEY (sid) REFERENCES public.sessions(sid);
 ALTER TABLE ONLY public.hip_abduction
     ADD CONSTRAINT fk_sid FOREIGN KEY (sid) REFERENCES public.sessions(sid);
-ALTER TABLE ONLY public.hip_adduction
+ALTER TABLE ONLY public.adductors
     ADD CONSTRAINT fk_sid FOREIGN KEY (sid) REFERENCES public.sessions(sid);
 ALTER TABLE ONLY public.reverse_flies
     ADD CONSTRAINT fk_sid FOREIGN KEY (sid) REFERENCES public.sessions(sid);
@@ -606,7 +606,7 @@ ALTER TABLE ONLY public.hip_thrust
     ADD CONSTRAINT fk_uid FOREIGN KEY (uid) REFERENCES public.users(uid);
 ALTER TABLE ONLY public.hip_abduction
     ADD CONSTRAINT fk_uid FOREIGN KEY (uid) REFERENCES public.users(uid);
-ALTER TABLE ONLY public.hip_adduction
+ALTER TABLE ONLY public.adductors
     ADD CONSTRAINT fk_uid FOREIGN KEY (uid) REFERENCES public.users(uid);
 ALTER TABLE ONLY public.reverse_flies
     ADD CONSTRAINT fk_uid FOREIGN KEY (uid) REFERENCES public.users(uid);

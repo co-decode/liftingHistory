@@ -35,7 +35,7 @@ export default function Graph({ get }) {
   });
 
   function dateInitialiser(date) {
-    const stringsToDates = get.date.map((v) => new Date(v.date));
+    const stringsToDates = get.sessions.map((v) => new Date(v.date));
 
     function isoSlicer(dateObject) {
       return dateObject.toISOString().slice(0, 10);
@@ -91,6 +91,7 @@ export default function Graph({ get }) {
       scales: {
         x,
         y1: {
+          min: 0,
           type: "linear",
           display: "auto",
           position: "left",
@@ -98,11 +99,12 @@ export default function Graph({ get }) {
             drawOnChartArea: true,
           },
           ticks: {
-            stepSize: 1,
+            precision: 0,
           },
           grace: "5%",
         },
         y: {
+          min: 0,
           type: "linear",
           display: "auto",
           position: "left",
@@ -113,7 +115,7 @@ export default function Graph({ get }) {
             callback: function (value, index, ticks) {
               return value + ` kg`;
             },
-            stepSize: 1,
+            precision: 0
           },
         },
       },
@@ -144,7 +146,6 @@ export default function Graph({ get }) {
         const monthsBetween =
           lastDate.getMonth() - firstDate.getMonth() + yearDifference * 12;
         return monthsBetween;
-        //
       } else if (["WEEK", "CUSTOM"].includes(input.interval)) {
         const yearDifference = lastDate.getFullYear() - firstDate.getFullYear();
         const intervalDifference =
@@ -156,34 +157,39 @@ export default function Graph({ get }) {
     }
 
     const sessionList = dataRange.apply
-      ? get.date.filter(
+      ? get.sessions.filter(
           (sess) =>
             new Date(sess.date) >= new Date(dataRange.earliest) &&
             new Date(sess.date) <= new Date(dataRange.latest)
         )
-      : get.date;
+      : get.sessions;
 
     const sessionListFiltered =
       input.exercise === "ALL"
         ? sessionList
         : sessionList.filter((sess) => sess.exercises.includes(input.exercise));
 
-    const getDataset = (what, input) => {
+    const getDataset = (/* what, */ input) => {
       function returnExerciseObject(getWhat, sid) {
         return get[getWhat].find((entry) => entry.sid === sid);
       }
       function totalMassRepsSets(exerciseObject) {
-        if (what === "mass") {
-          return exerciseObject.reps.reduce(
+        let output = {mass: [], reps: [], sets: []}
+        // if (what === "mass") {
+          //return 
+          output.mass = exerciseObject.reps.reduce(
             (a, v, i) => a + v * exerciseObject.mass[i],
             0
           );
-        } else if (what === "reps")
-          return exerciseObject.reps.reduce((a, v) => {
+        // } else if (what === "reps")
+          // return 
+          output.reps = exerciseObject.reps.reduce((a, v) => {
             return a + v;
           }, 0);
-        else if (what === "sets") return exerciseObject.reps.length;
-        else throw Error;
+        // else if (what === "sets") /* return */ 
+        output.sets = exerciseObject.reps.length;
+        // else throw Error;
+        return output
       }
       function returnTotalSwitch(sid) {
         if (input.exercise === "ALL") {
@@ -192,19 +198,23 @@ export default function Graph({ get }) {
           ).exercises;
           return exerciseCall
             .map((exercise) => {
-              return totalMassRepsSets(returnExerciseObject(exercise, sid));
-            })
+              return totalMassRepsSets(returnExerciseObject(exercise, sid)); //should return an object of numerics: {mass: [for exercse]...}
+            }) // The map becomes an array of objects for each exercise for this session: [{m, r, s}, {m,r,s}]
             .reduce((a, v) => {
-              return a + v;
-            }, 0);
+              Object.keys(a).forEach(key=> a[key] += parseInt(v[key]))
+              return a;
+            }, {mass: 0, reps: 0, sets: 0}); // This can return an object of numeric primitives,each of which will then be pushed to an array.
         } else {
-          return totalMassRepsSets(returnExerciseObject(input.exercise, sid));
+          return totalMassRepsSets(returnExerciseObject(input.exercise, sid)); //currently returning object of numerics for this session: {m,r,s}
         }
       }
+      let output = {mass: [], reps: [], sets: []}
       if (input.interval === "SESSION") {
-        return sessionListFiltered
+        /* return  */sessionListFiltered
           .map((sess) => sess.sid)
-          .map((sid) => returnTotalSwitch(sid));
+          .map((sid) => returnTotalSwitch(sid))
+          .forEach(sess=> Object.keys(output).forEach(key=>output[key].push(sess[key])));
+        return output // [session, session, session]... [{m, r, s}, {m, r, s}...  WANT to become: {m: [...], r: [...]...}
       } else if (["WEEK", "MONTH", "CUSTOM"].includes(input.interval)) {
         const sidsTagged = sessionListFiltered
           .sort(
@@ -261,16 +271,24 @@ export default function Graph({ get }) {
               })
               .map((val) => val.sid))
         );
-        return Object.values(categoryObject).map((array) =>
-          array.reduce((acc, sid) => acc + returnTotalSwitch(sid), 0)
-        );
+        return Object.values(categoryObject).map((array) => //should be an array of sids here
+          array.reduce((acc, sid) => {
+            const total = returnTotalSwitch(sid)
+            Object.keys(acc).forEach(key=> acc[key] += total[key])
+            return acc}, {mass: 0, reps: 0, sets: 0})  //array is reduced to with numerics... {m,r,s}
+          //!
+        ).reduce((a, v) => { // here we have an array of {m,r,s}... we want an object of arrays
+          Object.keys(a).forEach(key=> a[key].push(v[key]))
+          return a;
+        }, {mass: [], reps: [], sets: []}); 
       }
     };
+    const output = getDataset(input)
     const getLabels = (input) => {
       if (input.interval === "SESSION") {
         if (input.exercise === "ALL") {
           return sessionList.map((sess) => new Date(sess.date).toISOString());
-        } else if (["deadlift", "squat", "bench"].includes(input.exercise)) {
+        } else if (Object.keys(get).includes(input.exercise)) {
           return sessionListFiltered.map((sess) =>
             new Date(sess.date).toISOString()
           );
@@ -301,7 +319,7 @@ export default function Graph({ get }) {
           yAxisID: "y",
           xAxisID: "x",
           label: "Tonnage (kg)",
-          data: getDataset("mass", input),
+          data: output.mass, //getDataset("mass", input)
           borderColor: "rgb(75, 192, 192)",
           backgroundColor: "rgb(75, 192, 192)",
           fill: false,
@@ -309,7 +327,7 @@ export default function Graph({ get }) {
         {
           yAxisID: "y1",
           label: "Reps",
-          data: getDataset("reps", input),
+          data: output.reps, //getDataset("reps", input)
           borderColor: "rgb(255, 192, 192)",
           backgroundColor: "rgb(255, 192, 192)",
           fill: false,
@@ -317,7 +335,7 @@ export default function Graph({ get }) {
         {
           yAxisID: "y1",
           label: "Sets",
-          data: getDataset("sets", input),
+          data: output.sets, //getDataset("sets", input)
           borderColor: "rgb(70, 255, 192)",
           backgroundColor: "rgb(70, 255, 192)",
           fill: false,
@@ -354,9 +372,14 @@ export default function Graph({ get }) {
             onChange={(e) => setInput({ ...input, exercise: e.target.value })}
           >
             <option value="ALL">All</option>
-            <option value="deadlift">Deadlift</option>
+            {Object.keys(get).filter(key => key !== "sessions").map((exercise)=> 
+              <option key={`${exercise}_option`} value={`${exercise}`}>
+                {exercise.split("_").map(
+                  word=>word[0].toUpperCase() + word.slice(1)).join(" ")}</option>
+            )}
+            {/* <option value="deadlift">Deadlift</option>
             <option value="squat">Squat</option>
-            <option value="bench">Bench</option>
+            <option value="bench">Bench</option> */}
           </select>
         </label>
       </>

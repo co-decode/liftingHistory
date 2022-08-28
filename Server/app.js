@@ -21,10 +21,11 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      origin: ["https://lifting-history-2-container.herokuapp.com", "https://lifting-log.netlify.app"],
+      origin: ["http://localhost:3000"],
       credentials: true,
     })
   );
+  //"https://lifting-history-2-container.herokuapp.com", "https://lifting-log.netlify.app"
   //"https://node-lifting-history2.herokuapp.com"
 
   app.use(express.json());
@@ -56,7 +57,8 @@ function makeApp(database,  ) {
     if (sessions.length === 0) return res.status(200).send("There are no sessions yet")
     sessions.forEach((v)=> v.exercises.forEach(ex => s.add(ex)))
     const {rows:exercises} = await userPool.query(createGetFromExercises(Array.from(s), id))
-    return res.status(200).json({sessions, exercises});
+    // const exercisesObject = exercises[0]
+    return res.status(200).json({sessions, ...exercises[0]});
     } catch {
       throw new Error('Something went wrong')
     }

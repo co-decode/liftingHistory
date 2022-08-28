@@ -2,26 +2,15 @@ import React, { useState } from "react";
 import Graph from "./Graph";
 import returnTonnage from "./utils/tonnageFunctions";
 import "./Tonnage.css"
+import { variationObject } from "./utils/variables";
 
 export default function Tonnage({ get }) {
   const [page, setPage] = useState("TABLE");
   const [interval, setInterval] = useState(null);
   const [intervalLength, setIntervalLength] = useState([null, null]);
   const [referenceDate, setReferenceDate] = useState(null);
-  const [showZeroes, setShowZeroes] = useState(false);
+  // const [showZeroes, setShowZeroes] = useState(false);
   const [variationFilter, setVariationFilter] = useState({});
-
-  const variationObject = {
-    deadlift: [
-      ["Conventional", "Sumo"],
-      ["Double Overhand", "Mixed Grip", "Straps"],
-    ],
-    squat: [["High Bar", "Front", "Low Bar"]],
-    bench: [
-      ["Close Grip", "Standard", "Wide Grip"],
-      ["Flat", "Incline"],
-    ],
-  };
 
   function returnPageButtons() {
     return (
@@ -91,7 +80,8 @@ export default function Tonnage({ get }) {
               />
             </>
           )}
-          {interval !== "SESSION" && (
+          {/* DELETE showZeroes */}
+          {/* interval !== "SESSION" && (
             <>
               <label htmlFor="showZeroes">Show Zeroes</label>
               <input
@@ -100,15 +90,15 @@ export default function Tonnage({ get }) {
                 onChange={(e) => setShowZeroes(e.target.checked)}
               />
             </>
-          )}
-          {["deadlift", "squat", "bench"].map((exercise) => {
+          ) */}
+          {Object.keys(get).filter(key => key !== "sessions").map((exercise) => {
             return (
               <div
                 key={`${exercise}VariationFilter`}
                 style={{ display: "inline-block" }}
               >
                 <label htmlFor={`${exercise}VariationFilter`}>
-                  {exercise.replace(/^\w/, exercise[0].toUpperCase())}:
+                  {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}:
                 </label>
                 <select
                   id={`${exercise}VariationFilter`}
@@ -142,7 +132,7 @@ export default function Tonnage({ get }) {
           interval || "ALL",
           intervalLength[0] || 7,
           referenceDate,
-          showZeroes,
+          // showZeroes,
           variationFilter
         )}
       </>

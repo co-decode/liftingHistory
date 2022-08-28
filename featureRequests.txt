@@ -1,15 +1,19 @@
-BUG: After editting a session, the log display order is reset. Fix the Reverse button state.
+FIXED BUG: After editing a session, the log display order is reset. Fix the Reverse button state.
 
+FIXED BUG: fixed untouched date field from offsetting by the timezone on submission
+    - unchanged edit submission is possible, but this seems benign.
+     
 POTENTIAL ISSUE: The deployed Heroku container of the Server has a CORS allowance for the non-container Server. I meant to point CORS to itself.
     ie. IS "https://node-lifting-history2.herokuapp.com" - SHOULD BE "https://lifting-history-2-container.herokuapp.com"
         Perhaps this is an incorrect assumption on my part. I should experiment with taking it out altogether if it is in fact unnecessary.
+    SOLUTION: Seems to be unnecessary, removing in v3.
 
 
 VERSION 3:
 
     DONE: alter get function to - 1 - rename 'date' to 'sessions' - 2 - dynamically create an exercise call based on existing entries.
             FIXED ERROR: No existing sessions throws an error and crashes server.
-    ->> Set up more exercises. Here is the current list:
+    DONE: Set up more exercises. Here is the current list:
             BIG ONES:
             - Bench    - Deadlift    - Squat    - Overhead Press    - Bicep    - Tricep    - Grip    - Calf    - Lunge    - Rows    - Shrugs
             - Pull Up    - Push up    - Dips    - Abs    - Lateral Raise    - Good Morning    - Face Pull    - Hip Thrusters    - Hip Abduction
@@ -18,11 +22,28 @@ VERSION 3:
 
             And if anything is important enough, I can just make another category...
         DONE: Add these tables to the database.
-        ->> NEXT: Alter Add component to allow entries into the new tables
-        Fix the client side, so that it is looking into the sessions property, not the date
-            AND fix the limited exercise call... use that global variable... or construct the array from exercise properties
+        DONE: Alter Add component to allow entries into the new tables
+        DONE: Fix the client side, so that it is looking into the sessions property, not the date
+        DONE: Fix the limited exercise call... use that global variable... or construct the array from exercise properties
             (could also send the unique array down from the server... but it shouldn't be too expensive to go Object.keys(get.exercises))
-        Alter the Edit components to allow any exercises
-        Fix the Tonnage and Graph logic to accumulate correctly.
+        DONE: Alter the Edit components to allow any exercises
+        DONE: Fix the Tonnage and Graph logic to accumulate correctly.
 
-    Experiment with the Accumulator logic for the Tonnage and Graph components, try to limit the number of times through the whole function to once fo the three datasets.
+        DONE: Add variations
+
+        Extend variation entry to permit custom entries.
+
+        Experiment with reading a JSON file, or text stream, and auto-filling the Add and Edit forms.
+
+        ->> NEXT: Filter tonnage by exercise, don't want to see 27 difference exercises, all repeated by date.
+        Maybe mix and match exercise combinations into the accumulator, shouldn't be too hard programmatically
+
+        Test suspected issues with variation filters...
+
+        Cannot filter by variation for Graph... may be a desirable functionality.
+
+        ->> Zeroes still show for tonnage table
+
+        Then variation filters need to be extended / improved, checkboxes to see multiple variations at a time, optional and mandatory variation entries
+
+    DONE: Experiment with the Accumulator logic for the Tonnage and Graph components, try to limit the number of times through the whole function to once for the three datasets.

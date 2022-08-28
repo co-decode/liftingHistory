@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { backend } from "./utils/variables";
+import { backend, variationObject, exerciseArray } from "./utils/variables";
 import Spinner from "./utils/Spinner";
 
 const LOG = "LOG";
 
-function variationOptions(exercise, index, existing) {
-  const variationObject = {
-    deadlift: [
-      ["Conventional", "Sumo"],
-      ["Double Overhand", "Mixed Grip", "Straps"],
-    ],
-    squat: [["High Bar", "Front", "Low Bar"]],
-    bench: [
-      ["Close Grip", "Standard", "Wide Grip"],
-      ["Flat", "Incline"],
-    ],
-  };
+function variationOptions(exercise, index/* , existing */) {
+  // const variationObject = {
+  //   deadlift: [
+  //     ["Conventional", "Sumo"],
+  //     ["Double Overhand", "Mixed Grip", "Straps"],
+  //   ],
+  //   squat: [["High Bar", "Front", "Low Bar"]],
+  //   bench: [
+  //     ["Close Grip", "Standard", "Wide Grip"],
+  //     ["Flat", "Incline"],
+  //   ],
+  // };
   return variationObject[exercise][index]
-    .filter((v) => v !== existing)
+    // .filter((v) => v !== existing)
     .map((v) => <option key={`${exercise}${index}${v}`}>{v}</option>);
 }
 
@@ -31,6 +31,7 @@ export default function Edit({
   setPage,
   user,
   setDateFilter,
+  dateFilter
 }) {
   const [update, setUpdate] = useState(null);
   const [feedback, setFeedback] = useState(null);
@@ -51,16 +52,21 @@ export default function Edit({
   }, [link]);
 
   useEffect(() => {
-    const session = get.date.filter((v) => v.sid === edit)[0];
+    const session = get.sessions.find((v) => v.sid === edit)
+    const receivedDate = new Date(session.date)
+    const correctedDate = new Date(
+      receivedDate.setTime(
+        receivedDate.getTime() - receivedDate.getTimezoneOffset() * 60 * 1000))
+        .toISOString()
     const updateObject = {
       lifts: {},
       newLifts: {},
       lostLifts: [],
-      date: session.date,
+      date: correctedDate
     };
     const fieldsInitial = {};
     session.exercises.forEach((v) => {
-      const filtered = get[v].filter((v) => v.sid === edit)[0];
+      const filtered = get[v].find((v) => v.sid === edit);
       updateObject.lifts[v] = {
         mass: filtered.mass,
         reps: filtered.reps,
@@ -80,12 +86,12 @@ export default function Edit({
     return (
       <div>
         {sidList.map((sidVal) => {
-          let exerciseCall = get.date.filter((v) => v.sid === sidVal)[0]
+          let exerciseCall = get.sessions.find((v) => v.sid === sidVal)
             .exercises;
           let time = new Date(
-            new Date(get.date.filter((v) => v.sid === sidVal)[0].date).setTime(
+            new Date(get.sessions.find((v) => v.sid === sidVal).date).setTime(
               new Date(
-                get.date.filter((v) => v.sid === sidVal)[0].date
+                get.sessions.find((v) => v.sid === sidVal).date
               ).getTime() +
                 9 * 60 * 1000 * 60 +
                 30 * 60 * 1000
@@ -127,11 +133,11 @@ export default function Edit({
                       {update?.lostLifts.includes(exercise)
                         ? "Re-introduce "
                         : "Remove "}
-                      {exercise[0].toUpperCase() + exercise.slice(1)}
+                      {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}
                     </button>{" "}
                     <br />
                     <strong>
-                      {exercise[0].toUpperCase() + exercise.slice(1)}:
+                      {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}:
                     </strong>
                     {update?.lostLifts.includes(exercise) ? null : (
                       <div>
@@ -276,7 +282,6 @@ export default function Edit({
                         </div>
                       </div>
                     )}
-                    {/* {JSON.stringify(get[v].filter(v => v.sid === sidVal)[0])} */}
                   </div>
                 );
               })}
@@ -319,14 +324,14 @@ export default function Edit({
         url: `${backend}/sessions/${user.uid}`,
       }).then((res) => {
         setLoading(false)
-        setGet(res.data[0]);
+        setGet(res.data);
         setEdit(0);
         setPage(LOG)
         const earliest = new Date(
-          res.data[0].date.map((v) => new Date(v.date)).sort((a, b) => a - b)[0]
+          res.data.sessions.map((v) => new Date(v.date)).sort((a, b) => a - b)[0]
         );
         const latest = new Date(
-          res.data[0].date.map((v) => new Date(v.date)).sort((a, b) => b - a)[0]
+          res.data.sessions.map((v) => new Date(v.date)).sort((a, b) => b - a)[0]
         );
         setDateFilter({
           from: new Date(earliest.setTime(earliest.getTime()))
@@ -335,18 +340,18 @@ export default function Edit({
           to: new Date(latest.setTime(latest.getTime() + 34 * 60 * 60 * 1000))
             .toISOString()
             .slice(0, 10),
-          ascending: true,
+          ascending: dateFilter.ascending,
         });
       })
     );
   };
 
   function addFieldset(exercise) {
-    const variationObject = {
-      deadlift: ["", ""],
-      squat: [""],
-      bench: ["", ""],
-    };
+    // const variationObject = {
+    //   deadlift: ["", ""],
+    //   squat: [""],
+    //   bench: ["", ""],
+    // };
     return (
       <fieldset>
         <div>
@@ -470,7 +475,7 @@ export default function Edit({
                     }}
                   >
                     <option value=""> --- </option>
-                    {variationOptions(exercise, varNo, v)}
+                    {variationOptions(exercise, varNo/* , v */)}
                   </select>
                 </div>
               );
@@ -544,18 +549,18 @@ export default function Edit({
       >
         Cancel and view Breakdown
       </button>
-      <button onClick={() => submitUpdate(update)}>Submit Update</button>
+      <button onClick={() => submitUpdate(update)}>Submit Update</button><br/>
       {!update
         ? null
-        : ["deadlift", "squat", "bench"]
+        : exerciseArray
             .filter(
               (v) =>
-                !get.date.filter((v) => v.sid === edit)[0].exercises.includes(v)
+                !get.sessions.find((v) => v.sid === edit).exercises.includes(v)
             )
             .map((exercise) => {
               return (
-                <div key={`missing${exercise}`}>
-                  <button
+                <div key={`missing${exercise}`} style={{display:"inline-block"}}>
+                  <button style={{display:"inline-block"}}
                     onClick={() => {
                       update.newLifts[exercise]
                         ? removeExercise(exercise)
@@ -572,8 +577,8 @@ export default function Edit({
                           });
                     }}
                   >
-                    {update.newLifts[exercise] ? `Cancel ` : `Add `}
-                    {exercise.replace(/^\w/, (c) => c.toUpperCase())}
+                    {update.newLifts[exercise] ? `Remove ` : `Add `}
+                    {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}
                   </button>
                   {update.newLifts[exercise] ? addFieldset(exercise) : null}
                 </div>

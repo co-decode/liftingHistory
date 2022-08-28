@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { backend } from "./utils/variables";
+import { backend, exerciseArray, variationObject } from "./utils/variables";
 import Spinner from "./utils/Spinner";
 
-export default function Add({ get, setPage, setGet, setDateFilter}) {
+export default function Add({ get, setPage, setGet, setDateFilter, dateFilter}) {
   const dateRefs = useRef({ date: null, time: null });
   const exerciseRefs = useRef({});
   const [exArr, setExArr] = useState([]);
@@ -54,13 +54,13 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
       withCredentials: true,
       url: `${backend}/sessions/${user.uid}`,
     }).then((res) => {
-      setGet(res.data[0]);
+      setGet(res.data);
       redirect && setPage("LOG")
       const earliest = new Date(
-        res.data[0].date.map((v) => new Date(v.date)).sort((a, b) => a - b)[0]
+        res.data.sessions.map((v) => new Date(v.date)).sort((a, b) => a - b)[0]
       );
       const latest = new Date(
-        res.data[0].date.map((v) => new Date(v.date)).sort((a, b) => b - a)[0]
+        res.data.sessions.map((v) => new Date(v.date)).sort((a, b) => b - a)[0]
       );
       setDateFilter({
         from: new Date(earliest.setTime(earliest.getTime()))
@@ -69,7 +69,7 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
         to: new Date(latest.setTime(latest.getTime() + 34 * 60 * 60 * 1000))
           .toISOString()
           .slice(0, 10),
-        ascending: true,
+        ascending: dateFilter.ascending,
       });
     })
   );
@@ -128,7 +128,7 @@ export default function Add({ get, setPage, setGet, setDateFilter}) {
 
     const submission = { date: time, lifts };
 
-    if (get.date?.some(session =>session.date === submission.date.slice(0,19))) {
+    if (get.sessions?.some(session =>session.date === submission.date.slice(0,19))) {
       setResponse("A session has already been recorded for this Timestamp")
       return
     }
@@ -205,11 +205,12 @@ function variationOptions(exercise, array, exerciseRefs) {
 function ExerciseAdd({ exArr, setExArr }) {
   return (
     <>
-      {["deadlift", "squat", "bench"].map((exercise) => {
+      {exerciseArray.map((exercise) => {
         return (
           <div style={{ display: "inline-block" }} key={`${exercise}Add`}>
             <label htmlFor={`${exercise}Add`}>
-              {exercise[0].toUpperCase() + exercise.slice(1)}:{" "}
+              {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}
+              :{" "}
             </label>
             <input
               id={`${exercise}Add`}
@@ -219,7 +220,7 @@ function ExerciseAdd({ exArr, setExArr }) {
                   ? setExArr([...exArr.filter((v) => v !== exercise)])
                   : setExArr([...exArr, exercise])
               }
-            />
+            />&nbsp;|&nbsp;
           </div>
         );
       })}
@@ -228,7 +229,13 @@ function ExerciseAdd({ exArr, setExArr }) {
 }
 
 function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
-  const [fields, setFields] = useState({ deadlift: 0, squat: 0, bench: 0 });
+  const [fields, setFields] = useState({});
+  useEffect(() => {
+    const fieldObject = {}
+    exArr.forEach(ex=>fieldObject[ex] = 0)
+    setFields({...fieldObject})
+  }, [exArr])
+  console.log(fields)
   
   
   const lengthenArr = (number, exercise) => {
@@ -274,31 +281,20 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
     ));
   };
 
-  const variationObject = {
-    deadlift: [
-      ["Conventional", "Sumo"],
-      ["Double Overhand", "Mixed Grip", "Straps"],
-    ],
-    squat: [["High Bar", "Front", "Low Bar"]],
-    bench: [
-      ["Close Grip", "Standard", "Wide Grip"],
-      ["Flat", "Incline"],
-    ],
-  };
   return exArr.map((exercise) => {
     
     function returnTemplateButton() {
-      if (!get.date) return null
-      if (get.date.every(v=>!v.exercises.includes(exercise))) return null
+      if (!get.sessions) return null
+      if (get.sessions.every(v=>!v.exercises.includes(exercise))) return null
 
-      const mostRecentExerciseSessionSID = get.date
+      const mostRecentExerciseSessionSID = get.sessions
         .filter((val) => val.exercises.includes(exercise))
         .reduce((acc, val) =>
           new Date(val.date) > new Date(acc.date) ? val : acc).sid;
   
-      const sets = get[exercise].filter(
+      const sets = get[exercise].find(
         (v) => v.sid === mostRecentExerciseSessionSID
-        )[0].mass.length
+        ).mass.length
 
       return (
         <button onClick={(e)=>getPrevTemplate(e, mostRecentExerciseSessionSID, sets)}>{fields[exercise] < sets ? "Use Previous Template" : "Fill with Previous Session"}</button>
@@ -316,20 +312,20 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
       if (exerciseRefs.current[exercise]) {
         Object.keys(exerciseRefs.current[exercise]).forEach((key) => {
           if (exerciseRefs.current[exercise][key].mass) {
-            exerciseRefs.current[exercise][key].mass.value = get[exercise].filter(
+            exerciseRefs.current[exercise][key].mass.value = get[exercise].find(
               (v) => v.sid === mostRecentExerciseSessionSID
-            )[0].mass[key - 1];
-            exerciseRefs.current[exercise][key].reps.value = get[exercise].filter(
+            ).mass[key - 1];
+            exerciseRefs.current[exercise][key].reps.value = get[exercise].find(
               (v) => v.sid === mostRecentExerciseSessionSID
-            )[0].reps[key - 1];
+            ).reps[key - 1];
           }
         });
   
         Object.keys(exerciseRefs.current[exercise].variation).forEach((key) => {
           exerciseRefs.current[exercise].variation[key].value =
-            get[exercise].filter(
+            get[exercise].find(
               (v) => v.sid === mostRecentExerciseSessionSID
-            )[0].variation[key];
+            ).variation[key];
         });
       }
     }

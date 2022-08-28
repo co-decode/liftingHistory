@@ -9,7 +9,7 @@ import Breakdown from "./Breakdown";
 import Calendar from "./Calendar";
 import Equivalence from "./Equivalence/Equivalence";
 import Profile from "./Profile";
-import { backend } from "./utils/variables";
+import { backend, variationObject } from "./utils/variables";
 import Spinner from "./utils/Spinner";
 
 const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
@@ -40,18 +40,6 @@ export default function Log() {
   const editRefs = useRef({});
   const link = useNavigate();
 
-  const variationObject = {
-    deadlift: [
-      ["Conventional", "Sumo"],
-      ["Double Overhand", "Mixed Grip", "Straps"],
-    ],
-    squat: [["High Bar", "Front", "Low Bar"]],
-    bench: [
-      ["Close Grip", "Standard", "Wide Grip"],
-      ["Flat", "Incline"],
-    ],
-  };
-
   useEffect(() => {
     axios({
       method: "get",
@@ -66,15 +54,15 @@ export default function Log() {
           withCredentials: true,
           url: `${backend}/sessions/${res.data.uid}`,
         }).then((res) => {
-          if (res.data[0].date) {
-            setGet(res.data[0]);
+          if (res.data.sessions) {
+            setGet(res.data);
             const earliest = new Date(
-              res.data[0].date
+              res.data.sessions
                 .map((v) => new Date(v.date))
                 .sort((a, b) => a - b)[0]
             );
             const latest = new Date(
-              res.data[0].date
+              res.data.sessions
                 .map((v) => new Date(v.date))
                 .sort((a, b) => b - a)[0]
             );
@@ -125,13 +113,13 @@ export default function Log() {
         url: `${backend}/sessions/${user.uid}`,
       }).then((res) => {
         setLoading(false);
-        setGet(res.data[0]);
+        setGet(res.data);
       });
     });
   }
 
   function returnSid() {
-    let sidList = get.date
+    let sidList = get.sessions
       .filter((v) => v.date >= dateFilter.from && v.date <= dateFilter.to)
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .map((v) => v.sid);
@@ -143,8 +131,7 @@ export default function Log() {
     return (
       <div>
         {sidList.map((sidVal) => {
-          let exerciseCall = get.date.filter((v) => v.sid === sidVal)[0]
-            .exercises;
+          let exerciseCall = get.sessions.find((v) => v.sid === sidVal).exercises;
           if (
             exerciseCall.every((exercise) => {
               if (varFilter[exercise]) {
@@ -164,7 +151,7 @@ export default function Log() {
             >
               <div>
                 {new Date(
-                  get.date.filter((v) => v.sid === sidVal)[0].date
+                  get.sessions.filter((v) => v.sid === sidVal)[0].date
                 ).toLocaleString()}
                 <div>
                   <button onClick={() => deleteSession(sidVal)}>
@@ -198,7 +185,7 @@ export default function Log() {
                     key={v}
                     style={{ display: "inline-block", marginRight: "20px" }}
                   >
-                    <strong>{v[0].toUpperCase() + v.slice(1)}: </strong>
+                    <strong>{v.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}: </strong>
                     <div>
                       Max:{" "}
                       {exerciseData.mass.reduce((acc, item) => {
@@ -291,10 +278,10 @@ export default function Log() {
   function returnVarFilter() {
     return (
       <div>
-        {["bench", "deadlift", "squat"].map((exercise) => (
+        {Object.keys(get).filter(key => key !== "sessions").map((exercise) => (
           <div key={`${exercise}VarFilter`} style={{ display: "inline-block" }}>
             <label htmlFor={`${exercise}VarFilter`}>
-              {exercise[0].toUpperCase() + exercise.slice(1)}:
+              {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}:
             </label>
             <select
               id={`${exercise}VarFilter`}
@@ -344,7 +331,8 @@ export default function Log() {
           setPage={setPage}
           user={user}
           setDateFilter={setDateFilter}
-        />
+          dateFilter={dateFilter}
+          />
       );
     else if (page === BREAK)
       return (
@@ -363,6 +351,7 @@ export default function Log() {
           setPage={setPage}
           setGet={setGet}
           setDateFilter={setDateFilter}
+          dateFilter={dateFilter}
         />
       );
     else if (page === TONS) return <Tonnage get={get} />;
