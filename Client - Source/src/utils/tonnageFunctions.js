@@ -54,50 +54,45 @@ export default function intervalTon(
       ? { ...acc, [v.interval]: [...acc[v.interval], v.sid] }
       : { ...acc, [v.interval]: [v.sid] };
   }, {});
-
+  
   const exerciseArray = exerciseList.filter((exercise) =>
-    get.sessions.some((sess) => sess.exercises.includes(exercise))
+  get.sessions.some((sess) => sess.exercises.includes(exercise))
   );
-
+  
   return (
     <>
       {exerciseArray.map((exercise) => {
+          // vv A session exists with the variation selected
+        if (variationFilter[exercise].length){ //!
+        const sidsByExerciseByVariation = get[exercise]
+          .some(session => variationFilter[exercise]
+            .some(variation => session.variation.includes(variation)) )//!
+        if (!sidsByExerciseByVariation) return null
+      }
         return (
           <div key={`${exercise}`}>
-            {" "}
-            <strong>
-              {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ") + ": "}
-            </strong>
-            {Object.keys(sidsBinned).map((interval) => {
+            {Object.keys(sidsBinned).map((interval, index) => {
+
               const sidsByExercise = get.sessions
                 .filter((val) => sidsBinned[interval].includes(val.sid))
                 .filter((val) => val.exercises.includes(exercise));
 
-              // if (!showZeroes) {
-                if (sidsByExercise.length === 0) return null;
-              // }
 
+                
               let exerciseObjectsForSid = sidsByExercise.map((sidV) =>
-                get[exercise].find((val) => val.sid === sidV.sid)
+              get[exercise].find((val) => val.sid === sidV.sid)
               );
 
-              if (variationFilter[exercise]) {
-                exerciseObjectsForSid = exerciseObjectsForSid.filter((v) =>
-                  v.variation.includes(variationFilter[exercise])
-                );
-              }
+              
+              if (variationFilter[exercise].length) { //!
+                exerciseObjectsForSid = exerciseObjectsForSid.filter((session) =>
+                  variationFilter[exercise].some((variation)=>session.variation.includes(variation))
+                )}
 
-              const totalReps = exerciseObjectsForSid.reduce((acc, v) => {
-                return acc + v.reps.reduce((a, val) => a + val, 0);
-              }, 0);
-              const totalMass = exerciseObjectsForSid.reduce((acc, v) => {
+              const filterZeroes = () => {
+                if (exerciseObjectsForSid.length === 0) return null;
                 return (
-                  acc +
-                  v.reps.reduce((a, val, ind) => a + val * v.mass[ind], 0)
-                );
-              }, 0);
-              return (
-                <div key={`${interval}`}>
+                  <div key={`${interval}`}>
                   <div className="tableGridContainer">
                     <span className="tableInterval">{interval}</span>
                     <span className="tableTotalReps">{totalReps}</span>
@@ -143,14 +138,37 @@ export default function intervalTon(
                           const sessionSets = v.reps.length;
                           return acc + sessionReps / sessionSets;
                         }, 0) / exerciseObjectsForSid.length
-                      ).toFixed(2)}
+                        ).toFixed(2)}
                       {` r / s`}
                     </span>
                   </div>
+                  </div>
+                )
+              }
+
+              
+              const totalReps = exerciseObjectsForSid.reduce((acc, v) => {
+                return acc + v.reps.reduce((a, val) => a + val, 0);
+              }, 0);
+              const totalMass = exerciseObjectsForSid.reduce((acc, v) => {
+                return (
+                  acc + v.reps.reduce((a, val, ind) => a + val * v.mass[ind], 0)
+                  );
+                }, 0);
+              return (
+                <div key={`${exercise}${interval}`}>
+                  { !index &&
+                  <strong>
+                    {exercise
+                      .split("_")
+                      .map((word) => word[0].toUpperCase() + word.slice(1))
+                      .join(" ") + ": "}
+                  </strong>}
+                  {filterZeroes()}
                 </div>
               );
             })}
-          </div>
+            </div>
         );
       })}
     </>

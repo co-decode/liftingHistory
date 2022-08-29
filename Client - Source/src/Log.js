@@ -34,7 +34,10 @@ export default function Log() {
     ascending: sessionStorage.getItem("WeightLiftingLogAscending") || true,
   });
   const [user, setUser] = useState(null);
+
   const [varFilter, setVarFilter] = useState({});
+  const [varMenus, setVarMenus] = useState({});
+  const checkRefs = useRef({});
   const [goToMonthYear, setGoToMonthYear] = useState(null);
   const [loading, setLoading] = useState(false);
   const editRefs = useRef({});
@@ -56,6 +59,15 @@ export default function Log() {
         }).then((res) => {
           if (res.data.sessions) {
             setGet(res.data);
+            const exercisesForUser = Object.keys(res.data).filter(
+              (key) => key !== "sessions"
+            );
+            function initialFilter() {
+              let output = {};
+              exercisesForUser.forEach((exercise) => (output[exercise] = []));
+              return output;
+            }
+            setVarFilter(initialFilter());
             const earliest = new Date(
               res.data.sessions
                 .map((v) => new Date(v.date))
@@ -95,13 +107,13 @@ export default function Log() {
   }, [edit, prevEdit]);
 
   useEffect(() => {
-    if (page === LOG) setVarFilter({});
+    if (page === LOG);
   }, [page]);
 
   function deleteSession(sid) {
     if (!window.confirm("Are you sure you want to delete this session?"))
       return;
-    setLoading(true)
+    setLoading(true);
     axios({
       method: "delete",
       withCredentials: true,
@@ -131,17 +143,20 @@ export default function Log() {
     return (
       <div>
         {sidList.map((sidVal) => {
-          let exerciseCall = get.sessions.find((v) => v.sid === sidVal).exercises;
+          let exerciseCall = get.sessions.find(
+            (v) => v.sid === sidVal
+          ).exercises;
           if (
-            exerciseCall.every((exercise) => {
-              if (varFilter[exercise]) {
-                return !get[exercise]
-                  .filter((v) => v.sid === sidVal)[0]
-                  .variation.includes(varFilter[exercise]);
-              } else return false;
-            })
-          )
+            exerciseCall.every((exercise) =>
+              varFilter[exercise].includes("HIDE")
+            ) )
             return null;
+
+          
+          if (exerciseCall.every((exercise) => {
+            if (!varFilter[exercise].length ) return false; 
+            return !varFilter[exercise].some(vari => get[exercise].find(sess => sess.sid === sidVal).variation.includes(vari))
+          })) return null
           return (
             <div
               key={sidVal}
@@ -177,15 +192,25 @@ export default function Log() {
               </div>
               {exerciseCall.map((v) => {
                 const exerciseData = get[v].filter((v) => v.sid === sidVal)[0];
-                if (varFilter[v])
-                  if (!exerciseData.variation.includes(varFilter[v]))
+                if (varFilter[v].length > 0)
+                  if (
+                    varFilter[v].every(
+                      (vari) => !exerciseData.variation.includes(vari)
+                    )
+                  )
                     return null;
                 return (
                   <div
                     key={v}
                     style={{ display: "inline-block", marginRight: "20px" }}
                   >
-                    <strong>{v.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}: </strong>
+                    <strong>
+                      {v
+                        .split("_")
+                        .map((word) => word[0].toUpperCase() + word.slice(1))
+                        .join(" ")}
+                      :{" "}
+                    </strong>
                     <div>
                       Max:{" "}
                       {exerciseData.mass.reduce((acc, item) => {
@@ -276,30 +301,134 @@ export default function Log() {
     );
   }
   function returnVarFilter() {
+
+    function handleHideAll() {
+      let newVariationFilter = {};
+      if (
+        Object.keys(get).filter((key) => key !== "sessions").every((exercise) =>
+          varFilter[exercise].includes("HIDE")
+        )
+      ) {
+        Object.keys(get).filter((key) => key !== "sessions").forEach(
+          (exercise) => (newVariationFilter[exercise] = [])
+        );
+      } else {
+        Object.keys(get).filter((key) => key !== "sessions").forEach(
+          (exercise) => (newVariationFilter[exercise] = ["HIDE"])
+        );
+        let newVarMenus = {...varMenus}
+        Object.keys(newVarMenus).forEach(exercise=> newVarMenus = {...newVarMenus, [exercise]: false})
+        setVarMenus(newVarMenus)
+      }
+      setVarFilter(newVariationFilter);
+    }
     return (
       <div>
-        {Object.keys(get).filter(key => key !== "sessions").map((exercise) => (
-          <div key={`${exercise}VarFilter`} style={{ display: "inline-block" }}>
-            <label htmlFor={`${exercise}VarFilter`}>
-              {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}:
-            </label>
-            <select
-              id={`${exercise}VarFilter`}
-              onChange={(e) =>
-                setVarFilter({
-                  ...varFilter,
-                  [exercise]: e.target.value,
-                })
-              }
-            >
-              <option value=""> Show All </option>
-              <option value="HIDE"> Hide All </option>
-              {variationObject[exercise].flat().map((value) => {
-                return <option key={`${value}`}>{value}</option>;
-              })}
-            </select>
-          </div>
-        ))}
+        <button onClick={() => handleHideAll()}>
+          {Object.keys(get).filter((key) => key !== "sessions").every((exercise) =>
+            varFilter[exercise].includes("HIDE")
+          )
+            ? "Show"
+            : "Hide"}{" "}
+          All Exercises
+        </button>
+        {Object.keys(get)
+          .filter((key) => key !== "sessions")
+          .map((exercise) => (
+            <div key={`${exercise}VarFilter`} style={{ display: "block" }}>
+              <button
+                onClick={() => {
+                  if (varFilter[exercise].includes("HIDE")) {
+                    setVarFilter({
+                      ...varFilter,
+                      [exercise]: [],
+                    });
+                    if (varMenus[exercise])
+                      setVarMenus({ ...varMenus, [exercise]: false });
+                  } else {
+                    setVarFilter({
+                      ...varFilter,
+                      [exercise]: ["HIDE"],
+                    });
+                  }
+                }}
+              >
+                {varFilter[exercise].includes("HIDE") ? "Show" : "Hide"}&nbsp;
+                {exercise
+                  .split("_")
+                  .map((word) => word[0].toUpperCase() + word.slice(1))
+                  .join(" ")}
+              </button>
+              {!varFilter[exercise].includes("HIDE") && (
+                <>
+                  <button
+                    onClick={() => {
+                      if (!varMenus[exercise])
+                        setVarMenus({
+                          ...varMenus,
+                          [exercise]: !varMenus[exercise],
+                        });
+                      else if (
+                        varMenus[exercise] &&
+                        !varFilter[exercise].length
+                      )
+                        setVarMenus({
+                          ...varMenus,
+                          [exercise]: !varMenus[exercise],
+                        });
+                      else {
+                        setVarFilter({ ...varFilter, [exercise]: [] });
+                        Object.keys(checkRefs.current[exercise]).forEach(
+                          (vari) =>
+                            (checkRefs.current[exercise][vari].checked = false)
+                        );
+                      }
+                    }}
+                  >
+                    {varFilter[exercise].length > 0
+                      ? "Show All"
+                      : varMenus[exercise]
+                      ? "Filter <"
+                      : "Filter >"}
+                  </button>
+
+                  {varMenus[exercise] &&
+                    variationObject[exercise].flat().map((value) => {
+                      return (
+                        <label>
+                          {value}
+                          <input
+                            ref={(el) =>
+                              (checkRefs.current = {
+                                ...checkRefs.current,
+                                [exercise]: {
+                                  ...checkRefs.current[exercise],
+                                  [value]: el,
+                                },
+                              })
+                            }
+                            type="checkbox"
+                            onChange={(e) =>
+                              e.target.checked
+                                ? setVarFilter({
+                                    ...varFilter,
+                                    [exercise]: [...varFilter[exercise], value],
+                                  })
+                                : setVarFilter({
+                                    ...varFilter,
+                                    [exercise]: varFilter[exercise].filter(
+                                      (variation) => variation !== value
+                                    ),
+                                  })
+                            }
+                          />
+                        </label>
+                      );
+                    })}
+                </>
+              )}
+            </div>
+          ))}
       </div>
     );
   }
@@ -332,7 +461,7 @@ export default function Log() {
           user={user}
           setDateFilter={setDateFilter}
           dateFilter={dateFilter}
-          />
+        />
       );
     else if (page === BREAK)
       return (
@@ -365,16 +494,21 @@ export default function Log() {
         />
       );
     else if (page === EQUIV) return <Equivalence />;
-    else if (page === PROFILE) return <Profile user={user} />
-    
+    else if (page === PROFILE) return <Profile user={user} />;
   }
 
-  if (get === null) return <><strong>Loading...</strong><Spinner/></>;
+  if (get === null)
+    return (
+      <>
+        <strong>Loading...</strong>
+        <Spinner />
+      </>
+    );
 
   return (
     <div>
       <h1>Lifting Log</h1>
-      {loading && <Spinner/>}
+      {loading && <Spinner />}
       {pageButtons()}
       <Logout />
       {returnComponent()}

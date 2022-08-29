@@ -31,19 +31,33 @@ VERSION 3:
 
         DONE: Add variations
 
-        Extend variation entry to permit custom entries.
+        // Tonnage
 
-        Experiment with reading a JSON file, or text stream, and auto-filling the Add and Edit forms.
+        DONE: Filter tonnage by exercise, don't want to see 27 difference exercises, all repeated by date.
+        DONE: Zeroes still show for tonnage table
+        
+        DONE: Maybe mix and match exercise combinations into the accumulator, shouldn't be too hard programmatically
+        DONE: IN LOG - Then variation filters need to be extended / improved, checkboxes to see multiple variations at a time
 
-        ->> NEXT: Filter tonnage by exercise, don't want to see 27 difference exercises, all repeated by date.
-        Maybe mix and match exercise combinations into the accumulator, shouldn't be too hard programmatically
 
-        Test suspected issues with variation filters...
+        FIX key errors in log and tonnage
+        THINK about fixing varMenu staying open when hide all and show all is toggled.
+
+        optional and mandatory variation entries
+
+        Extend variation entry to permit custom entries 
+
+
+        // Variation Filtering
+
 
         Cannot filter by variation for Graph... may be a desirable functionality.
 
-        ->> Zeroes still show for tonnage table
 
-        Then variation filters need to be extended / improved, checkboxes to see multiple variations at a time, optional and mandatory variation entries
+        // JSON to entry
+
+        Experiment with reading a JSON file, or text stream, and auto-filling the Add and Edit forms.
+
+        >> Then go work on the sheet music project.
 
     DONE: Experiment with the Accumulator logic for the Tonnage and Graph components, try to limit the number of times through the whole function to once for the three datasets.
