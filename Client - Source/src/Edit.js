@@ -6,20 +6,20 @@ import Spinner from "./utils/Spinner";
 
 const LOG = "LOG";
 
-function variationOptions(exercise, index/* , existing */) {
-  // const variationObject = {
-  //   deadlift: [
-  //     ["Conventional", "Sumo"],
-  //     ["Double Overhand", "Mixed Grip", "Straps"],
-  //   ],
-  //   squat: [["High Bar", "Front", "Low Bar"]],
-  //   bench: [
-  //     ["Close Grip", "Standard", "Wide Grip"],
-  //     ["Flat", "Incline"],
-  //   ],
-  // };
-  return variationObject[exercise][index]
-    // .filter((v) => v !== existing)
+function variationOptions(get, exercise, index, existing) {
+  if (!variationObject[exercise][index]) {
+    let variationsForUser = [];
+            get[exercise].forEach((sess) =>
+              sess.variation.forEach(
+                (variation) =>
+                  !variationObject[exercise].flat().includes(variation) &&
+                  !variationsForUser.includes(variation) &&
+                  variationsForUser.push(variation)
+              )
+            );
+    return variationsForUser.filter((v) => v !== existing).map((variation)=> <option key={`${exercise}${index}${variation}`}>{variation}</option>)}
+    else return variationObject[exercise][index]
+    .filter((v) => v !== existing)
     .map((v) => <option key={`${exercise}${index}${v}`}>{v}</option>);
 }
 
@@ -124,9 +124,15 @@ export default function Edit({
                 />
               </>
               {exerciseCall.map((exercise) => {
-                const filtered = get[exercise].filter(
+                const filtered = get[exercise].find(
                   (v) => v.sid === sidVal
-                )[0];
+                );
+                function variationArray() {
+                  if (filtered.variation.length < variationObject[exercise].length) {
+                    return Array(variationObject[exercise].length).fill(null).map((v,i)=> filtered.variation[i] || "")
+                  }
+                  else return filtered.variation
+                }
                 return (
                   <div key={exercise}>
                     <button onClick={() => loseLift(exercise)}>
@@ -245,7 +251,7 @@ export default function Edit({
                         <div>
                           {" "}
                           Variation
-                          {filtered.variation.map((v, varNo) => {
+                          {variationArray().map((v, varNo) => {
                             return (
                               <div key={`${exercise}var${varNo}`}>
                                 <label htmlFor={`${exercise}variation`}>
@@ -274,7 +280,7 @@ export default function Edit({
                                   defaultValue={filtered.variation[varNo]}
                                 >
                                   <option>{filtered.variation[varNo]}</option>
-                                  {variationOptions(exercise, varNo, v)}
+                                  {variationOptions(get, exercise, varNo, v)}
                                 </select>
                               </div>
                             );
@@ -309,7 +315,10 @@ export default function Edit({
       setFeedback("Incomplete Forms");
       return;
     }
-
+    if (Object.keys(update.lifts).some(exercise => update.lifts[exercise].variation.length !== Array.from(new Set(update.lifts[exercise].variation)).length)){
+      setFeedback("Cannot submit multiple identical variations")
+      return
+    }
     setLoading(true)
 
     axios({
@@ -347,11 +356,6 @@ export default function Edit({
   };
 
   function addFieldset(exercise) {
-    // const variationObject = {
-    //   deadlift: ["", ""],
-    //   squat: [""],
-    //   bench: ["", ""],
-    // };
     return (
       <fieldset>
         <div>
@@ -475,14 +479,14 @@ export default function Edit({
                     }}
                   >
                     <option value=""> --- </option>
-                    {variationOptions(exercise, varNo/* , v */)}
+                    {variationOptions(get, exercise, varNo, v)}
                   </select>
                 </div>
               );
             })}
           </div>
         </div>
-      </fieldset>
+      </fieldset> 
     );
   }
 
@@ -510,7 +514,7 @@ export default function Edit({
       return;
     } else if (update.lostLifts.includes(exercise)) {
       const lostLiftsClone = [];
-      const filtered = get[exercise].filter((v) => v.sid === edit)[0];
+      const filtered = get[exercise].find((v) => v.sid === edit);
       update.lostLifts
         .filter((v) => v !== exercise)
         .forEach((v) => lostLiftsClone.push(v));
@@ -536,7 +540,7 @@ export default function Edit({
     <div>
       <button
         onClick={() => {
-          setEdit(0);
+          setEdit(0); 
           setPage(LOG);
         }}
       >

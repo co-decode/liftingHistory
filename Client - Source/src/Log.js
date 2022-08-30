@@ -9,7 +9,7 @@ import Breakdown from "./Breakdown";
 import Calendar from "./Calendar";
 import Equivalence from "./Equivalence/Equivalence";
 import Profile from "./Profile";
-import { backend, variationObject } from "./utils/variables";
+import { backend } from "./utils/variables";
 import Spinner from "./utils/Spinner";
 
 const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
@@ -337,7 +337,16 @@ export default function Log() {
         </button>
         {Object.keys(get)
           .filter((key) => key !== "sessions")
-          .map((exercise) => (
+          .map((exercise) => { 
+            let variationsForUser = [];
+            get[exercise].forEach((sess) =>
+              sess.variation.forEach(
+                (variation) =>
+                  !variationsForUser.includes(variation) &&
+                  variationsForUser.push(variation)
+              )
+            );
+            return(
             <div key={`${exercise}VarFilter`} style={{ display: "block" }}>
               <button
                 onClick={() => {
@@ -396,7 +405,7 @@ export default function Log() {
                   </button>
 
                   {varMenus[exercise] &&
-                    variationObject[exercise].flat().map((value) => {
+                    /* variationObject[exercise].flat() */variationsForUser.map((value) => { //!
                       return (
                         <label key={`${exercise}_${value}_box`}>
                           {value}
@@ -431,7 +440,7 @@ export default function Log() {
                 </>
               )}
             </div>
-          ))}
+          )})}
       </div>
     );
   }

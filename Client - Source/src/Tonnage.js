@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import Graph from "./Graph";
 import returnTonnage from "./utils/tonnageFunctions";
 import "./Tonnage.css"
-import { variationObject } from "./utils/variables";
+// import { variationObject } from "./utils/variables";
 
 export default function Tonnage({ get }) {
   const [page, setPage] = useState("TABLE");
@@ -106,6 +106,14 @@ export default function Tonnage({ get }) {
             </>
           )}
           {exercisesForUser.map((exercise) => {
+            let variationsForUser = [];
+            get[exercise].forEach((sess) =>
+              sess.variation.forEach(
+                (variation) =>
+                  !variationsForUser.includes(variation) &&
+                  variationsForUser.push(variation)
+              )
+            );
             return (
               <div
                 key={`${exercise}VariationFilter`}
@@ -142,7 +150,8 @@ export default function Tonnage({ get }) {
                     }
                     }>{variationFilter[exercise].length > 0 ? "Show All" : variationMenus[exercise] ? "Filter <" : "Filter >"}</button>
                   
-                  {variationMenus[exercise] && variationObject[exercise].flat().map((value) => {
+                 
+                  {variationMenus[exercise] && /* variationObject[exercise].flat() */variationsForUser.map((value) => {
                     return <label key={`${exercise}_${value}_box`}>{value}<input ref={(el) => checkRefs.current = {...checkRefs.current, [exercise]: {...checkRefs.current[exercise], [value]: el}}} type="checkbox" onChange={e =>
                       e.target.checked ? 
                       setVariationFilter({

@@ -48,9 +48,14 @@ VERSION 3:
         DONE FIX Add component allows resubmission of unchanged entry still.
         DONE FIX delete for all exercises
 
+        DONE Extend variation entry to permit custom entries 
+            DONE Test and make sure it works with the edit component, and all the others... the filters are going to need it as well, they are currently pulling from the global variationsObject
+        ->> Add custom entry feature to the Edit component
+                DONE: Allowed to add to tags of the same value to the edit component
+                DONE: Edit component not filtering existing tags for customs.
+                DONE: Can add missing mandatory fields now
 
-        optional and mandatory variation entries
-        Extend variation entry to permit custom entries 
+        optional and mandatory variation entries ?
 
 
         // Variation Filtering
@@ -62,6 +67,9 @@ VERSION 3:
         // JSON to entry
 
         Experiment with reading a JSON file, or text stream, and auto-filling the Add and Edit forms.
+
+
+        Would require major refactoring, but I could tag each set with a variation template, and make it reasonably quick to assign in entry.
 
         >> Then go work on the sheet music project.
 

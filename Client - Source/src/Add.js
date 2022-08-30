@@ -1,17 +1,23 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { backend, exerciseArray, variationObject } from "./utils/variables";
 import Spinner from "./utils/Spinner";
 
-export default function Add({ get, setPage, setGet, setDateFilter, dateFilter}) {
+export default function Add({
+  get,
+  setPage,
+  setGet,
+  setDateFilter,
+  dateFilter,
+}) {
   const dateRefs = useRef({ date: null, time: null });
   const exerciseRefs = useRef({});
   const [exArr, setExArr] = useState([]);
   const [response, setResponse] = useState(null);
   const [user, setUser] = useState(null);
   const [redirect, setRedirect] = useState(false);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const link = useNavigate();
 
   useEffect(() => {
@@ -36,7 +42,7 @@ export default function Add({ get, setPage, setGet, setDateFilter, dateFilter}) 
   }, [response]);
 
   function post(submission) {
-    setLoading(true)
+    setLoading(true);
     axios({
       method: "post",
       data: {
@@ -45,37 +51,49 @@ export default function Add({ get, setPage, setGet, setDateFilter, dateFilter}) 
       },
       withCredentials: true,
       url: `${backend}/sessions/${user.uid}`,
-    }).then((res) => {
-      setLoading(false)
-      setResponse(res.data);
-    }).then((res) =>
-    axios({
-      method: "get",
-      withCredentials: true,
-      url: `${backend}/sessions/${user.uid}`,
-    }).then((res) => {
-      setGet(res.data);
-      const earliest = new Date(
-        res.data.sessions.map((v) => new Date(v.date)).sort((a, b) => a - b)[0]
+    })
+      .then((res) => {
+        setLoading(false);
+        setResponse(res.data);
+      })
+      .then((res) =>
+        axios({
+          method: "get",
+          withCredentials: true,
+          url: `${backend}/sessions/${user.uid}`,
+        })
+          .then((res) => {
+            setGet(res.data);
+            const earliest = new Date(
+              res.data.sessions
+                .map((v) => new Date(v.date))
+                .sort((a, b) => a - b)[0]
+            );
+            const latest = new Date(
+              res.data.sessions
+                .map((v) => new Date(v.date))
+                .sort((a, b) => b - a)[0]
+            );
+            setDateFilter({
+              from: new Date(earliest.setTime(earliest.getTime()))
+                .toISOString()
+                .slice(0, 10),
+              to: new Date(
+                latest.setTime(latest.getTime() + 34 * 60 * 60 * 1000)
+              )
+                .toISOString()
+                .slice(0, 10),
+              ascending: dateFilter.ascending,
+            });
+          })
+          .then(() => redirect && setPage("LOG"))
       );
-      const latest = new Date(
-        res.data.sessions.map((v) => new Date(v.date)).sort((a, b) => b - a)[0]
-      );
-      setDateFilter({
-        from: new Date(earliest.setTime(earliest.getTime()))
-          .toISOString()
-          .slice(0, 10),
-        to: new Date(latest.setTime(latest.getTime() + 34 * 60 * 60 * 1000))
-          .toISOString()
-          .slice(0, 10),
-        ascending: dateFilter.ascending,
-      });
-    }).then(()=>redirect && setPage("LOG"))
-  );
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
     const datePart = dateRefs.current.date.value;
     const timePart = dateRefs.current.time.value;
@@ -126,34 +144,55 @@ export default function Add({ get, setPage, setGet, setDateFilter, dateFilter}) 
     });
 
     const submission = { date: time, lifts };
-    if (get.sessions?.some(session => {
-      function correctTimezone(dateString) {
-        const dateObject = new Date(dateString)
-        const correction = dateObject.setTime(dateObject.getTime() - 1000 * 60 * dateObject.getTimezoneOffset())
-        return new Date(correction).toISOString().slice(0,19)
-      }
-      return correctTimezone(session.date) === submission.date.slice(0,19)
-    })) {
-      setResponse("A session has already been recorded for this Timestamp")
-      return
+    if (
+      get.sessions?.some((session) => {
+        function correctTimezone(dateString) {
+          const dateObject = new Date(dateString);
+          const correction = dateObject.setTime(
+            dateObject.getTime() - 1000 * 60 * dateObject.getTimezoneOffset()
+          );
+          return new Date(correction).toISOString().slice(0, 19);
+        }
+        return correctTimezone(session.date) === submission.date.slice(0, 19);
+      })
+    ) {
+      setResponse("A session has already been recorded for this Timestamp");
+      return;
     }
 
-    if (Object.keys(submission.lifts).length > 0 ) {
+    if (Object.keys(submission.lifts).length > 0) {
       post(submission);
     }
   };
 
-  if (!user) return (<><strong>Loading...</strong><Spinner/></>);
+  if (!user)
+    return (
+      <>
+        <strong>Loading...</strong>
+        <Spinner />
+      </>
+    );
 
   return (
     <div>
       <ExerciseAdd exArr={exArr} setExArr={setExArr} />
-      <label>Redirect on submit
-        <input type="checkbox" onChange={(e)=>setRedirect(e.target.checked)} />
+      <label>
+        Redirect on submit
+        <input
+          type="checkbox"
+          onChange={(e) => setRedirect(e.target.checked)}
+        />
       </label>
-      <form onSubmit={(e) => handleSubmit(e)}>
+      <form
+        onKeyDown={(e) => e.code === "Enter" && e.preventDefault()}
+        onSubmit={(e) => handleSubmit(e)}
+      >
         <DateInput dateRefs={dateRefs} />
-        <ExerciseFieldSets exerciseRefs={exerciseRefs} exArr={exArr} get={get}/>
+        <ExerciseFieldSets
+          exerciseRefs={exerciseRefs}
+          exArr={exArr}
+          get={get}
+        />
         {exArr.length ? (
           <button type="submit">Submit</button>
         ) : (
@@ -161,12 +200,67 @@ export default function Add({ get, setPage, setGet, setDateFilter, dateFilter}) 
         )}
       </form>
       {response && response}
-      {loading && <Spinner/>}
+      {loading && <Spinner />}
     </div>
   );
 }
 
-function variationOptions(exercise, array, exerciseRefs) {
+function VariationOptions({ get, exercise, exerciseRefs }) {
+  //!
+  const customRef = useRef({});
+  const customs = useMemo(() => {
+    let output = [];
+    if (!get[exercise]) return output;
+    get[exercise].forEach((sess) =>
+      sess.variation.forEach(
+        (variation) =>
+          !variationObject[exercise].flat().includes(variation) &&
+          !output.includes(variation) &&
+          output.push(variation)
+      )
+    );
+    return output;
+  }, [get, exercise]);
+  // function getCustoms() {
+  //
+  //   get[exercise].forEach(sess=> sess.variation.forEach(variation=> !variationObject[exercise].flat().includes(variation) && !output.includes(variation) && output.push(variation)))
+  //
+  // }
+  const [customAdditions, setCustomAdditions] = useState(customs);
+  const [varFields, setVarFields] = useState(0);
+  const number = variationObject[exercise].length;
+  const [array, setArray] = useState(
+    Array(number + varFields)
+      .fill(null)
+      .map((val, ind) => {
+        if (ind < number) {
+          return variationObject[exercise][ind];
+        } else return customs;
+      })
+  );
+
+  useEffect(
+    () =>
+      setArray(
+        Array(number + varFields)
+          .fill(null)
+          .map((val, ind) => {
+            if (ind < number) {
+              return variationObject[exercise][ind];
+            } else {
+              if (customAdditions.length) {
+                let output = [...customs];
+                customAdditions.forEach((addition) => {
+                  if (!output.includes(addition)) output.push(addition);
+                });
+                return output;
+              }
+              return customs;
+            }
+          })
+      ),
+    [varFields, exercise, number, customAdditions, customs]
+  );
   return (
     <div>
       {array.map((val, i) => {
@@ -203,6 +297,35 @@ function variationOptions(exercise, array, exerciseRefs) {
           </div>
         );
       })}
+      {varFields < 3 && (
+        <button type="button" onClick={() => setVarFields(varFields + 1)}>
+          +
+        </button>
+      )}
+      {varFields > 0 && (
+        <button type="button" onClick={() => setVarFields(varFields - 1)}>
+          -
+        </button>
+      )}
+      {!!varFields && (
+        <>
+          <label>
+            {" "}
+            Custom entry
+            <input type="text" placeholder="too" ref={customRef} />
+          </label>
+          <button
+            type="button"
+            onClick={() =>
+              customRef.current.value &&
+              !customAdditions.includes(customRef.current.value) &&
+              setCustomAdditions([...customAdditions, customRef.current.value])
+            }
+          >
+            add custom
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -214,7 +337,10 @@ function ExerciseAdd({ exArr, setExArr }) {
         return (
           <div style={{ display: "inline-block" }} key={`${exercise}Add`}>
             <label htmlFor={`${exercise}Add`}>
-              {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}
+              {exercise
+                .split("_")
+                .map((word) => word[0].toUpperCase() + word.slice(1))
+                .join(" ")}
               :{" "}
             </label>
             <input
@@ -225,7 +351,8 @@ function ExerciseAdd({ exArr, setExArr }) {
                   ? setExArr([...exArr.filter((v) => v !== exercise)])
                   : setExArr([...exArr, exercise])
               }
-            />&nbsp;|&nbsp;
+            />
+            &nbsp;|&nbsp;
           </div>
         );
       })}
@@ -235,14 +362,14 @@ function ExerciseAdd({ exArr, setExArr }) {
 
 function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
   const [fields, setFields] = useState({});
+
   useEffect(() => {
-    const fieldObject = {}
-    exArr.forEach(ex=>fieldObject[ex] = 0)
-    setFields({...fieldObject})
-  }, [exArr])
+    const fieldObject = {};
+    exArr.forEach((ex) => (fieldObject[ex] = 0));
+    setFields({ ...fieldObject });
+  }, [exArr]);
   // console.log(fields)
-  
-  
+
   const lengthenArr = (number, exercise) => {
     const arr = Array(0);
     arr.length = number;
@@ -287,31 +414,40 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
   };
 
   return exArr.map((exercise) => {
-    
     function returnTemplateButton() {
-      if (!get.sessions) return null
-      if (get.sessions.every(v=>!v.exercises.includes(exercise))) return null
+      if (!get.sessions) return null;
+      if (get.sessions.every((v) => !v.exercises.includes(exercise)))
+        return null;
 
       const mostRecentExerciseSessionSID = get.sessions
         .filter((val) => val.exercises.includes(exercise))
         .reduce((acc, val) =>
-          new Date(val.date) > new Date(acc.date) ? val : acc).sid;
-  
+          new Date(val.date) > new Date(acc.date) ? val : acc
+        ).sid;
+
       const sets = get[exercise].find(
         (v) => v.sid === mostRecentExerciseSessionSID
-        ).mass.length
+      ).mass.length;
 
       return (
-        <button onClick={(e)=>getPrevTemplate(e, mostRecentExerciseSessionSID, sets)}>{fields[exercise] < sets ? "Use Previous Template" : "Fill with Previous Session"}</button>
-      )
+        <button
+          onClick={(e) =>
+            getPrevTemplate(e, mostRecentExerciseSessionSID, sets)
+          }
+        >
+          {fields[exercise] < sets
+            ? "Use Previous Template"
+            : "Fill with Previous Session"}
+        </button>
+      );
     }
-    
+
     function getPrevTemplate(e, mostRecentExerciseSessionSID, sets) {
       e.preventDefault();
-        
-      if (fields[exercise] < sets){
-        setFields({...fields, [exercise]: sets})
-        return
+
+      if (fields[exercise] < sets) {
+        setFields({ ...fields, [exercise]: sets });
+        return;
       }
 
       if (exerciseRefs.current[exercise]) {
@@ -325,19 +461,25 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
             ).reps[key - 1];
           }
         });
-  
+
         Object.keys(exerciseRefs.current[exercise].variation).forEach((key) => {
-          exerciseRefs.current[exercise].variation[key].value =
-            get[exercise].find(
-              (v) => v.sid === mostRecentExerciseSessionSID
-            ).variation[key];
+          exerciseRefs.current[exercise].variation[key].value = get[
+            exercise
+          ].find((v) => v.sid === mostRecentExerciseSessionSID).variation[key];
         });
       }
     }
+
     return (
-      <fieldset key={`${exercise}FieldSet`}>
+      <div
+        key={`${exercise}FieldSet`}
+        style={{ border: "1px solid grey", margin: "-1px 0", padding: "2px" }}
+      >
         <div style={{ fontWeight: "bold" }}>
-          {exercise[0].toUpperCase() + exercise.slice(1)}
+          {exercise
+            .split("_")
+            .map((word) => word[0].toUpperCase() + word.slice(1))
+            .join(" ")}
         </div>
         <label htmlFor={`${exercise}Sets`}>Sets</label>
         <input
@@ -352,10 +494,15 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
           }
           placeholder={fields[exercise] ? fields[exercise] : 0}
         />
-        {variationOptions(exercise, variationObject[exercise], exerciseRefs)}
+        <VariationOptions
+          get={get}
+          exercise={exercise}
+          /* variationObject[exercise] */ exerciseRefs={exerciseRefs}
+        />{" "}
+        {/* //! */}
         {fields[exercise] ? lengthenArr(fields[exercise], exercise) : null}
         {returnTemplateButton()}
-      </fieldset>
+      </div>
     );
   });
 }
