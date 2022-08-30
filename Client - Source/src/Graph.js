@@ -275,7 +275,7 @@ export default function Graph({ get }) {
           array.reduce((acc, sid) => {
             const total = returnTotalSwitch(sid)
             Object.keys(acc).forEach(key=> acc[key] += total[key])
-            return acc}, {mass: 0, reps: 0, sets: 0})  //array is reduced to with numerics... {m,r,s}
+            return acc}, {mass: 0, reps: 0, sets: 0})  //array is reduced to an object with numerics... {m,r,s}
           //!
         ).reduce((a, v) => { // here we have an array of {m,r,s}... we want an object of arrays
           Object.keys(a).forEach(key=> a[key].push(v[key]))
@@ -377,9 +377,6 @@ export default function Graph({ get }) {
                 {exercise.split("_").map(
                   word=>word[0].toUpperCase() + word.slice(1)).join(" ")}</option>
             )}
-            {/* <option value="deadlift">Deadlift</option>
-            <option value="squat">Squat</option>
-            <option value="bench">Bench</option> */}
           </select>
         </label>
       </>

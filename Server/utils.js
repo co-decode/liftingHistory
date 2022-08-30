@@ -70,4 +70,11 @@ function createGetFromExercises(arrayFromSet, uid) {
 }   
 // log(createGetFromExercises(['bench', 'deadlift'], 3))
 
-module.exports = {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray, createGetFromExercises}
+function deleteSessionQuery(sid, exerciseArray) {
+    let output = ``
+    exerciseArray.forEach(exer=> output += `delete from ${exer} where sid = ${sid};`)
+    output += `delete from sessions where sid = ${sid};`
+    return output
+}
+
+module.exports = {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray, createGetFromExercises, deleteSessionQuery}

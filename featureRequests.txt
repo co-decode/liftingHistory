@@ -38,13 +38,18 @@ VERSION 3:
         
         DONE: Maybe mix and match exercise combinations into the accumulator, shouldn't be too hard programmatically
         DONE: IN LOG - Then variation filters need to be extended / improved, checkboxes to see multiple variations at a time
+        DONE fix varMenu staying open when hide all and show all is toggled.
 
 
-        FIX key errors in log and tonnage
-        THINK about fixing varMenu staying open when hide all and show all is toggled.
+        DONE FIX key errors in log and tonnage
+
+        DONE FIX error when redirected to log on submit of Add -- React is so broken, randomly decided it would fix itself, probably updating finally after a change I made ages ago.
+
+        DONE FIX Add component allows resubmission of unchanged entry still.
+        DONE FIX delete for all exercises
+
 
         optional and mandatory variation entries
-
         Extend variation entry to permit custom entries 
 
 

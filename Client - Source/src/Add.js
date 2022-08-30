@@ -55,7 +55,6 @@ export default function Add({ get, setPage, setGet, setDateFilter, dateFilter}) 
       url: `${backend}/sessions/${user.uid}`,
     }).then((res) => {
       setGet(res.data);
-      redirect && setPage("LOG")
       const earliest = new Date(
         res.data.sessions.map((v) => new Date(v.date)).sort((a, b) => a - b)[0]
       );
@@ -71,7 +70,7 @@ export default function Add({ get, setPage, setGet, setDateFilter, dateFilter}) 
           .slice(0, 10),
         ascending: dateFilter.ascending,
       });
-    })
+    }).then(()=>redirect && setPage("LOG"))
   );
   }
 
@@ -127,8 +126,14 @@ export default function Add({ get, setPage, setGet, setDateFilter, dateFilter}) 
     });
 
     const submission = { date: time, lifts };
-
-    if (get.sessions?.some(session =>session.date === submission.date.slice(0,19))) {
+    if (get.sessions?.some(session => {
+      function correctTimezone(dateString) {
+        const dateObject = new Date(dateString)
+        const correction = dateObject.setTime(dateObject.getTime() - 1000 * 60 * dateObject.getTimezoneOffset())
+        return new Date(correction).toISOString().slice(0,19)
+      }
+      return correctTimezone(session.date) === submission.date.slice(0,19)
+    })) {
       setResponse("A session has already been recorded for this Timestamp")
       return
     }
@@ -235,7 +240,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get }) {
     exArr.forEach(ex=>fieldObject[ex] = 0)
     setFields({...fieldObject})
   }, [exArr])
-  console.log(fields)
+  // console.log(fields)
   
   
   const lengthenArr = (number, exercise) => {

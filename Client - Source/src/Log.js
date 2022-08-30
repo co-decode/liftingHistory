@@ -43,6 +43,7 @@ export default function Log() {
   const editRefs = useRef({});
   const link = useNavigate();
 
+
   useEffect(() => {
     axios({
       method: "get",
@@ -113,9 +114,11 @@ export default function Log() {
   function deleteSession(sid) {
     if (!window.confirm("Are you sure you want to delete this session?"))
       return;
+    const exerciseArray = get.sessions.find(sess => sess.sid === sid).exercises
     setLoading(true);
     axios({
       method: "delete",
+      data: exerciseArray,
       withCredentials: true,
       url: `${backend}/sessions/${sid}`,
     }).then((res) => {
@@ -147,9 +150,9 @@ export default function Log() {
             (v) => v.sid === sidVal
           ).exercises;
           if (
-            exerciseCall.every((exercise) =>
-              varFilter[exercise].includes("HIDE")
-            ) )
+            exerciseCall.every((exercise) =>{
+              return varFilter[exercise].includes("HIDE")
+            }) )
             return null;
 
           
@@ -191,7 +194,7 @@ export default function Log() {
                 </div>
               </div>
               {exerciseCall.map((v) => {
-                const exerciseData = get[v].filter((v) => v.sid === sidVal)[0];
+                const exerciseData = get[v].find((v) => v.sid === sidVal);
                 if (varFilter[v].length > 0)
                   if (
                     varFilter[v].every(
@@ -395,7 +398,7 @@ export default function Log() {
                   {varMenus[exercise] &&
                     variationObject[exercise].flat().map((value) => {
                       return (
-                        <label>
+                        <label key={`${exercise}_${value}_box`}>
                           {value}
                           <input
                             ref={(el) =>

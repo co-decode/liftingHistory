@@ -117,8 +117,9 @@ function makeApp(database,  ) {
 
   app.delete("/sessions/:sid", async (req, res, next) => {
     const { sid } = req.params;
+    const exerciseArray = req.body
     try {
-      const returned = await database.deleteQuery(sid);
+      await database.deleteQuery(sid, exerciseArray);
       res.status(200).send("Session removed");
     } catch (error) {
       res.send("Failure");
