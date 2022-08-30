@@ -43,6 +43,14 @@ export default function Log() {
   const editRefs = useRef({});
   const link = useNavigate();
 
+  // useEffect(() => {
+  //   let output = {}
+  //   if (!get) return
+  //   Object.keys(get).filter(
+  //     (key) => key !== "sessions"
+  //   ).forEach((exercise) => (output[exercise] = []))
+  //   setVarFilter(output)
+  // }, [get])
 
   useEffect(() => {
     axios({
@@ -473,6 +481,8 @@ export default function Log() {
           user={user}
           setDateFilter={setDateFilter}
           dateFilter={dateFilter}
+          varFilter={varFilter}
+          setVarFilter={setVarFilter}
         />
       );
     else if (page === BREAK)
@@ -493,6 +503,8 @@ export default function Log() {
           setGet={setGet}
           setDateFilter={setDateFilter}
           dateFilter={dateFilter}
+          varFilter={varFilter}
+          setVarFilter={setVarFilter}
         />
       );
     else if (page === TONS) return <Tonnage get={get} />;

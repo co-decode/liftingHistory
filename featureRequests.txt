@@ -50,16 +50,18 @@ VERSION 3:
 
         DONE Extend variation entry to permit custom entries 
             DONE Test and make sure it works with the edit component, and all the others... the filters are going to need it as well, they are currently pulling from the global variationsObject
-        ->> Add custom entry feature to the Edit component
+        DONE Add custom entry feature to the Edit component
                 DONE: Allowed to add to tags of the same value to the edit component
                 DONE: Edit component not filtering existing tags for customs.
                 DONE: Can add missing mandatory fields now
+                DONE: Can add custom fields...
+                DONE: Allow new customs to be added.
+                DONE: Fix the add exercise forms.
 
-        optional and mandatory variation entries ?
+        DONE optional and mandatory variation entries
 
 
         // Variation Filtering
-
 
         Cannot filter by variation for Graph... may be a desirable functionality.
 

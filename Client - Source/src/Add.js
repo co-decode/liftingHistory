@@ -10,6 +10,8 @@ export default function Add({
   setGet,
   setDateFilter,
   dateFilter,
+  varFilter,
+  setVarFilter
 }) {
   const dateRefs = useRef({ date: null, time: null });
   const exerciseRefs = useRef({});
@@ -63,6 +65,10 @@ export default function Add({
           url: `${backend}/sessions/${user.uid}`,
         })
           .then((res) => {
+            let varFilterAddition = {}
+            const newExercises = Object.keys(res.data).filter(key =>!Object.keys(get).includes(key)) 
+            newExercises.forEach(exercise => varFilterAddition[exercise] = [])
+            setVarFilter({...varFilter, ...varFilterAddition })
             setGet(res.data);
             const earliest = new Date(
               res.data.sessions
@@ -210,7 +216,7 @@ function VariationOptions({ get, exercise, exerciseRefs }) {
   const customRef = useRef({});
   const customs = useMemo(() => {
     let output = [];
-    if (!get[exercise]) return output;
+    if (!get[exercise]) return []
     get[exercise].forEach((sess) =>
       sess.variation.forEach(
         (variation) =>
@@ -221,11 +227,6 @@ function VariationOptions({ get, exercise, exerciseRefs }) {
     );
     return output;
   }, [get, exercise]);
-  // function getCustoms() {
-  //
-  //   get[exercise].forEach(sess=> sess.variation.forEach(variation=> !variationObject[exercise].flat().includes(variation) && !output.includes(variation) && output.push(variation)))
-  //
-  // }
   const [customAdditions, setCustomAdditions] = useState(customs);
   const [varFields, setVarFields] = useState(0);
   const number = variationObject[exercise].length;

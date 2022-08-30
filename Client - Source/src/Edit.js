@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { backend, variationObject, exerciseArray } from "./utils/variables";
@@ -6,18 +6,18 @@ import Spinner from "./utils/Spinner";
 
 const LOG = "LOG";
 
-function variationOptions(get, exercise, index, existing) {
+function variationOptions(customs, exercise, index, existing) {
   if (!variationObject[exercise][index]) {
-    let variationsForUser = [];
-            get[exercise].forEach((sess) =>
-              sess.variation.forEach(
-                (variation) =>
-                  !variationObject[exercise].flat().includes(variation) &&
-                  !variationsForUser.includes(variation) &&
-                  variationsForUser.push(variation)
-              )
-            );
-    return variationsForUser.filter((v) => v !== existing).map((variation)=> <option key={`${exercise}${index}${variation}`}>{variation}</option>)}
+    // let variationsForUser = [];
+    //         get[exercise].forEach((sess) =>
+    //           sess.variation.forEach(
+    //             (variation) =>
+    //               !variationObject[exercise].flat().includes(variation) &&
+    //               !variationsForUser.includes(variation) &&
+    //               variationsForUser.push(variation)
+    //           )
+    //         );
+    return customs.filter((v) => v !== existing).map((variation)=> <option key={`${exercise}${index}${variation}`}>{variation}</option>)}
     else return variationObject[exercise][index]
     .filter((v) => v !== existing)
     .map((v) => <option key={`${exercise}${index}${v}`}>{v}</option>);
@@ -31,12 +31,16 @@ export default function Edit({
   setPage,
   user,
   setDateFilter,
-  dateFilter
+  dateFilter,
+  varFilter,
+  setVarFilter
 }) {
   const [update, setUpdate] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [fields, setFields] = useState({});
   const [loading, setLoading] = useState(false)
+  const [customAdditions, setCustomAdditions] = useState()
+  const customRefs = useRef({})
   const link = useNavigate();
 
   useEffect(() => {
@@ -65,18 +69,34 @@ export default function Edit({
       date: correctedDate
     };
     const fieldsInitial = {};
+    const customsObject = {};
     session.exercises.forEach((v) => {
       const filtered = get[v].find((v) => v.sid === edit);
+      let variationPart = variationObject[v].length - filtered.variation.length > 0 
+      ? filtered.variation.concat(Array(variationObject[v].length - filtered.variation.length).fill("")) 
+      : filtered.variation
       updateObject.lifts[v] = {
         mass: filtered.mass,
         reps: filtered.reps,
-        variation: filtered.variation,
+        variation: variationPart,
       };
       fieldsInitial[v] = filtered.mass.length;
+
+      let customsComb = [];
+      get[v].forEach((sess) =>
+      sess.variation.forEach(
+        (variation) =>
+          !variationObject[v].flat().includes(variation) &&
+          !customsComb.includes(variation) &&
+          customsComb.push(variation)
+      )
+    );
+      customsObject[v] = customsComb
     });
     setFields(fieldsInitial);
     setUpdate(updateObject);
-  }, [get, edit]);
+    setCustomAdditions(customsObject)
+  }, [get, edit ]);
 
   useEffect(() => {
     setFeedback(null);
@@ -127,12 +147,14 @@ export default function Edit({
                 const filtered = get[exercise].find(
                   (v) => v.sid === sidVal
                 );
-                function variationArray() {
-                  if (filtered.variation.length < variationObject[exercise].length) {
-                    return Array(variationObject[exercise].length).fill(null).map((v,i)=> filtered.variation[i] || "")
-                  }
-                  else return filtered.variation
-                }
+                // function variationArray() {
+                //   if (filtered.variation.length < variationObject[exercise].length) {
+                //     return Array(variationObject[exercise].length).fill(null).map((v,i)=> filtered.variation[i] || "")
+                //   }
+                //   else return filtered.variation
+                // }
+                if (!update) return null
+                const varArray = update.lifts[exercise].variation//!
                 return (
                   <div key={exercise}>
                     <button onClick={() => loseLift(exercise)}>
@@ -251,7 +273,7 @@ export default function Edit({
                         <div>
                           {" "}
                           Variation
-                          {variationArray().map((v, varNo) => {
+                          {varArray.map((v, varNo) => {
                             return (
                               <div key={`${exercise}var${varNo}`}>
                                 <label htmlFor={`${exercise}variation`}>
@@ -260,31 +282,65 @@ export default function Edit({
                                 <select
                                   id={`${exercise}variation`}
                                   onChange={(e) => {
-                                    setUpdate({
-                                      ...update,
-                                      lifts: {
-                                        ...update.lifts,
-                                        [exercise]: {
-                                          ...update.lifts[exercise],
-                                          variation: [
-                                            ...update.lifts[exercise].variation,
-                                          ].map((v, i) => {
-                                            return i === varNo
-                                              ? e.target.value
-                                              : v;
-                                          }),
+                                    let newUpdate
+                                      newUpdate = {
+                                        ...update,
+                                        lifts: {
+                                          ...update.lifts,
+                                          [exercise]: {
+                                            ...update.lifts[exercise],
+                                            variation: [
+                                              ...update.lifts[exercise].variation,
+                                            ].map((v, i) => {
+                                              return i === varNo
+                                                ? e.target.value //!
+                                                : v;
+                                            }),
+                                          },
                                         },
-                                      },
-                                    });
+                                      }
+                                    setUpdate(newUpdate);
                                   }}
-                                  defaultValue={filtered.variation[varNo]}
+                                  // defaultValue={v}
                                 >
-                                  <option>{filtered.variation[varNo]}</option>
-                                  {variationOptions(get, exercise, varNo, v)}
+                                  <option>{v}</option>
+                                  {variationOptions(customAdditions[exercise], exercise, varNo, v)}
                                 </select>
                               </div>
                             );
                           })}
+                          { update.lifts[exercise].variation.length < 5 &&
+                          <button onClick={() => setUpdate({
+                                        ...update,
+                                        lifts: {
+                                          ...update.lifts,
+                                          [exercise]: {
+                                            ...update.lifts[exercise],
+                                            variation: [
+                                              ...update.lifts[exercise].variation,
+                                            ].concat([""]),
+                                          },
+                                        },
+                                      })}>+</button>}
+                          { update.lifts[exercise].variation.length > variationObject[exercise].length &&
+                          <>
+                          <button onClick={()=> setUpdate({
+                                        ...update,
+                                        lifts: {
+                                          ...update.lifts,
+                                          [exercise]: {
+                                            ...update.lifts[exercise],
+                                            variation: [
+                                              ...update.lifts[exercise].variation,
+                                            ].slice(0, update.lifts[exercise].variation.length - 1),
+                                          },
+                                        },
+                                      })}>-</button>
+                          <label> New Custom:
+                            <input type='text' ref={(el) => customRefs.current[exercise] = el}/>
+                          </label>
+                          <button onClick={() => setCustomAdditions({...customAdditions, [exercise]: [...customAdditions[exercise], customRefs.current[exercise].value]})}>Add New Variation</button>
+                          </>}
                         </div>
                       </div>
                     )}
@@ -307,7 +363,7 @@ export default function Edit({
         )
       ) ||
       Object.keys(update.newLifts).some((exercise) =>
-        Object.values(update.newLifts[exercise]).some((arrayKey) =>
+        Object.keys(update.newLifts[exercise]).some((arrayKey) =>
           Object.values(update.newLifts[exercise][arrayKey]).some((v) => !v)
         )
       )
@@ -315,7 +371,10 @@ export default function Edit({
       setFeedback("Incomplete Forms");
       return;
     }
-    if (Object.keys(update.lifts).some(exercise => update.lifts[exercise].variation.length !== Array.from(new Set(update.lifts[exercise].variation)).length)){
+    if (
+      Object.keys(update.lifts).some(exercise => update.lifts[exercise].variation.length !== Array.from(new Set(update.lifts[exercise].variation)).length)
+      || Object.keys(update.newLifts).some(exercise => update.newLifts[exercise].variation.length !== Array.from(new Set(update.newLifts[exercise].variation)).length)
+      ){
       setFeedback("Cannot submit multiple identical variations")
       return
     }
@@ -332,10 +391,13 @@ export default function Edit({
         withCredentials: true,
         url: `${backend}/sessions/${user.uid}`,
       }).then((res) => {
+        let varFilterAddition = {}
+        const newExercises = Object.keys(res.data).filter(key =>!Object.keys(get).includes(key)) 
+        newExercises.forEach(exercise => varFilterAddition[exercise] = [])
+        setVarFilter({...varFilter, ...varFilterAddition })
         setLoading(false)
         setGet(res.data);
         setEdit(0);
-        setPage(LOG)
         const earliest = new Date(
           res.data.sessions.map((v) => new Date(v.date)).sort((a, b) => a - b)[0]
         );
@@ -351,7 +413,7 @@ export default function Edit({
             .slice(0, 10),
           ascending: dateFilter.ascending,
         });
-      })
+      }).then(()=>setPage(LOG))
     );
   };
 
@@ -453,7 +515,7 @@ export default function Edit({
           <div>
             {" "}
             Variation
-            {variationObject[exercise].map((v, varNo) => {
+            {update.newLifts[exercise].variation.map((v, varNo) => {
               return (
                 <div key={`${exercise}var${varNo}`}>
                   <label htmlFor={`${exercise}variation`}>{varNo + 1}</label>
@@ -466,7 +528,7 @@ export default function Edit({
                           ...update.newLifts,
                           [exercise]: {
                             ...update.newLifts[exercise],
-                            variation: [...variationObject[exercise]].map(
+                            variation: [...update.newLifts[exercise].variation].map(
                               (v, i) => {
                                 return i === varNo
                                   ? e.target.value
@@ -474,16 +536,48 @@ export default function Edit({
                               }
                             ),
                           },
-                        },
+                        },//!
                       });
                     }}
                   >
-                    <option value=""> --- </option>
-                    {variationOptions(get, exercise, varNo, v)}
+                    <option>{v}</option>
+                    {variationOptions(customAdditions[exercise], exercise, varNo, v)}
                   </select>
                 </div>
               );
             })}
+            { update.newLifts[exercise].variation.length < 5 &&
+                          <button onClick={() => setUpdate({
+                                        ...update,
+                                        newLifts: {
+                                          ...update.newLifts,
+                                          [exercise]: {
+                                            ...update.newLifts[exercise],
+                                            variation: [
+                                              ...update.newLifts[exercise].variation,
+                                            ].concat([""]),
+                                          },
+                                        },
+                                      })}>+</button>}
+                          { update.newLifts[exercise].variation.length > variationObject[exercise].length &&
+                          <>
+                          <button onClick={()=> setUpdate({
+                                        ...update,
+                                        newLifts: {
+                                          ...update.newLifts,
+                                          [exercise]: {
+                                            ...update.newLifts[exercise],
+                                            variation: [
+                                              ...update.newLifts[exercise].variation,
+                                            ].slice(0, update.newLifts[exercise].variation.length - 1),
+                                          },
+                                        },
+                                      })}>-</button>
+                          <label> New Custom:
+                            <input type='text' ref={(el) => customRefs.current[exercise] = el}/>
+                          </label>
+                          <button onClick={() => setCustomAdditions({...customAdditions, [exercise]: [...customAdditions[exercise], customRefs.current[exercise].value]})}>Add New Variation</button>
+                          </>}
           </div>
         </div>
       </fieldset> 
@@ -499,6 +593,31 @@ export default function Edit({
       );
     setUpdate({ ...update, newLifts: newLiftsClone });
   };
+
+  const addExercise = (exercise) => {
+    let customsComb = []
+    if (get[exercise]){
+    get[exercise].forEach((sess) =>
+      sess.variation.forEach(
+        (variation) =>
+          !variationObject[exercise].flat().includes(variation) &&
+          !customsComb.includes(variation) &&
+          customsComb.push(variation)
+      )
+    )}
+    setCustomAdditions({...customAdditions, [exercise]: customsComb})
+    setUpdate({
+      ...update,
+      newLifts: {
+        ...update.newLifts,
+        [exercise]: {
+          mass: null,
+          reps: null,
+          variation: Array(variationObject[exercise].length).fill(''),
+        },
+      },
+    })
+  }
 
   const loseLift = (exercise) => {
     if (!update.lostLifts.includes(exercise)) {
@@ -553,10 +672,9 @@ export default function Edit({
       >
         Cancel and view Breakdown
       </button>
+      <button onClick={() => console.log(update, customAdditions)}>log Update</button><br/>
       <button onClick={() => submitUpdate(update)}>Submit Update</button><br/>
-      {!update
-        ? null
-        : exerciseArray
+      {update && exerciseArray
             .filter(
               (v) =>
                 !get.sessions.find((v) => v.sid === edit).exercises.includes(v)
@@ -565,26 +683,16 @@ export default function Edit({
               return (
                 <div key={`missing${exercise}`} style={{display:"inline-block"}}>
                   <button style={{display:"inline-block"}}
-                    onClick={() => {
+                    onClick={() => { 
                       update.newLifts[exercise]
                         ? removeExercise(exercise)
-                        : setUpdate({
-                            ...update,
-                            newLifts: {
-                              ...update.newLifts,
-                              [exercise]: {
-                                mass: null,
-                                reps: null,
-                                variation: [],
-                              },
-                            },
-                          });
+                        : addExercise(exercise);
                     }}
                   >
                     {update.newLifts[exercise] ? `Remove ` : `Add `}
                     {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}
                   </button>
-                  {update.newLifts[exercise] ? addFieldset(exercise) : null}
+                  {update.newLifts[exercise] && addFieldset(exercise)}
                 </div>
               );
             })}
