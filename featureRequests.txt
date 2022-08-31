@@ -69,8 +69,13 @@ VERSION 3:
         // JSON to entry
 
         Experiment with reading a JSON file, or text stream, and auto-filling the Add and Edit forms.
+            DONE: I can output files AND  I can input files
+            What do I want to do with this?
+            Be able to write a JSON object on my phone, then pass it to the website to automate the process? How do I receive these objects? It would be a pain to use the local file system.
+    
+        Why not just access the website from my phone...
+            Calendar component and the graph component seem to fail on mobile due to the .at() function. I love this function, but experiment with leaving it out in order to see whether the mobile browser is capable of rendering these components.
 
-            Learn how to use promises correct, right now I've got a callback when I'm inputting template data. I want to use chained promises.
 
         More Colours for the Calendar
 

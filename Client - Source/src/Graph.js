@@ -242,7 +242,7 @@ export default function Graph({ get }) {
           });
 
         const categoryObject = {};
-        const categoryArray = Array(
+        const categoryArray = Array( //!!! MOBILE doesn't like the .at() component, try it with this: sidsTagged[sidsTagged.length - 1]
           getDifference(sidsTagged[0].interval, sidsTagged.at(-1).interval) + 1
         )
           .fill(null)

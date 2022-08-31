@@ -43,7 +43,7 @@ export const variationObject = {
       ["Conventional", "Sumo"],
       ["Double Overhand", "Mixed Grip", "Straps"],
     ],
-    squat: [["High Bar", "Front", "Low Bar"]],
+    squat: [["High Bar", "Front", "Low Bar", "Free"]],
     bench: [
       ["Close Grip", "Standard", "Wide Grip"],
       ["Flat", "Incline"],

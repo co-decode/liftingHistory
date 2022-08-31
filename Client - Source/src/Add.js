@@ -173,6 +173,7 @@ export default function Add({
     }
   };
 
+
   function readFile() {
     let file = fileRef.current.files[0]
     let reader = new FileReader()
@@ -182,6 +183,12 @@ export default function Add({
       setBlob(reader.result)
     }
   }
+
+  let downloadableFile = new File([JSON.stringify([1,2,3,4,5])], `hello.json`, {
+    type: "application/json"
+  })
+
+  let fileURL = URL.createObjectURL(downloadableFile)
 
   if (!user)
     return (
@@ -205,6 +212,11 @@ export default function Add({
         onKeyDown={(e) => e.code === "Enter" && e.preventDefault()}
         onSubmit={(e) => handleSubmit(e)}
       >
+        <label>
+          Download a file:
+          <a href={`${fileURL}`} download={'hello.json'} >CLICK ME</a>
+        </label>
+        <button onClick={()=> readFile()}>Output file read</button>
         <label>
           Upload a file:
           <input type="file" ref={fileRef} />

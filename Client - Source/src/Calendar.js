@@ -8,6 +8,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
   const sortedSessions = get.sessions.sort(
     (a, b) => new Date(a.date) - new Date(b.date)
   );
+  // !!! MOBILE cannot handle the .at() function... use this instead: sortedSessions[sortedSessions.length-1]
   const mostRecentSessionDate = new Date(sortedSessions.at(-1).date);
   const [monthYearDate, setMonthYearDate] = useState(goToMonthYear || mostRecentSessionDate);
   // const mostRecentSessionDate = new Date(2022, 0 , 1);
