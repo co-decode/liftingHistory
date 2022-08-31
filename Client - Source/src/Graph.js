@@ -218,8 +218,8 @@ export default function Graph({ get }) {
           });
 
         const categoryObject = {};
-        const categoryArray = Array(
-          getDifference(sidsTagged[0].interval, sidsTagged.at(-1).interval) + 1
+        const categoryArray = Array( // .at() doesn't seem to work for mobiles: testing with change
+          getDifference(sidsTagged[0].interval, sidsTagged[sidsTagged.length - 1].interval/* sidsTagged.at(-1).interval */) + 1
         )
           .fill(null)
           .map((v, i) =>
@@ -279,7 +279,7 @@ export default function Graph({ get }) {
         const sorted = sessionListFiltered.sort(
           (a, b) => new Date(a) - new Date(b)
         );
-        return Array(getDifference(sorted[0].date, sorted.at(-1).date) + 1)
+        return Array(getDifference(sorted[0].date, sorted[sorted.length - 1].date /* sorted.at(-1).date */) + 1) // .at() doesn't work on mobile, testing
           .fill(null)
           .map((v, i) => {
             if (input.interval === "MONTH") {
