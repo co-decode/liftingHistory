@@ -28,11 +28,16 @@ export default function Graph({ get }) {
   const [input, setInput] = useState({ interval: "SESSION", exercise: "ALL" });
   const [intervalLength, setIntervalLength] = useState([null, null]);
   const [referenceDate, setReferenceDate] = useState(null);
+  const [varFilter, setVarFilter] = useState([])
   const [dataRange, setDataRange] = useState({
     earliest: dateInitialiser("EARLIEST"),
     latest: dateInitialiser("LATEST"),
     apply: false,
   });
+
+  useEffect(() => {
+    setVarFilter( [] )
+  }, [input.exercise])
 
   function dateInitialiser(date) {
     const stringsToDates = get.sessions.map((v) => new Date(v.date));
@@ -164,10 +169,19 @@ export default function Graph({ get }) {
         )
       : get.sessions;
 
-    const sessionListFiltered =
-      input.exercise === "ALL"
-        ? sessionList
-        : sessionList.filter((sess) => sess.exercises.includes(input.exercise));
+    function filterSessions() {
+      if (input.exercise === "ALL") return sessionList
+      else {
+        if (varFilter.length) {
+          return sessionList.filter((sess) => sess.exercises.includes(input.exercise))
+          .filter(sess=> get[input.exercise]
+          .find(exerciseSession=>exerciseSession.sid === sess.sid).variation
+          .some(variation => varFilter.includes(variation) ) )
+        }
+        return sessionList.filter((sess) => sess.exercises.includes(input.exercise))
+      } 
+    }
+    const sessionListFiltered = filterSessions()
 
     const getDataset = (/* what, */ input) => {
       function returnExerciseObject(getWhat, sid) {
@@ -342,7 +356,7 @@ export default function Graph({ get }) {
         },
       ],
     };
-  }, [input, get, referenceDate, intervalLength, dataRange]);
+  }, [input, get, referenceDate, intervalLength, dataRange, varFilter]);
 
   const [data, setData] = useState(dataInitialiser);
   const [options, setOptions] = useState(optionsInitialiser(input.interval));
@@ -382,6 +396,29 @@ export default function Graph({ get }) {
       </>
     );
   }
+
+  function returnVarControls() {
+    if (input.exercise === "ALL") return null;
+
+    else {
+      let variationsForUser = [];
+      get[input.exercise].forEach((sess) =>
+        sess.variation.forEach(
+          (variation) =>
+            !variationsForUser.includes(variation) &&
+            variationsForUser.push(variation)
+        )
+      )
+      return (
+      <div>
+         {variationsForUser.map(variation => 
+            <label key={variation}>{variation}
+              <input type="checkbox" onChange={(e)=> e.target.checked ? setVarFilter([...varFilter, variation]) : setVarFilter([...varFilter].filter(vari => vari !== variation))}/>
+            </label>
+         )}
+      </div>
+    )
+  }}
 
   function returnCustomControls() {
     if (input.interval !== "CUSTOM") return null;
@@ -471,6 +508,7 @@ export default function Graph({ get }) {
       <fieldset>
         {returnInputControls()}
         {returnCustomControls()}
+        {returnVarControls()}
         {returnDataRange()}
       </fieldset>
       <Line options={options} data={data} />

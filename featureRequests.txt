@@ -63,12 +63,16 @@ VERSION 3:
 
         // Variation Filtering
 
-        Cannot filter by variation for Graph... may be a desirable functionality.
+        DONE Cannot filter by variation for Graph... may be a desirable functionality.
 
 
         // JSON to entry
 
         Experiment with reading a JSON file, or text stream, and auto-filling the Add and Edit forms.
+
+            Learn how to use promises correct, right now I've got a callback when I'm inputting template data. I want to use chained promises.
+
+        More Colours for the Calendar
 
 
         Would require major refactoring, but I could tag each set with a variation template, and make it reasonably quick to assign in entry.
