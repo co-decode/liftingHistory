@@ -78,15 +78,16 @@ VERSION 3:
         
         DONE: Create programmable entry controls. Such as fill all mass fields with {value}, etc...
     
-        More Colours for the Calendar
+        DONE: More Colours for the Calendar
             Not sure what I want to do with this... maybe everything is categorised into general body parts and each gets its own of three base colours, and the individual exercises vary in transparency or something?
 
             DONE FIX: the gradient creation AND the box fill is NON modular. DRY.
-            We have colours now but GOD are they ugly, give me a localStorage object to store colour preferences with.
+            DONE We have colours now but GOD are they ugly, give me a localStorage object to store colour preferences with.
         
 
-        Would require major (<- not really...) refactoring, but I could tag each set with a variation template, and make it reasonably quick to assign in entry.
+        ->> Would require major (<- not really...) refactoring, but I could tag each set with a variation template, and make it reasonably quick to assign in entry.
             THIS I want another variation field, with the same length as the mass and rep fields. The old variation field will become the templates field, which will be an array of arrays, if this is supported by postgres.
+            ->> Refactoring
 
 
 

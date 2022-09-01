@@ -105,16 +105,28 @@ export default function Edit({
     setFeedback(null);
   }, [update]);
 
-  function handleMacro(e, exercise) {
+  function handleMacro(e, exercise, liftString) {
     e.preventDefault()
     var {fields: col, range, number} = macroRefs.current[exercise]
     
     const target = exerciseRefs.current[exercise]
     function changeFields(from, to) {
       if (col.value !== "Mass") {
-        Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach((setNo)=>target[setNo].reps.value = number.value)
+        Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach((setNo)=>{
+          setUpdate({...update, [liftString]: {...update[liftString], 
+            [exercise]: {...update[liftString][exercise], 
+              reps: [...update[liftString][exercise].reps].map((repsVal, ind) => 
+                ind >= from && ind <= to ? parseInt(number.value) : repsVal
+              )}}})
+          target[setNo].reps.value = number.value
+        })
       }
       if (col.value !== "Reps") {
+        setUpdate({...update, [liftString]: {...update[liftString], 
+          [exercise]: {...update[liftString][exercise], 
+            mass: [...update[liftString][exercise].mass].map((massVal, ind) => 
+              ind >= from && ind <= to ? parseInt(number.value) : massVal
+            )}}})
         Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach(setNo=> target[setNo].mass.value = number.value)
       }
     }
@@ -279,7 +291,7 @@ export default function Edit({
                             ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], to: el}}} style={{ width: "5ch" }} 
                             defaultValue={macroState[exercise].to}/>
                           </>}
-                          <button type="" onClick={e => handleMacro(e,exercise)}>Go</button>
+                          <button type="" onClick={e => handleMacro(e,exercise,"lifts")}>Go</button>
                         </div>
                         {Array(fields[exercise])
                           .fill(null)
@@ -444,12 +456,12 @@ export default function Edit({
     if (
       Object.keys(update.lifts).some((exercise) =>
         Object.keys(update.lifts[exercise]).some((arrayKey) =>
-          Object.values(update.lifts[exercise][arrayKey]).some((v) => !v)
+          Object.values(update.lifts[exercise][arrayKey]).some((v) => !v && v !== 0)
         )
       ) ||
       Object.keys(update.newLifts).some((exercise) =>
         Object.keys(update.newLifts[exercise]).some((arrayKey) =>
-          Object.values(update.newLifts[exercise][arrayKey]).some((v) => !v)
+          Object.values(update.newLifts[exercise][arrayKey]).some((v) => {console.log(update.newLifts[exercise], exercise, arrayKey, v); return !v && v !== 0})
         )
       )
     ) {
@@ -583,7 +595,7 @@ export default function Edit({
               ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], to: el}}} style={{ width: "5ch" }} 
               defaultValue={macroState[exercise].to}/>
             </>}
-            <button type="" onClick={e => handleMacro(e,exercise)}>Go</button>
+            <button type="" onClick={e => handleMacro(e,exercise,"newLifts")}>Go</button>
           </div>
           {Array(fields[exercise])
             .fill(null)
@@ -817,7 +829,7 @@ export default function Edit({
         Cancel and view Breakdown
       </button>
       {/* <button onClick={() => console.log(exerciseRefs.current)}>log exerciseRefs</button><br/>
-      <button onClick={() => console.log(update, customAdditions)}>log Update</button><br/> */}
+      <button onClick={() => console.log(update)}>log Update</button><br/> */}
       <button onClick={() => submitUpdate(update)}>Submit Update</button><br/>
       {update && exerciseArray
             .filter(

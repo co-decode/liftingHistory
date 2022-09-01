@@ -1,11 +1,104 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./calendarCSS.css";
 import * as d3 from "d3";
 import {exerciseArray} from "./utils/variables"
 
 export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
   const svgRef = useRef();
-  const [colourState, setColourState] = useState({})
+  const colourForExercise = useMemo(() => {
+    let output ={}
+    exerciseArray.forEach((exercise, ind) => 
+      output[exercise] = JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] 
+      || "#" + (parseInt("ffffff",  16) * Math.random()).toString(16).replace(/\.\w+$/, "").padStart(6, 0) + "50")
+    return output
+  },[])
+  const [colourState, setColourState] = useState(colourForExercise)
+  const colorStrings = [
+    `#ff80ed`,
+    `#065535`,
+    `#000000`,
+    `#133337`,
+    `#ffc0cb`,
+    `#ffffff`,
+    `#ffe4e1`,
+    `#008080`,
+    `#ff0000`,
+    `#e6e6fa`,
+    `#ffd700`,
+    `#ffa500`,
+    `#00ffff`,
+    `#ff7373`,
+    `#0000ff`,
+    `#40e0d0`,
+    `#d3ffce`,
+    `#c6e2ff`,
+    `#b0e0e6`,
+    `#f0f8ff`,
+    `#666666`,
+    `#faebd7`,
+    `#bada55`,
+    `#003366`,
+    `#ffff00`,
+    `#fa8072`,
+    `#ffb6c1`,
+    `#c0c0c0`,
+    `#7fffd4`,
+    `#800000`,
+    `#800080`,
+    `#c39797`,
+    `#00ff00`,
+    `#cccccc`,
+    `#eeeeee`,
+    `#f08080`,
+    `#20b2aa`,
+    `#fff68f`,
+    `#333333`,
+    `#ffc3a0`,
+    `#66cdaa`,
+    `#ff00ff`,
+    `#ff6666`,
+    `#c0d6e4`,
+    `#ffdab9`,
+    `#ff7f50`,
+    `#cbbeb5`,
+    `#afeeee`,
+    `#468499`,
+    `#00ced1`,
+    `#008000`,
+    `#f6546a`,
+    `#b4eeb4`,
+    `#b6fcd5`,
+    `#0e2f44`,
+    `#660066`,
+    `#990000`,
+    `#daa520`,
+    `#6897bb`,
+    `#000080`,
+    `#f5f5f5`,
+    `#808080`,
+    `#696969`,
+    `#088da5`,
+    `#8b0000`,
+    `#f5f5dc`,
+    `#ffff66`,
+    `#101010`,
+    `#dddddd`,
+    `#81d8d0`,
+    `#8a2be2`,
+    `#2acaea`,
+    `#0a75ad`,
+    `#ccff00`,
+    `#ff4040`,
+    `#66cccc`,
+    `#420420`,
+    `#ff1493`,
+    `#00ff7f`,
+    `#a0db8e`,
+    `#cc0000`,
+    `#3399ff`,
+    `#794044`,
+    `#999999`
+  ]
 
   // localStorage.setItem("liftingLogCalendarColors", JSON.stringify({deadlift: "#ff000050", bench: "#0000ff50", squat: "#00ff0050"}))
 
@@ -16,6 +109,9 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
   const mostRecentSessionDate = new Date(sortedSessions[sortedSessions.length-1].date);
   const [monthYearDate, setMonthYearDate] = useState(goToMonthYear || mostRecentSessionDate);
   // const mostRecentSessionDate = new Date(2022, 0 , 1);
+
+
+  
 
   useEffect(() => {
     function returnInitialOffset(days, startDay) {
@@ -211,10 +307,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
       .attr("fill", "black")
       .style("font-size", "19px");
     
-    const colourForExercise = {}
-    exerciseArray.forEach((exercise, ind) => 
-      colourForExercise[exercise] = JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] 
-      || "#" + (parseInt("ffffff",  16) * Math.random()).toString(16).replace(/\.\w+$/, "").padStart(6, 0) + "50")
+    
 
     Object.values(dataObject).forEach((sessionArray, i) => {
       svg
@@ -330,7 +423,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
         .attr("pointer-events", "none")
         .style("font-size", "19px");
     });
-  }, [sortedSessions, monthYearDate, setEdit, setPage]);
+  }, [sortedSessions, monthYearDate, setEdit, setPage, colourForExercise]);
 
   return (
     <>
@@ -343,12 +436,20 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
     {Object.keys(get).filter(key=> key !== "sessions").map(exercise => {
       if (colourState[exercise] === undefined) setColourState({...colourState, [exercise]: null})
       return (
-        <>
-          <label>{exercise}
-            <input type="text" onChange={(e)=> setColourState({...colourState, [exercise]: e.target.value})}
-              defaultValue={JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || null}/>
+          <label key={`color_${exercise}`}>{exercise
+            .split("_")
+            .map((word) => word[0].toUpperCase() + word.slice(1))
+            .join(" ")}
+            <select style={{backgroundColor: colourState[exercise] || /* JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || */ colourForExercise[exercise]}}
+                    onChange={(e)=> setColourState({...colourState, [exercise]: e.target.value})}
+                    defaultValue={JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || colourForExercise[exercise]}>
+              {Object.values(colourForExercise)
+                    .concat(colorStrings.filter(color=>!Object.values(colourForExercise).includes(color)))
+                    .map(color=> 
+              <option key={`${exercise}${color}`} style={{backgroundColor: color}}>{color}</option>)}
+            </select>
           </label>
-        </>
+        
       )
     })}
     <button onClick={()=>localStorage.setItem("liftingLogCalendarColors", JSON.stringify(colourState))}>Save colours</button>
