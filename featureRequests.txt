@@ -75,7 +75,7 @@ VERSION 3:
 
         // Entry improvement
         
-        Create programmable entry controls. Such as fill all mass fields with {value}, etc...
+        DONE: Create programmable entry controls. Such as fill all mass fields with {value}, etc...
     
         More Colours for the Calendar
             Not sure what I want to do with this... maybe everything is categorised into general body parts and each gets its own of three base colours, and the individual exercises vary in transparency or something?

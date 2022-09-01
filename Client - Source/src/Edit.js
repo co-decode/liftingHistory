@@ -40,6 +40,9 @@ export default function Edit({
   const [fields, setFields] = useState({});
   const [loading, setLoading] = useState(false)
   const [customAdditions, setCustomAdditions] = useState()
+  const exerciseRefs = useRef({})
+  const macroRefs = useRef({})
+  const [macroState, setMacroState] = useState({})
   const customRefs = useRef({})
   const link = useNavigate();
 
@@ -102,6 +105,31 @@ export default function Edit({
     setFeedback(null);
   }, [update]);
 
+  function handleMacro(e, exercise) {
+    e.preventDefault()
+    var {fields: col, range, number} = macroRefs.current[exercise]
+    
+    const target = exerciseRefs.current[exercise]
+    function changeFields(from, to) {
+      if (col.value !== "Mass") {
+        Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach((setNo)=>target[setNo].reps.value = number.value)
+      }
+      if (col.value !== "Reps") {
+        Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach(setNo=> target[setNo].mass.value = number.value)
+      }
+    }
+
+    if (range.value === "Range") {
+      var {from, to} = macroRefs.current[exercise]
+      if (to.value > fields[exercise] || to.value <= from.value ) to.value = fields[exercise]
+      if (from.value >= to.value) from.value = 1
+      changeFields(from.value - 1, to.value - 1) // Only differences between Add component and Edit component
+    }
+    else {
+      changeFields(1 - 1, fields[exercise] - 1) //
+    }
+  }
+
   function returnSid(get, sidList) {
     return (
       <div>
@@ -144,6 +172,18 @@ export default function Edit({
                 />
               </>
               {exerciseCall.map((exercise) => {
+
+                
+
+                if (!exerciseRefs.current[exercise]) exerciseRefs.current = {...exerciseRefs.current, [exercise]: {variation: {}}}
+                if (!macroState[exercise]) setMacroState({...macroState, [exercise]: {
+                  fields: "Mass",
+                  range: "All",
+                  number: null,
+                  from: 1,
+                  to: 1
+                }})
+
                 const filtered = get[exercise].find(
                   (v) => v.sid === sidVal
                 );
@@ -208,10 +248,43 @@ export default function Edit({
                               });
                             }
                           }}
-                        />
+                        /><br/>
+                        <div>
+                          Fill
+                          <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], fields: e.target.value}})} 
+                                  ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {fields: el}}}
+                                  defaultValue={macroState[exercise].fields}>
+                            <option>Mass</option>
+                            <option>Reps</option>
+                            <option>Both</option>
+                          </select>&nbsp;
+                          with <input type="number" max="999" min="0" 
+                            onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], number: e.target.value}})} 
+                            ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], number: el}}} style={{ width: "9ch" }} 
+                            defaultValue={macroState[exercise].number}/> for&nbsp;
+                          <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], range: e.target.value}})} 
+                                  ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], range: el}}}
+                                  defaultValue={macroState[exercise].range}>
+                            <option>All</option>
+                            <option>Range</option>
+                          </select>
+                          { macroState[exercise].range === "Range" && <>
+                          {": Sets "}
+                          <input type="number" max="20" min="0" 
+                            onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], from: e.target.value}})}
+                            ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], from: el}}} style={{ width: "5ch" }} 
+                            defaultValue={macroState[exercise].from}/> to&nbsp;
+                          <input type="number" max="20" min="0" 
+                            onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], to: e.target.value}})}
+                            ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], to: el}}} style={{ width: "5ch" }} 
+                            defaultValue={macroState[exercise].to}/>
+                          </>}
+                          <button type="" onClick={e => handleMacro(e,exercise)}>Go</button>
+                        </div>
                         {Array(fields[exercise])
                           .fill(null)
                           .map((set, setNo) => {
+
                             return (
                               <div key={`${exercise}set${setNo}`}>
                                 {" "}
@@ -221,6 +294,9 @@ export default function Edit({
                                 </label>
                                 <input
                                   id={`${exercise}Set${setNo}mass`}
+                                  ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
+                                    [exercise]: {...exerciseRefs.current[exercise], 
+                                      [setNo]: {...exerciseRefs.current[exercise][setNo], mass: el}}}}
                                   onChange={(e) => {
                                     setUpdate({
                                       ...update,
@@ -246,6 +322,9 @@ export default function Edit({
                                 </label>
                                 <input
                                   id={`${exercise}Set${setNo}reps`}
+                                  ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
+                                    [exercise]: {...exerciseRefs.current[exercise], 
+                                      [setNo]: {...exerciseRefs.current[exercise][setNo], reps: el}}}}
                                   onChange={(e) => {
                                     setUpdate({
                                       ...update,
@@ -281,6 +360,10 @@ export default function Edit({
                                 </label>
                                 <select
                                   id={`${exercise}variation`}
+                                  ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
+                                    [exercise]: {...exerciseRefs.current[exercise], 
+                                      variation: {...exerciseRefs.current[exercise].variation, 
+                                      [varNo]: el}}}}
                                   onChange={(e) => {
                                     let newUpdate
                                       newUpdate = {
@@ -419,9 +502,18 @@ export default function Edit({
     );
   };
 
-  ///// vv Extract to component and manage state from there.
+  ///// 
 
   function addFieldset(exercise) {
+
+    if (!macroState[exercise]) {setMacroState({...macroState, [exercise]: {
+      fields: "Mass",
+      range: "All",
+      number: null,
+      from: 1,
+      to: 1
+    }}); return null}
+
     return (
       <fieldset>
         <div>
@@ -460,10 +552,43 @@ export default function Edit({
                 });
               }
             }}
-          />
+          /><br/>
+          <div>
+            Fill
+            <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], fields: e.target.value}})} 
+                    ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {fields: el}}}
+                    defaultValue={macroState[exercise].fields}>
+              <option>Mass</option>
+              <option>Reps</option>
+              <option>Both</option>
+            </select>&nbsp;
+            with <input type="number" max="999" min="0" 
+              onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], number: e.target.value}})} 
+              ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], number: el}}} style={{ width: "9ch" }} 
+              defaultValue={macroState[exercise].number}/> for&nbsp;
+            <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], range: e.target.value}})} 
+                    ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], range: el}}}
+                    defaultValue={macroState[exercise].range}>
+              <option>All</option>
+              <option>Range</option>
+            </select>
+            { macroState[exercise].range === "Range" && <>
+            {": Sets "}
+            <input type="number" max="20" min="0" 
+              onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], from: e.target.value}})}
+              ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], from: el}}} style={{ width: "5ch" }} 
+              defaultValue={macroState[exercise].from}/> to&nbsp;
+            <input type="number" max="20" min="0" 
+              onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], to: e.target.value}})}
+              ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], to: el}}} style={{ width: "5ch" }} 
+              defaultValue={macroState[exercise].to}/>
+            </>}
+            <button type="" onClick={e => handleMacro(e,exercise)}>Go</button>
+          </div>
           {Array(fields[exercise])
             .fill(null)
             .map((set, setNo) => {
+              if (!exerciseRefs.current[exercise]) exerciseRefs.current = {...exerciseRefs.current, [exercise]: {variation: {}}}
               return (
                 <div key={`${exercise}set${setNo}`}>
                   {" "}
@@ -471,6 +596,9 @@ export default function Edit({
                   <label htmlFor={`${exercise}Set${setNo}mass`}>Mass:</label>
                   <input
                     id={`${exercise}Set${setNo}mass`}
+                    ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
+                      [exercise]: {...exerciseRefs.current[exercise], 
+                        [setNo]: {...exerciseRefs.current[exercise][setNo], mass: el}}}}
                     onChange={(e) => {
                       setUpdate({
                         ...update,
@@ -493,6 +621,9 @@ export default function Edit({
                   <label htmlFor={`${exercise}Set${setNo}reps`}>Reps:</label>
                   <input
                     id={`${exercise}Set${setNo}reps`}
+                    ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
+                      [exercise]: {...exerciseRefs.current[exercise], 
+                        [setNo]: {...exerciseRefs.current[exercise][setNo], reps: el}}}}
                     onChange={(e) => {
                       setUpdate({
                         ...update,
@@ -525,6 +656,10 @@ export default function Edit({
                   <label htmlFor={`${exercise}variation`}>{varNo + 1}</label>
                   <select
                     id={`${exercise}variation`}
+                    ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
+                      [exercise]: {...exerciseRefs.current[exercise], 
+                        variation: {...exerciseRefs.current[exercise].variation, 
+                        [varNo]: el}}}}
                     onChange={(e) => {
                       setUpdate({
                         ...update,
@@ -584,6 +719,7 @@ export default function Edit({
                           </>}
           </div>
         </div>
+
       </fieldset> 
     );
   }
@@ -680,7 +816,8 @@ export default function Edit({
       >
         Cancel and view Breakdown
       </button>
-      <button onClick={() => console.log(update, customAdditions)}>log Update</button><br/>
+      {/* <button onClick={() => console.log(exerciseRefs.current)}>log exerciseRefs</button><br/>
+      <button onClick={() => console.log(update, customAdditions)}>log Update</button><br/> */}
       <button onClick={() => submitUpdate(update)}>Submit Update</button><br/>
       {update && exerciseArray
             .filter(
