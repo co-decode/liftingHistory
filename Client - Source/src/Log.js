@@ -31,7 +31,7 @@ export default function Log() {
   const [dateFilter, setDateFilter] = useState({
     from: null,
     to: null,
-    ascending: sessionStorage.getItem("WeightLiftingLogAscending") || true,
+    ascending: null,
   });
   const [user, setUser] = useState(null);
 
@@ -87,6 +87,9 @@ export default function Log() {
                 .map((v) => new Date(v.date))
                 .sort((a, b) => b - a)[0]
             );
+            const storedAscending = localStorage.getItem("WeightLiftingLogAscending") 
+              ? localStorage.getItem("WeightLiftingLogAscending") == "true" 
+              : true
             setDateFilter({
               from: new Date(earliest.setTime(earliest.getTime()))
                 .toISOString()
@@ -96,7 +99,7 @@ export default function Log() {
               )
                 .toISOString()
                 .slice(0, 10),
-              ascending: true,
+              ascending: storedAscending,
             });
           } else {
             setGet(false);
@@ -146,9 +149,8 @@ export default function Log() {
       .filter((v) => v.date >= dateFilter.from && v.date <= dateFilter.to)
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .map((v) => v.sid);
-
-    if (!dateFilter.ascending) {
-      sidList = sidList.reverse();
+      if (!dateFilter.ascending) {
+        sidList = sidList.reverse();
     }
 
     return (
@@ -296,13 +298,14 @@ export default function Log() {
         />
         <button
           onClick={() => {
+            const opposite = !dateFilter.ascending
             setDateFilter({
               ...dateFilter,
-              ascending: !dateFilter.ascending,
+              ascending: opposite,
             });
-            sessionStorage.setItem(
+            localStorage.setItem(
               "WeightLiftingLogAscending",
-              !dateFilter.ascending
+              opposite
             );
           }}
         >

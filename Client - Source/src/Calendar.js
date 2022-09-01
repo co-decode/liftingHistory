@@ -345,6 +345,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
             else if (session.exercises.includes("deadlift")) return "#ff000050";
             else if (session.exercises.includes("squat")) return "#00ff0050";
             else if (session.exercises.includes("bench")) return "#0000ff50";
+            else if (session.exercises.length) return "#ffffff50";
           } else if (
             !session &&
             ind === 0 &&

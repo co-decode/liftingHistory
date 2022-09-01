@@ -60,27 +60,33 @@ VERSION 3:
 
         DONE optional and mandatory variation entries
 
-
-        // Variation Filtering
-
         DONE Cannot filter by variation for Graph... may be a desirable functionality.
 
+        DONE Why not just access the website from my phone...
+            WORKED Calendar component and the graph component seem to fail on mobile due to the .at() function.
+
+        DONE I want the log reversal to be locally stored.
 
         // JSON to entry
 
         Experiment with reading a JSON file, or text stream, and auto-filling the Add and Edit forms.
             DONE: I can output files AND  I can input files
-            What do I want to do with this?
-            Be able to write a JSON object on my phone, then pass it to the website to automate the process? How do I receive these objects? It would be a pain to use the local file system.
+            Create a facility that generates a JSON object from a previous entry.. 
+
+        // Entry improvement
+        
+        Create programmable entry controls. Such as fill all mass fields with {value}, etc...
     
-        Why not just access the website from my phone...
-            Calendar component and the graph component seem to fail on mobile due to the .at() function. I love this function, but experiment with leaving it out in order to see whether the mobile browser is capable of rendering these components.
-
-
         More Colours for the Calendar
+            Not sure what I want to do with this... maybe everything is categorised into general body parts and each gets its own of three base colours, and the individual exercises vary in transparency or something?
 
+            FIX: the gradient creation AND the box fill is NON modular. DRY.
+        
 
         Would require major refactoring, but I could tag each set with a variation template, and make it reasonably quick to assign in entry.
+
+
+
 
         >> Then go work on the sheet music project.
 

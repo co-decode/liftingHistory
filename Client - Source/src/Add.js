@@ -11,12 +11,12 @@ export default function Add({
   setDateFilter,
   dateFilter,
   varFilter,
-  setVarFilter
+  setVarFilter,
 }) {
   const dateRefs = useRef({ date: null, time: null });
   const exerciseRefs = useRef({});
   const fileRef = useRef();
-  const [blob, setBlob] = useState()
+  const [blob, setBlob] = useState();
   const [exArr, setExArr] = useState([]);
   const [response, setResponse] = useState(null);
   const [user, setUser] = useState(null);
@@ -67,10 +67,14 @@ export default function Add({
           url: `${backend}/sessions/${user.uid}`,
         })
           .then((res) => {
-            let varFilterAddition = {}
-            const newExercises = Object.keys(res.data).filter(key =>!Object.keys(get).includes(key)) 
-            newExercises.forEach(exercise => varFilterAddition[exercise] = [])
-            setVarFilter({...varFilter, ...varFilterAddition })
+            let varFilterAddition = {};
+            const newExercises = Object.keys(res.data).filter(
+              (key) => !Object.keys(get).includes(key)
+            );
+            newExercises.forEach(
+              (exercise) => (varFilterAddition[exercise] = [])
+            );
+            setVarFilter({ ...varFilter, ...varFilterAddition });
             setGet(res.data);
             const earliest = new Date(
               res.data.sessions
@@ -173,22 +177,25 @@ export default function Add({
     }
   };
 
-
   function readFile() {
-    let file = fileRef.current.files[0]
-    let reader = new FileReader()
-    reader.readAsText(file)
+    let file = fileRef.current.files[0];
+    let reader = new FileReader();
+    reader.readAsText(file);
     reader.onload = function () {
       // console.log(reader.result)
-      setBlob(reader.result)
-    }
+      setBlob(reader.result);
+    };
   }
 
-  let downloadableFile = new File([JSON.stringify([1,2,3,4,5])], `hello.json`, {
-    type: "application/json"
-  })
+  let downloadableFile = new File(
+    [JSON.stringify([1, 2, 3, 4, 5])],
+    `hello.json`,
+    {
+      type: "application/json",
+    }
+  );
 
-  let fileURL = URL.createObjectURL(downloadableFile)
+  let fileURL = URL.createObjectURL(downloadableFile);
 
   if (!user)
     return (
@@ -214,15 +221,18 @@ export default function Add({
       >
         <label>
           Download a file:
-          <a href={`${fileURL}`} download={'hello.json'} >CLICK ME</a>
+          <a href={`${fileURL}`} download={"hello.json"}>
+            CLICK ME
+          </a>
         </label>
-        <button onClick={()=> readFile()}>Output file read</button>
+        <button onClick={() => readFile()}>Output file read</button>
         <label>
           Upload a file:
           <input type="file" ref={fileRef} />
         </label>
-        <button onClick={()=> readFile()}>Output file read</button>
+        <button onClick={() => readFile()}>Output file read</button>
         {/* <div>{!!blob && console.log(JSON.parse(blob))}</div> */}
+        <br />
         <DateInput dateRefs={dateRefs} />
         <ExerciseFieldSets
           exerciseRefs={exerciseRefs}
@@ -242,10 +252,17 @@ export default function Add({
   );
 }
 
-function VariationOptions({ get, exercise, exerciseRefs, varFields, setVarFields, customs }) {
+function VariationOptions({
+  get,
+  exercise,
+  exerciseRefs,
+  varFields,
+  setVarFields,
+  customs,
+}) {
   //!
   const customRef = useRef({});
-  
+
   const [customAdditions, setCustomAdditions] = useState(customs);
   const number = variationObject[exercise].length;
   const [array, setArray] = useState(() =>
@@ -317,12 +334,22 @@ function VariationOptions({ get, exercise, exerciseRefs, varFields, setVarFields
         );
       })}
       {varFields[exercise] < 3 && (
-        <button type="button" onClick={() => setVarFields({...varFields, [exercise]: varFields[exercise] + 1})}>
+        <button
+          type="button"
+          onClick={() =>
+            setVarFields({ ...varFields, [exercise]: varFields[exercise] + 1 })
+          }
+        >
           +
         </button>
       )}
       {varFields[exercise] > 0 && (
-        <button type="button" onClick={() => setVarFields({...varFields, [exercise]: varFields[exercise] - 1})}>
+        <button
+          type="button"
+          onClick={() =>
+            setVarFields({ ...varFields, [exercise]: varFields[exercise] - 1 })
+          }
+        >
           -
         </button>
       )}
@@ -381,12 +408,15 @@ function ExerciseAdd({ exArr, setExArr }) {
 
 function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
   const [fields, setFields] = useState({});
-  const [varFields, setVarFields] = useState()
-  const prevExArr = useRef(exArr)
+  const macroRefs = useRef()
+  const [macroState, setMacroState] = useState({})
+  // const [macroRange, setMacroRange] = useState({})
+  const [varFields, setVarFields] = useState();
+  const prevExArr = useRef(exArr);
   const [customs, setCustoms] = useState(() => {
     const customsArray = [];
-    exArr.forEach(exercise =>{
-      if (!get[exercise]) return []
+    exArr.forEach((exercise) => {
+      if (!get[exercise]) return [];
       get[exercise].forEach((sess) =>
         sess.variation.forEach(
           (variation) =>
@@ -394,27 +424,24 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
             !customsArray.includes(variation) &&
             customsArray.push(variation)
         )
-      )
+      );
     });
     return customsArray;
   }, [get, exArr]);
-  
 
   useEffect(() => {
     if (prevExArr.current.length !== exArr.length) {
-
-    const fieldObject = {...fields};
-    const varObject = {...varFields};
-    const customsObject = {...customs};
-      exArr.forEach((ex) =>{
-
+      const fieldObject = { ...fields };
+      const varObject = { ...varFields };
+      const customsObject = { ...customs };
+      exArr.forEach((ex) => {
         if (fields[ex] === undefined) {
-        fieldObject[ex] = 0;
-        varObject[ex] = 0;
+          fieldObject[ex] = 0;
+          varObject[ex] = 0;
         }
 
         if (get[ex]) {
-          if (!customsObject[ex]) customsObject[ex] = []
+          if (!customsObject[ex]) customsObject[ex] = [];
           get[ex].forEach((sess) =>
             sess.variation.forEach(
               (variation) =>
@@ -422,15 +449,15 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
                 !customsObject[ex].includes(variation) &&
                 customsObject[ex].push(variation)
             )
-          )
+          );
+        } else if (!get[ex]) {
+          customsObject[ex] = [];
         }
-        else if (!get[ex]) { customsObject[ex] = [] }
-
       });
       setFields(fieldObject);
-      setVarFields(varObject)
-      prevExArr.current = exArr
-      setCustoms(customsObject)
+      setVarFields(varObject);
+      prevExArr.current = exArr;
+      setCustoms(customsObject);
     }
   }, [exArr, fields, varFields, customs, get]);
 
@@ -478,6 +505,14 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
   };
 
   return exArr.map((exercise) => {
+    if (!macroState[exercise]) setMacroState({...macroState, [exercise]: {
+      fields: "Mass",
+      range: "All",
+      number: null,
+      from: 1,
+      to: 1
+    }})
+
     function returnTemplateButton() {
       if (!get.sessions) return null;
       if (get.sessions.every((v) => !v.exercises.includes(exercise)))
@@ -508,57 +543,103 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
 
     function getPrevTemplate(e, mostRecentExerciseSessionSID, sets, blob) {
       e.preventDefault();
-      blob = JSON.parse(blob)
-      const noOfVars = blob.variation.length - variationObject[exercise].length
-      if (blob){
-      var [readFields, readVariation, readSets] = [blob.fields, blob.variation, blob.sets]
-        } 
-      new Promise(resolve => {
-        if (fields[exercise] < sets)setFields({ ...fields, [exercise]: readFields/* sets */ }) // Fields set here : fields
+      blob = JSON.parse(blob);
+      const noOfVars = blob.variation.length - variationObject[exercise].length;
+      if (blob) {
+        var [readFields, readVariation, readSets] = [
+          blob.fields,
+          blob.variation,
+          blob.sets,
+        ];
+      }
+      new Promise((resolve) => {
+        if (fields[exercise] < sets)
+          setFields({ ...fields, [exercise]: readFields /* sets */ }); // Fields set here : fields
         if (varFields[exercise] < noOfVars) {
-          setVarFields({...varFields, [exercise]: noOfVars})
+          setVarFields({ ...varFields, [exercise]: noOfVars });
+        }
+        if (
+          blob.variation
+            .slice(2)
+            .some((vari) => !customs[exercise].includes(vari))
+        ) {
+          let addToCustoms = [];
+          blob.variation
+            .slice(2)
+            .filter((vari) => !customs[exercise].includes(vari))
+            .forEach((vari) => addToCustoms.push(vari));
+          setCustoms({
+            ...customs,
+            [exercise]: [...customs[exercise], ...addToCustoms],
+          });
+        }
+        resolve("Done");
+      }).then(() => {
+        const refsExist = () => {
+          if (
+            Object.keys(exerciseRefs.current[exercise].variation).every(
+              (varNo) => !!exerciseRefs.current[exercise].variation[varNo]
+            ) &&
+            Object.keys(exerciseRefs.current[exercise].variation).length >=
+              readVariation.length
+          ) {
+            if (exerciseRefs.current[exercise]) {
+              Object.keys(exerciseRefs.current[exercise]).forEach((key) => {
+                if (exerciseRefs.current[exercise][key].mass) {
+                  exerciseRefs.current[exercise][key].mass.value =
+                    readSets[key].mass;
 
-        }
-        if (blob.variation.slice(2).some(vari => !customs[exercise].includes(vari)) ) {
-          let addToCustoms = []
-          blob.variation.slice(2).filter(vari => !customs[exercise].includes(vari)).forEach(vari => addToCustoms.push(vari))
-          setCustoms({...customs, [exercise]: [...customs[exercise], ...addToCustoms]})
-        }
-        resolve("Done")
-        })
-        .then(() => {
-          const refsExist = () => {
-            if ( Object.keys(exerciseRefs.current[exercise].variation).every(varNo => !!exerciseRefs.current[exercise].variation[varNo])
-              && Object.keys(exerciseRefs.current[exercise].variation).length >= readVariation.length) {
-              if (exerciseRefs.current[exercise]) {
-                Object.keys(exerciseRefs.current[exercise]).forEach((key) => {
-                  if (exerciseRefs.current[exercise][key].mass) {
-                    exerciseRefs.current[exercise][key].mass.value = readSets[key].mass
-                    
-                    /* get[exercise].find( //! Fields set here : sets - [1,2,3...] - mass
+                  /* get[exercise].find( //! Fields set here : sets - [1,2,3...] - mass
                       (v) => v.sid === mostRecentExerciseSessionSID
                     ).mass[key - 1]; */
-                    exerciseRefs.current[exercise][key].reps.value = readSets[key].reps
-                    
-                    /* get[exercise].find( //! Fields set here : sets - [1,2,3...] - reps
+                  exerciseRefs.current[exercise][key].reps.value =
+                    readSets[key].reps;
+
+                  /* get[exercise].find( //! Fields set here : sets - [1,2,3...] - reps
                       (v) => v.sid === mostRecentExerciseSessionSID
                     ).reps[key - 1]; */
-                  }
-                });
-                Object.keys(exerciseRefs.current[exercise].variation).forEach((index) => { 
-                  exerciseRefs.current[exercise].variation[index].value = readVariation[index]
-                  
+                }
+              });
+              Object.keys(exerciseRefs.current[exercise].variation).forEach(
+                (index) => {
+                  exerciseRefs.current[exercise].variation[index].value =
+                    readVariation[index];
+
                   /* get[exercise]   //! Fields set here : variation: []
                     .find((v) => v.sid === mostRecentExerciseSessionSID).variation[index];  */
-                });
-              }
+                }
+              );
             }
-            else setTimeout(() => refsExist(), 0)
-          }
-          refsExist()
-        } )
+          } else setTimeout(() => refsExist(), 0);
+        };
+        refsExist();
+      });
     }
 
+    function handleMacro(e) {
+      e.preventDefault()
+      var {fields: col, range, number} = macroRefs.current[exercise]
+      
+      const target = exerciseRefs.current[exercise]
+      function changeFields(from, to) {
+        if (col.value !== "Mass") {
+          Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach((setNo)=>target[setNo].reps.value = number.value)
+        }
+        if (col.value !== "Reps") {
+          Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach(setNo=> target[setNo].mass.value = number.value)
+        }
+      }
+
+      if (range.value === "Range") {
+        var {from, to} = macroRefs.current[exercise]
+        if (to.value > fields[exercise] || to.value <= from.value ) to.value = fields[exercise]
+        if (from.value >= to.value) from.value = 1
+        changeFields(from.value, to.value)
+      }
+      else {
+        changeFields(1, fields[exercise])
+      }
+    }
 
     return (
       <div
@@ -583,17 +664,55 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
               : null
           }
           placeholder={fields[exercise] ? fields[exercise] : 0}
-        />{ varFields && varFields[exercise] !== undefined &&
-        <VariationOptions
-          get={get}
-          exercise={exercise}
-          varFields={varFields}
-          setVarFields={setVarFields}
-          /* variationObject[exercise] */ exerciseRefs={exerciseRefs}
-          customs={customs[exercise]}
-        />}{" "}
+        />
+        {varFields && varFields[exercise] !== undefined && (
+          <VariationOptions
+            get={get}
+            exercise={exercise}
+            varFields={varFields}
+            setVarFields={setVarFields}
+            /* variationObject[exercise] */ exerciseRefs={exerciseRefs}
+            customs={customs[exercise]}
+          />
+        )}{" "}
         {/* //! */}
-        {fields[exercise] ? lengthenArr(fields[exercise], exercise) : null}
+        {!!fields[exercise] && (
+          <>
+            <div>
+              Fill
+              <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], fields: e.target.value}})} 
+                      ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {fields: el}}}
+                      defaultValue={macroState[exercise].fields}>
+                <option>Mass</option>
+                <option>Reps</option>
+                <option>Both</option>
+              </select>&nbsp;
+              with <input type="number" max="999" min="0" 
+                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], number: e.target.value}})} 
+                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], number: el}}} style={{ width: "9ch" }} 
+                defaultValue={macroState[exercise].number}/> for&nbsp;
+              <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], range: e.target.value}})} 
+                      ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], range: el}}}
+                      defaultValue={macroState[exercise].range}>
+                <option>All</option>
+                <option>Range</option>
+              </select>
+              { macroState[exercise].range === "Range" && <>
+              {": Sets "}
+              <input type="number" max="20" min="0" 
+                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], from: e.target.value}})}
+                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], from: el}}} style={{ width: "5ch" }} 
+                defaultValue={macroState[exercise].from}/> to&nbsp;
+              <input type="number" max="20" min="0" 
+                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], to: e.target.value}})}
+                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], to: el}}} style={{ width: "5ch" }} 
+                defaultValue={macroState[exercise].to}/>
+              </>}
+              <button type="" onClick={handleMacro}>Go</button>
+            </div>
+            {lengthenArr(fields[exercise], exercise)}
+          </>
+        )}
         {returnTemplateButton()}
       </div>
     );

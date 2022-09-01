@@ -355,6 +355,8 @@ export default function Edit({
     );
   }
 
+  ////
+
   const submitUpdate = (update) => {
     if (
       Object.keys(update.lifts).some((exercise) =>
@@ -416,6 +418,8 @@ export default function Edit({
       }).then(()=>setPage(LOG))
     );
   };
+
+  ///// vv Extract to component and manage state from there.
 
   function addFieldset(exercise) {
     return (
@@ -584,6 +588,8 @@ export default function Edit({
     );
   }
 
+  ///////////
+
   const removeExercise = (exercise) => {
     const newLiftsClone = {};
     Object.keys(update.newLifts)
@@ -618,6 +624,8 @@ export default function Edit({
       },
     })
   }
+
+  /////
 
   const loseLift = (exercise) => {
     if (!update.lostLifts.includes(exercise)) {
