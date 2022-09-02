@@ -20,7 +20,7 @@ const url = require('url')
 // }
 const userDB = {
   host: "localhost",
-  database: "Weightlifting",
+  database: "weightlifting_3",
   user: "postgres",
   password: " ",
   port: 5432

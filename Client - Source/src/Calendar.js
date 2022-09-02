@@ -1,17 +1,17 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./calendarCSS.css";
 import * as d3 from "d3";
 import {exerciseArray} from "./utils/variables"
 
 export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
   const svgRef = useRef();
-  const colourForExercise = useMemo(() => {
+  const [colourForExercise, setColourForExercise] = useState(() => {
     let output ={}
     exerciseArray.forEach((exercise, ind) => 
       output[exercise] = JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] 
-      || "#" + (parseInt("ffffff",  16) * Math.random()).toString(16).replace(/\.\w+$/, "").padStart(6, 0) + "50")
+      || "#" + (parseInt("ffffff",  16) * Math.random()).toString(16).replace(/\.\w+$/, "").padStart(6, 0) /* + "50" */)
     return output
-  },[])
+  })
   const [colourState, setColourState] = useState(colourForExercise)
   const colorStrings = [
     `#ff80ed`,
@@ -251,6 +251,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
       .range([0, width]);
     // const y = d3.scaleLinear().domain([0, Object.keys(dataObject).length]).range([0, height]);
     d3.selectAll("g > *").remove();
+    d3.selectAll("defs").remove();
     d3.selectAll("text").remove();
 
     var defs = svg.append("defs"); // <-- For gradients 
@@ -339,7 +340,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
                 gradient
                   .append("stop")
                   .attr("offset", `${parseInt(ind * Math.round(100 / (session.exercises.length - 1 || 1)))}%`)
-                  .attr("stop-color", `${colourForExercise[exercise]}`)
+                  .attr("stop-color", `${colourState[exercise]}`)
                   .attr("stop-opacity", 1);
               })
             }
@@ -423,7 +424,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
         .attr("pointer-events", "none")
         .style("font-size", "19px");
     });
-  }, [sortedSessions, monthYearDate, setEdit, setPage, colourForExercise]);
+  }, [sortedSessions, monthYearDate, setEdit, setPage, colourState]);
 
   return (
     <>
@@ -440,11 +441,11 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
             .split("_")
             .map((word) => word[0].toUpperCase() + word.slice(1))
             .join(" ")}
-            <select style={{backgroundColor: colourState[exercise] || /* JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || */ colourForExercise[exercise]}}
+            <select style={{backgroundColor: colourState[exercise] || /* JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || */ colourState[exercise]}}
                     onChange={(e)=> setColourState({...colourState, [exercise]: e.target.value})}
-                    defaultValue={JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || colourForExercise[exercise]}>
-              {Object.values(colourForExercise)
-                    .concat(colorStrings.filter(color=>!Object.values(colourForExercise).includes(color)))
+                    defaultValue={JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || colourState[exercise]}>
+              {Object.values(colourState).reduce((acc, color)=> !acc.includes(color) ? [...acc, color] : acc, [])
+                    .concat(colorStrings.filter(color=>!Object.values(colourState).includes(color)))
                     .map(color=> 
               <option key={`${exercise}${color}`} style={{backgroundColor: color}}>{color}</option>)}
             </select>
@@ -452,7 +453,13 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
         
       )
     })}
-    <button onClick={()=>localStorage.setItem("liftingLogCalendarColors", JSON.stringify(colourState))}>Save colours</button>
+    <button onClick={()=>{localStorage.setItem("liftingLogCalendarColors", JSON.stringify(
+      Object.keys(colourState)
+      .filter(ex => Object.keys(get).filter(key=> key !== "sessions").includes(ex))
+      .reduce((obj, ex) => obj = {...obj, [ex]: colourState[ex]},{})
+    ))}}>
+      Save colours
+    </button>
     </>
   );
 }

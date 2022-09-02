@@ -89,6 +89,14 @@ VERSION 3:
             THIS I want another variation field, with the same length as the mass and rep fields. The old variation field will become the templates field, which will be an array of arrays, if this is supported by postgres.
             ->> Refactoring
 
+            Take a dump of your database first, then just go tinker with that same database...
+
+            DONE Leave the mass and rep fields alone, add an encapsulating array to variation, 
+            DONE rename variation to variation_templates,
+            DONE add another field to each exercise called variation, it is as long as the mass and reps arrays (Up to 20 items)
+            refactor client side
+
+
 
 
         >> Then go work on the sheet music project.

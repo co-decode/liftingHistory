@@ -64,9 +64,10 @@ export default function Breakdown({
         })}
       </fieldset>
       {show.map((exercise) => {
-        const { mass, reps, variation } = get[exercise].filter(
+        const { mass, reps, variation_templates:variation } = get[exercise].find(
           (v) => v.sid === edit
-        )[0];
+        );
+        // console.log(exercise, variation)
         const totalReps = reps.reduce((a, v) => a + v);
         const tonnage = mass.reduce((a, v, i) => a + v * reps[i], 0);
         return (
@@ -100,7 +101,7 @@ export default function Breakdown({
             Variation:{" "}
             {variation.map((v, i, a) => (
               <strong key={`variation${i}`}>
-                {v}
+                {v.filter(vari=>!!vari).toString().replace(/,/g, ", ")}
                 {i < a.length - 1 ? ` | ` : null}
               </strong>
             ))}

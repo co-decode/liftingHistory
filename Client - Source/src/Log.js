@@ -246,7 +246,8 @@ export default function Log() {
                       kg
                     </div>
                     <div>
-                      {exerciseData.variation.toString().replace(/,/, ", ")}
+                      {exerciseData.variation_templates.map(template => {
+                      return <div>{template.filter(vari=>!!vari).toString().replace(/,/g, ", ")}</div>})}
                     </div>
                   </div>
                 );
@@ -351,7 +352,7 @@ export default function Log() {
           .map((exercise) => { 
             let variationsForUser = [];
             get[exercise].forEach((sess) =>
-              sess.variation.forEach(
+              sess.variation_templates.forEach(
                 (variation) =>
                   !variationsForUser.includes(variation) &&
                   variationsForUser.push(variation)

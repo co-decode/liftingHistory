@@ -234,7 +234,11 @@ ALTER TABLE ONLY public.sessions
 
 
 
--- NEW STUFF:
+-- ALL EXERCISES:
+
+-- bench
+-- deadlift
+-- squat
 -- overhead_press
 -- bicep
 -- tricep
