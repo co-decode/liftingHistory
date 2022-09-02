@@ -175,8 +175,9 @@ export default function Graph({ get }) {
         if (varFilter.length) {
           return sessionList.filter((sess) => sess.exercises.includes(input.exercise))
           .filter(sess=> get[input.exercise]
-          .find(exerciseSession=>exerciseSession.sid === sess.sid).variation
-          .some(variation => varFilter.includes(variation) ) )
+            .find(exerciseSession=>exerciseSession.sid === sess.sid).variation_templates
+            .flat().filter(vari=> vari)
+            .some(variation => varFilter.includes(variation) ) )
         }
         return sessionList.filter((sess) => sess.exercises.includes(input.exercise))
       } 
@@ -403,10 +404,11 @@ export default function Graph({ get }) {
     else {
       let variationsForUser = [];
       get[input.exercise].forEach((sess) =>
-        sess.variation.forEach(
-          (variation) =>
-            !variationsForUser.includes(variation) &&
+        sess.variation_templates.forEach(
+          (template) => template.forEach(variation =>
+          !!variation && !variationsForUser.includes(variation) &&
             variationsForUser.push(variation)
+          )
         )
       )
       return (

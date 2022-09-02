@@ -87,9 +87,6 @@ export default function Log() {
                 .map((v) => new Date(v.date))
                 .sort((a, b) => b - a)[0]
             );
-            const storedAscending = localStorage.getItem("WeightLiftingLogAscending") 
-              ? localStorage.getItem("WeightLiftingLogAscending") == "true" 
-              : true
             setDateFilter({
               from: new Date(earliest.setTime(earliest.getTime()))
                 .toISOString()
@@ -99,7 +96,7 @@ export default function Log() {
               )
                 .toISOString()
                 .slice(0, 10),
-              ascending: storedAscending,
+              ascending: JSON.parse(localStorage.getItem("WeightLiftingLogAscending")),
             });
           } else {
             setGet(false);
@@ -179,7 +176,7 @@ export default function Log() {
             >
               <div>
                 {new Date(
-                  get.sessions.filter((v) => v.sid === sidVal)[0].date
+                  get.sessions.find((v) => v.sid === sidVal).date
                 ).toLocaleString()}
                 <div>
                   <button onClick={() => deleteSession(sidVal)}>
@@ -203,6 +200,7 @@ export default function Log() {
                   </button>
                 </div>
               </div>
+              <div style={{display:"flex"}}>
               {exerciseCall.map((v) => {
                 const exerciseData = get[v].find((v) => v.sid === sidVal);
                 if (varFilter[v].length > 0)
@@ -230,7 +228,7 @@ export default function Log() {
                         return item > acc ? item : acc;
                       })}{" "}
                       kg
-                    </div>
+                    </div>  
                     <div>
                       Reps:{" "}
                       {exerciseData.reps.reduce((acc, val) => {
@@ -246,12 +244,13 @@ export default function Log() {
                       kg
                     </div>
                     <div>
-                      {exerciseData.variation_templates.map(template => {
-                      return <div>{template.filter(vari=>!!vari).toString().replace(/,/g, ", ")}</div>})}
+                      {exerciseData.variation_templates.map((template, ind) => {
+                      return <div key={`${sidVal}${v}template${ind}`}>{template.filter(vari=>!!vari).toString().replace(/,/g, ", ")}</div>})}
                     </div>
                   </div>
                 );
               })}
+              </div>
               <hr />
             </div>
           );

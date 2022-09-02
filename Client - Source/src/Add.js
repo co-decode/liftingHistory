@@ -443,8 +443,9 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
         if (get[ex]) {
           if (!customsObject[ex]) customsObject[ex] = [];
           get[ex].forEach((sess) =>
-            sess.variation.forEach(
-              (variation) =>
+            sess.variation_templates.flat()
+            .reduce((acc, vari) => !!vari && !acc.includes(vari) ? [...acc, vari] : acc, [])
+            .forEach((variation) =>
                 !variationObject[ex].flat().includes(variation) &&
                 !customsObject[ex].includes(variation) &&
                 customsObject[ex].push(variation)

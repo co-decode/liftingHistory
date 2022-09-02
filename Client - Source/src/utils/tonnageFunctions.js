@@ -63,10 +63,10 @@ export default function intervalTon(
     <>
       {exerciseArray.map((exercise) => {
           // vv A session exists with the variation selected
-        if (variationFilter[exercise].length){ //!
+        if (variationFilter[exercise].length){ 
         const sidsByExerciseByVariation = get[exercise]
           .some(session => variationFilter[exercise]
-            .some(variation => session.variation.includes(variation)) )//!
+            .some(variation => session.variation_templates.flat().includes(variation)) )
         if (!sidsByExerciseByVariation) return null
       }
         return (
@@ -86,7 +86,7 @@ export default function intervalTon(
               
               if (variationFilter[exercise].length) { //!
                 exerciseObjectsForSid = exerciseObjectsForSid.filter((session) =>
-                  variationFilter[exercise].some((variation)=>session.variation.includes(variation))
+                  variationFilter[exercise].some((variation)=>session.variation_templates.flat().includes(variation))
                 )}
 
               const filterZeroes = () => {

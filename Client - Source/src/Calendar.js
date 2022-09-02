@@ -5,14 +5,13 @@ import {exerciseArray} from "./utils/variables"
 
 export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
   const svgRef = useRef();
-  const [colourForExercise, setColourForExercise] = useState(() => {
+  const [colourState, setColourState] = useState(() => {
     let output ={}
     exerciseArray.forEach((exercise, ind) => 
       output[exercise] = JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] 
       || "#" + (parseInt("ffffff",  16) * Math.random()).toString(16).replace(/\.\w+$/, "").padStart(6, 0) /* + "50" */)
     return output
   })
-  const [colourState, setColourState] = useState(colourForExercise)
   const colorStrings = [
     `#ff80ed`,
     `#065535`,
@@ -100,7 +99,6 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
     `#999999`
   ]
 
-  // localStorage.setItem("liftingLogCalendarColors", JSON.stringify({deadlift: "#ff000050", bench: "#0000ff50", squat: "#00ff0050"}))
 
   const sortedSessions = get.sessions.sort(
     (a, b) => new Date(a.date) - new Date(b.date)
@@ -108,7 +106,6 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
   // !!! MOBILE cannot handle the .at() function... use this instead: sortedSessions[sortedSessions.length-1]
   const mostRecentSessionDate = new Date(sortedSessions[sortedSessions.length-1].date);
   const [monthYearDate, setMonthYearDate] = useState(goToMonthYear || mostRecentSessionDate);
-  // const mostRecentSessionDate = new Date(2022, 0 , 1);
 
 
   

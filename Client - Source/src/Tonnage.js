@@ -108,10 +108,10 @@ export default function Tonnage({ get }) {
           {exercisesForUser.map((exercise) => {
             let variationsForUser = [];
             get[exercise].forEach((sess) =>
-              sess.variation.forEach(
-                (variation) =>
-                  !variationsForUser.includes(variation) &&
-                  variationsForUser.push(variation)
+              sess.variation_templates.forEach(
+                (template) => template.forEach(variation => 
+                !!variation && !variationsForUser.includes(variation) &&
+                  variationsForUser.push(variation))
               )
             );
             return (
