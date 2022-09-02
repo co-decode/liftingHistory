@@ -260,25 +260,37 @@ function VariationOptions({
   setVarFields,
   customs,
 }) {
-  //!
   const customRef = useRef({});
+  // console.log('high', varFields[exercise])
 
   const [customAdditions, setCustomAdditions] = useState(customs);
   const number = variationObject[exercise].length;
   const [array, setArray] = useState(() =>
-    Array(number + varFields[exercise])
-      .fill(null)
-      .map((val, ind) => {
-        if (ind < number) {
-          return variationObject[exercise][ind];
-        } else return customs;
-      })
+    varFields[exercise].map( (extraFields) =>
+      Array(number + extraFields) //
+        .fill(null)
+        .map((val, ind) => {
+          if (ind < number) {
+            return variationObject[exercise][ind];
+          } else {
+            if (customAdditions.length) {
+              let output = [...customs];
+              customAdditions.forEach((addition) => {
+                if (!output.includes(addition)) output.push(addition);
+              });
+              return output;
+            }
+            return customs;
+          }
+        }) )
   );
+  // console.log('low', array)
 
   useEffect(
     () =>
       setArray(
-        Array(number + varFields[exercise])
+        varFields[exercise].map( (extraFields) =>
+        Array(number + extraFields) //
           .fill(null)
           .map((val, ind) => {
             if (ind < number) {
@@ -293,24 +305,28 @@ function VariationOptions({
               }
               return customs;
             }
-          })
+          }) )
       ),
     [varFields, exercise, number, customAdditions, customs]
   );
   return (
     <div>
-      {array.map((val, i) => {
+      {array.map((template, tempNo) => { //
+      // console.log('here', val)
         return (
+          <div>
+            Template {tempNo + 1} |&nbsp;
+          {template.map((variations, i) => 
           <div
             style={{ display: "inline-block" }}
-            key={`${exercise}VariationDiv${i}`}
+            key={`${exercise}Template${tempNo}VariationDiv${i}`}
           >
-            <label htmlFor={`${exercise}Variation${i}`}>
+            <label htmlFor={`${exercise}Template${tempNo}Variation${i}`}>
               {i === 0 ? "Variation " : null}
               {i + 1}:
             </label>
             <select
-              id={`${exercise}Variation${i}`}
+              id={`${exercise}Template${tempNo}Variation${i}`}
               required
               ref={(el) =>
                 (exerciseRefs.current = {
@@ -326,35 +342,40 @@ function VariationOptions({
               }
             >
               <option value=""> --- </option>
-              {val.map((v) => (
-                <option key={`${exercise}Option${v}`}>{v}</option>
-              ))}
+              {/* {console.log("val", val)} */}
+              {variations.map(vari => <option key={`${exercise}Template${tempNo}varSet${i}Option${vari}`}>{vari}</option>
+              )}
             </select>
+          </div>)
+          }
+          {varFields[exercise][tempNo] < 3 && (
+            <button
+              type="button"
+              onClick={() =>
+                setVarFields({ ...varFields, [exercise]: varFields[exercise]
+                  .map((extraFieldsForTemplate, tempInd) => tempInd === tempNo ? extraFieldsForTemplate + 1 : extraFieldsForTemplate)})
+              }
+            >
+              +
+            </button> 
+          )}
+          {varFields[exercise][tempNo] > 0 && (
+            <button
+              type="button"
+              onClick={() =>
+                setVarFields({ ...varFields, [exercise]: varFields[exercise]
+                  .map((extraFieldsForTemplate, tempInd) => tempInd === tempNo ? extraFieldsForTemplate - 1 : extraFieldsForTemplate)})
+              }
+            >
+              -
+            </button>
+          )}
           </div>
         );
       })}
-      {varFields[exercise] < 3 && (
-        <button
-          type="button"
-          onClick={() =>
-            setVarFields({ ...varFields, [exercise]: varFields[exercise] + 1 })
-          }
-        >
-          +
-        </button>
-      )}
-      {varFields[exercise] > 0 && (
-        <button
-          type="button"
-          onClick={() =>
-            setVarFields({ ...varFields, [exercise]: varFields[exercise] - 1 })
-          }
-        >
-          -
-        </button>
-      )}
+      
       {!!varFields[exercise] && (
-        <>
+        <div>
           <label>
             {" "}
             Custom entry
@@ -370,7 +391,7 @@ function VariationOptions({
           >
             add custom
           </button>
-        </>
+        </div>
       )}
     </div>
   );
@@ -410,7 +431,6 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
   const [fields, setFields] = useState({});
   const macroRefs = useRef()
   const [macroState, setMacroState] = useState({})
-  // const [macroRange, setMacroRange] = useState({})
   const [varFields, setVarFields] = useState();
   const prevExArr = useRef(exArr);
   const [customs, setCustoms] = useState(() => {
@@ -437,7 +457,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
       exArr.forEach((ex) => {
         if (fields[ex] === undefined) {
           fieldObject[ex] = 0;
-          varObject[ex] = 0;
+          varObject[ex] = [0];
         }
 
         if (get[ex]) {
@@ -513,6 +533,15 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
       from: 1,
       to: 1
     }})
+    function addSubtractTemplates() {
+      return (
+        <div>{ varFields[exercise].length < 5 &&
+          <button onClick={(e) =>{ e.preventDefault(); setVarFields({...varFields, [exercise]: [...varFields[exercise], 0]})}}>Add a template</button>}
+          { varFields[exercise].length > 1 &&
+          <button onClick={(e) =>{e.preventDefault(); setVarFields({...varFields, [exercise]: varFields[exercise].slice(0, varFields[exercise].length - 1)})}}>Subtract a template</button>}
+        </div>
+      )
+    }
 
     function returnTemplateButton() {
       if (!get.sessions) return null;
@@ -555,7 +584,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
       }
       new Promise((resolve) => {
         if (fields[exercise] < sets)
-          setFields({ ...fields, [exercise]: readFields /* sets */ }); // Fields set here : fields
+          setFields({ ...fields, [exercise]: readFields /* sets */ });
         if (varFields[exercise] < noOfVars) {
           setVarFields({ ...varFields, [exercise]: noOfVars });
         }
@@ -590,13 +619,13 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
                   exerciseRefs.current[exercise][key].mass.value =
                     readSets[key].mass;
 
-                  /* get[exercise].find( //! Fields set here : sets - [1,2,3...] - mass
+                  /* get[exercise].find(
                       (v) => v.sid === mostRecentExerciseSessionSID
                     ).mass[key - 1]; */
                   exerciseRefs.current[exercise][key].reps.value =
                     readSets[key].reps;
 
-                  /* get[exercise].find( //! Fields set here : sets - [1,2,3...] - reps
+                  /* get[exercise].find(
                       (v) => v.sid === mostRecentExerciseSessionSID
                     ).reps[key - 1]; */
                 }
@@ -606,7 +635,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
                   exerciseRefs.current[exercise].variation[index].value =
                     readVariation[index];
 
-                  /* get[exercise]   //! Fields set here : variation: []
+                  /* get[exercise]   
                     .find((v) => v.sid === mostRecentExerciseSessionSID).variation[index];  */
                 }
               );
@@ -676,7 +705,6 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
             customs={customs[exercise]}
           />
         )}{" "}
-        {/* //! */}
         {!!fields[exercise] && (
           <>
             <div>
@@ -714,6 +742,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
             {lengthenArr(fields[exercise], exercise)}
           </>
         )}
+        {varFields && varFields[exercise] && addSubtractTemplates()}
         {returnTemplateButton()}
       </div>
     );

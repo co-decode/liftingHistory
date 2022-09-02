@@ -97,6 +97,7 @@ VERSION 3:
             refactor client side
                 DONE initial pass over Breakdown, Log, Calendar, Tonnage & Tonnage Functions, Graph, Add and Edit
                 ->> Add template addition functionality to Edit component,
+                    DONE Add UI functions... fix Add so that the submission is accepted.
                 Then migrate template functionality to the Add component
 
                 Test and correct the server queries to ensure things are working on that end.
