@@ -96,14 +96,20 @@ VERSION 3:
             DONE add another field to each exercise called variation, it is as long as the mass and reps arrays (Up to 20 items)
             refactor client side
                 DONE initial pass over Breakdown, Log, Calendar, Tonnage & Tonnage Functions, Graph, Add and Edit
-                ->> Add template addition functionality to Edit component,
+                Add template addition functionality to Edit component,
                     DONE Add UI functions... 
-                    ->> fix Add so that the submission is accepted.
-                Then migrate template functionality to the Add component
+                    DONE fix Add so that the submission is accepted.
+                    DONE Add variation map, default to first template
+                DONE Then migrate template functionality to the Add component
 
                 Test and correct the server queries to ensure things are working on that end.
+                    DONE FOR Add...
+                        ->> macro is broken... fix this.
+                        ->> for Add, I think I'll need to thoroughly check that submission logic properly rejects bad entry forms...
 
-                Ensure that update objects and add objects are prepared for postgres, that is, fill multi dimensional arrays of differing lengths with null to ensure they are of the same length.
+
+
+                DONE for ADD: Ensure that update objects and add objects are prepared for postgres, that is, fill multi dimensional arrays of differing lengths with null to ensure they are of the same length.
 
                 Add a variation field for every set, default to 1, send don't send nulls
                 Add support for multi template sessions to the accumulator logic within the graph and tonnage components

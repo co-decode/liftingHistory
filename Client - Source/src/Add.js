@@ -127,6 +127,7 @@ export default function Add({
       let repArray = [];
       let massArray = [];
       let varArray = [];
+      let tagArray = []
 
       Object.keys(exerciseRefs.current[exercise]).forEach((val) => {
         if (exerciseRefs.current[exercise][val].reps) {
@@ -138,6 +139,10 @@ export default function Add({
             ...massArray,
             parseFloat(exerciseRefs.current[exercise][val].mass.value),
           ];
+          tagArray = [
+            ...tagArray,
+            parseInt(exerciseRefs.current[exercise][val].template.value)
+          ]
         }
       });
       Object.keys(exerciseRefs.current[exercise]).filter(key => key.includes("template_"))
@@ -157,12 +162,13 @@ export default function Add({
           )});
       // console.log("var", varArray)
       lifts[exercise] = {
-        mass: [...massArray],
-        reps: [...repArray],
-        variation_templates: [...varArray],
+        mass: massArray,
+        reps: repArray,
+        vars: tagArray,
+        variation_templates: varArray,
       };
     });
-    // console.log(lifts)
+    console.log(lifts)
     const submission = { date: time, lifts };
     if (
       get.sessions?.some((session) => {
@@ -181,8 +187,8 @@ export default function Add({
     }
 
     if (Object.keys(submission.lifts).length > 0) {
-      // post(submission);
-      console.log("post")
+      post(submission);
+      // console.log("post")
     }
   };
 
@@ -536,11 +542,11 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
     arr.length = number;
     arr.fill(null);
     return arr.map((v, i) => (
-      <div key={`${"exercise"}${i + 1}`}>
-        <strong>Set {i + 1}: </strong>
-        <label>Mass</label>
+      <div key={`${exercise}${i}`}>
+        <strong>Set {i+1}: </strong>
+        <label>Mass
         <input
-          id={`${"exercise"}Set${i + 1}Mass`}
+          id={`${exercise}Set${i}Mass`}
           type="number"
           step="0.25"
           required
@@ -549,14 +555,14 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
               ...exerciseRefs.current,
               [exercise]: {
                 ...exerciseRefs.current[exercise],
-                [i + 1]: { ...exerciseRefs.current[exercise][i + 1], mass: el },
+                [`set_${i}`]: { ...exerciseRefs.current[exercise][`set_${i}`], mass: el },
               },
             })
           }
-        />
-        <label>Reps</label>
+        /></label>
+        <label>Reps
         <input
-          id={`${"exercise"}Set${i + 1}Reps`}
+          id={`${exercise}Set${i}Reps`}
           type="number"
           step="0.25"
           required
@@ -565,11 +571,29 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
               ...exerciseRefs.current,
               [exercise]: {
                 ...exerciseRefs.current[exercise],
-                [i + 1]: { ...exerciseRefs.current[exercise][i + 1], reps: el },
+                [`set_${i}`]: { ...exerciseRefs.current[exercise][`set_${i}`], reps: el },
               },
             })
           }
-        />
+        /></label>
+        <label>Template
+        <select
+          id={`${exercise}Set${i}Vars`}
+          type="number"
+          step="0.25"
+          required
+          ref={(el) =>
+            (exerciseRefs.current = {
+              ...exerciseRefs.current,
+              [exercise]: {
+                ...exerciseRefs.current[exercise],
+                [`set_${i}`]: { ...exerciseRefs.current[exercise][`set_${i}`], template: el },
+              },
+            })
+          }
+        >{varFields[exercise].map((template, tempNo) => 
+          <option key={`${exercise}Set${i}Vars_template${tempNo}`} value={tempNo}>{tempNo + 1}</option> )}
+        </select></label>
       </div>
     ));
   };

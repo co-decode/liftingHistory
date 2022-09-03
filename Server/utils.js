@@ -1,8 +1,9 @@
 const log = (statement) => console.log(statement)
 
-const lifts =  {deadlift: {mass: [155, 160, 167.5, 160], reps: [1,1,1,1], variation: ["Conventional", "Mixed"]},
+const lifts =  {deadlift: {mass: [155, 160, 167.5, 160], reps: [1,1,1,1], vars: [0,0,1,0], variation_templates: [["Conventional", "Mixed"],["UnderWater"]]}}
+/* ,
 bench: {mass: [80, 85, 90, 95, 90, 90], reps: [5,3,1,1,1,1], variation: ["Wide Grip", "Flat"]},
-squat: {mass: [130, 137.5, 142.5, 137.5, 130, 120], reps: [3, 1, 1, 1, 3, 5], variation: ["High Bar"]}}
+squat: {mass: [130, 137.5, 142.5, 137.5, 130, 120], reps: [3, 1, 1, 1, 3, 5], variation: ["High Bar"]}} */
 
 function createExercisesFromBody(lifts) {
     let keys = Object.keys(lifts);
@@ -26,8 +27,17 @@ function createInsertFromObject(id, sid, lifts) {
     const exerciseArray = Object.keys(lifts)
     let output = ``;
     for (let i = 0; i < exerciseArray.length; i++) {
+        const longestTemplateLength = Math.max(...lifts[exerciseArray[i]].variation_templates.map(template=> template.length))
+        const variation_templates_string = lifts[exerciseArray[i]].variation_templates.map(template => {
+            const toBeAdded = longestTemplateLength - template.length
+            // console.log(toBeAdded, longestTemplateLength)
+            return toBeAdded ? template.concat(Array(toBeAdded).fill('null')) : template
+        }).reduce((acc, template, tempNo, templates) => 
+                tempNo === templates.length - 1 
+                ? acc + `{${template}}` 
+                : acc + `{${template}},`, ``)
         lifts[exerciseArray[i]].mass.toString()
-        output = output.concat(`INSERT INTO ${exerciseArray[i]} (uid, sid, mass, reps, variation) VALUES (${id}, ${sid}, '{${lifts[exerciseArray[i]].mass}}', '{${lifts[exerciseArray[i]].reps}}', '{${lifts[exerciseArray[i]].variation}}');`)
+        output = output.concat(`INSERT INTO ${exerciseArray[i]} (uid, sid, mass, reps, variation_templates, vars) VALUES (${id}, ${sid}, '{${lifts[exerciseArray[i]].mass}}', '{${lifts[exerciseArray[i]].reps}}', '{${variation_templates_string}}', '{${lifts[exerciseArray[i]].vars}}');`)
     }
     return output
 }
