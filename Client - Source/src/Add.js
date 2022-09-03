@@ -719,28 +719,67 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
       });
     }
 
-    function handleMacro(e) {
+    function handleMacro(e) { // clean this up, lots of repetition here
       e.preventDefault()
       var {fields: col, range, number} = macroRefs.current[exercise]
       
       const target = exerciseRefs.current[exercise]
       function changeFields(from, to) {
-        if (col.value !== "Mass") {
-          Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach((setNo)=>target[setNo].reps.value = number.value)
+        if (col.value === "Template") {
+          if (number.value > Object.keys(target).filter(key=>key.includes("template_")).length) return
+          if (range.value === "Even") {
+            Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 0)
+            .forEach((setName)=>target[`set_${setName.slice(4)}`].template.value = number.value - 1)
+          }
+          else if (range.value === "Odd") {
+            Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 1)
+            .forEach((setName)=>target[`set_${setName.slice(4)}`].template.value = number.value - 1)
+          }
+          else {
+            Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) <= to && key.slice(4) >= from)
+            .forEach((setName)=>target[`set_${setName.slice(4)}`].template.value = number.value - 1)
+          }
         }
-        if (col.value !== "Reps") {
-          Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach(setNo=> target[setNo].mass.value = number.value)
+        else {
+          if (col.value !== "Mass") {
+            if (range.value === "Even") {
+              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 0)
+              .forEach((setName)=>target[`set_${setName.slice(4)}`].reps.value = number.value)
+            }
+            else if (range.value === "Odd") {
+              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 1)
+              .forEach((setName)=>target[`set_${setName.slice(4)}`].reps.value = number.value)
+            }
+            else {
+              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) <= to && key.slice(4) >= from)
+              .forEach((setName)=>target[`set_${setName.slice(4)}`].reps.value = number.value)
+            }
+          }
+          if (col.value !== "Reps") {
+            if (range.value === "Even") {
+              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 0)
+              .forEach((setName)=>target[`set_${setName.slice(4)}`].mass.value = number.value)
+            }
+            else if (range.value === "Odd") {
+              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 1)
+              .forEach((setName)=>target[`set_${setName.slice(4)}`].mass.value = number.value)
+            }
+            else {
+              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) <= to && key.slice(4) >= from)
+              .forEach((setName)=> target[`set_${setName.slice(4)}`].mass.value = number.value)
+            }
+          }
         }
       }
 
       if (range.value === "Range") {
         var {from, to} = macroRefs.current[exercise]
         if (to.value > fields[exercise] || to.value <= from.value ) to.value = fields[exercise]
-        if (from.value >= to.value) from.value = 1
-        changeFields(from.value, to.value)
+        if (from.value >= to.value) from.value = 0
+        changeFields(from.value - 1, to.value - 1)
       }
       else {
-        changeFields(1, fields[exercise])
+        changeFields(0, fields[exercise] - 1 )
       }
     }
 
@@ -790,6 +829,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
                 <option>Mass</option>
                 <option>Reps</option>
                 <option>Both</option>
+                <option>Template</option>
               </select>&nbsp;
               with <input type="number" max="999" min="0" 
                 onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], number: e.target.value}})} 
@@ -800,6 +840,8 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
                       defaultValue={macroState[exercise].range}>
                 <option>All</option>
                 <option>Range</option>
+                <option>Even</option>
+                <option>Odd</option>
               </select>
               { macroState[exercise].range === "Range" && <>
               {": Sets "}
@@ -812,7 +854,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
                 ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], to: el}}} style={{ width: "5ch" }} 
                 defaultValue={macroState[exercise].to}/>
               </>}
-              <button type="" onClick={handleMacro}>Go</button>
+              <button type="" onClick={(e)=> handleMacro(e)}>Go</button>
             </div>
             {lengthenArr(fields[exercise], exercise)}
           </>
