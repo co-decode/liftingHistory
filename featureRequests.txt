@@ -89,7 +89,7 @@ VERSION 3:
             THIS I want another variation field, with the same length as the mass and rep fields. The old variation field will become the templates field, which will be an array of arrays, if this is supported by postgres.
             ->> Refactoring
 
-            Take a dump of your database first, then just go tinker with that same database...
+            Dump your database first, then just go tinker with that same database...
 
             DONE Leave the mass and rep fields alone, add an encapsulating array to variation, 
             DONE rename variation to variation_templates,
@@ -97,7 +97,8 @@ VERSION 3:
             refactor client side
                 DONE initial pass over Breakdown, Log, Calendar, Tonnage & Tonnage Functions, Graph, Add and Edit
                 ->> Add template addition functionality to Edit component,
-                    DONE Add UI functions... fix Add so that the submission is accepted.
+                    DONE Add UI functions... 
+                    ->> fix Add so that the submission is accepted.
                 Then migrate template functionality to the Add component
 
                 Test and correct the server queries to ensure things are working on that end.

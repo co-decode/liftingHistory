@@ -140,21 +140,29 @@ export default function Add({
           ];
         }
       });
-      Object.keys(exerciseRefs.current[exercise].variation).forEach(
-        (val, i) => {
-          varArray = [
-            ...varArray,
-            exerciseRefs.current[exercise].variation[i].value,
-          ];
-        }
-      );
+      Object.keys(exerciseRefs.current[exercise]).filter(key => key.includes("template_"))
+      .forEach((keyName, tempNo) =>{ 
+        varArray = [...varArray, []]
+          Object.values(exerciseRefs.current[exercise][`template_${tempNo}`])
+          .forEach((varEl, varNo) => {
+              
+            varArray = varArray.map((templateArray, tempInd) => tempNo === tempInd 
+              ? [...templateArray, varEl.value]
+              : templateArray)
+              /* varArray = varArray.map((templateArray, tempInd) => tempNo === tempInd 
+                ? [...templateArray, exerciseRefs.current[exercise][`template_${tempNo}`][varNo].value]
+                : templateArray) */
+             
+            }
+          )});
+      // console.log("var", varArray)
       lifts[exercise] = {
         mass: [...massArray],
         reps: [...repArray],
-        variation: [...varArray],
+        variation_templates: [...varArray],
       };
     });
-
+    // console.log(lifts)
     const submission = { date: time, lifts };
     if (
       get.sessions?.some((session) => {
@@ -173,7 +181,8 @@ export default function Add({
     }
 
     if (Object.keys(submission.lifts).length > 0) {
-      post(submission);
+      // post(submission);
+      console.log("post")
     }
   };
 
@@ -284,13 +293,35 @@ function VariationOptions({
           }
         }) )
   );
+  if (!exerciseRefs.current[exercise]) exerciseRefs.current = {...exerciseRefs.current, [exercise]: {}}
+
+  let checkChange = exerciseRefs.current[exercise]
+
+  useEffect(() => {
+    // console.log('one', exerciseRefs.current[exercise])
+    let noOfTemplates = Object.keys(exerciseRefs.current[exercise]).filter(key=>key.includes("template_")).length
+    if (varFields[exercise].length < noOfTemplates) {
+      delete exerciseRefs.current[exercise][`template_${noOfTemplates - 1}`]
+      return;
+    }
+    varFields[exercise].forEach( (extraFields, tempNo) =>{
+        if (exerciseRefs.current[exercise] && exerciseRefs.current[exercise][`template_${tempNo}`])
+          {
+            let eRLength = Object.keys(exerciseRefs.current[exercise][`template_${tempNo}`]).length
+          if (eRLength > variationObject[exercise].length + extraFields){ 
+            delete exerciseRefs.current[exercise][`template_${tempNo}`][eRLength - 1]
+          }}
+        })
+
+  },[varFields, exercise, exerciseRefs, checkChange])
   // console.log('low', array)
 
   useEffect(
-    () =>
+    () =>{
       setArray(
-        varFields[exercise].map( (extraFields) =>
-        Array(number + extraFields) //
+        varFields[exercise].map( (extraFields) =>{
+          
+        return Array(number + extraFields) //
           .fill(null)
           .map((val, ind) => {
             if (ind < number) {
@@ -305,45 +336,46 @@ function VariationOptions({
               }
               return customs;
             }
-          }) )
-      ),
+          }) })
+      )
+    },
     [varFields, exercise, number, customAdditions, customs]
   );
   return (
     <div>
-      {array.map((template, tempNo) => { //
+      {array.map((template, tempNo) => { 
       // console.log('here', val)
+      
         return (
-          <div>
+          <div key={`${exercise}Template${tempNo}`}>
             Template {tempNo + 1} |&nbsp;
-          {template.map((variations, i) => 
+          {template.map((variations, varNo) => 
           <div
             style={{ display: "inline-block" }}
-            key={`${exercise}Template${tempNo}VariationDiv${i}`}
+            key={`${exercise}Template${tempNo}VariationDiv${varNo}`}
           >
-            <label htmlFor={`${exercise}Template${tempNo}Variation${i}`}>
-              {i === 0 ? "Variation " : null}
-              {i + 1}:
+            <label htmlFor={`${exercise}Template${tempNo}Variation${varNo}`}>
+              {varNo === 0 ? "Variation " : null}
+              {varNo + 1}:
             </label>
             <select
-              id={`${exercise}Template${tempNo}Variation${i}`}
+              id={`${exercise}Template${tempNo}Variation${varNo}`}
               required
-              ref={(el) =>
-                (exerciseRefs.current = {
+              ref={(el) => exerciseRefs.current = {
                   ...exerciseRefs.current,
                   [exercise]: {
                     ...exerciseRefs.current[exercise],
-                    variation: {
-                      ...exerciseRefs.current[exercise]?.variation,
-                      [i]: el,
-                    },
+                    [`template_${tempNo}`]: {
+                      ...exerciseRefs.current[exercise][`template_${tempNo}`],
+                      [varNo]: el
+                    } 
                   },
-                })
+                }
               }
             >
               <option value=""> --- </option>
               {/* {console.log("val", val)} */}
-              {variations.map(vari => <option key={`${exercise}Template${tempNo}varSet${i}Option${vari}`}>{vari}</option>
+              {variations.map(vari => <option key={`${exercise}Template${tempNo}varSet${varNo}Option${vari}`}>{vari}</option>
               )}
             </select>
           </div>)
@@ -362,14 +394,25 @@ function VariationOptions({
           {varFields[exercise][tempNo] > 0 && (
             <button
               type="button"
-              onClick={() =>
-                setVarFields({ ...varFields, [exercise]: varFields[exercise]
-                  .map((extraFieldsForTemplate, tempInd) => tempInd === tempNo ? extraFieldsForTemplate - 1 : extraFieldsForTemplate)})
-              }
+              onClick={() =>{
+                  setVarFields({ ...varFields, [exercise]: varFields[exercise]
+                    .map((extraFieldsForTemplate, tempInd) => tempInd === tempNo ? extraFieldsForTemplate - 1 : extraFieldsForTemplate)})
+                    }
+                /* = {
+                  ...exerciseRefs.current,
+                  [exercise]: {
+                    ...exerciseRefs.current[exercise],
+                    [tempNo]: {
+                      ...exerciseRefs.current[exercise][tempNo],
+                      [varNo]: el
+                    } 
+                  },
+                }
+              } */}
             >
               -
             </button>
-          )}
+          )} 
           </div>
         );
       })}
@@ -449,6 +492,9 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
     return customsArray;
   }, [get, exArr]);
 
+  
+
+
   useEffect(() => {
     if (prevExArr.current.length !== exArr.length) {
       const fieldObject = { ...fields };
@@ -459,7 +505,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
           fieldObject[ex] = 0;
           varObject[ex] = [0];
         }
-
+        
         if (get[ex]) {
           if (!customsObject[ex]) customsObject[ex] = [];
           get[ex].forEach((sess) =>
@@ -475,12 +521,15 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
           customsObject[ex] = [];
         }
       });
+      
       setFields(fieldObject);
       setVarFields(varObject);
       prevExArr.current = exArr;
       setCustoms(customsObject);
     }
-  }, [exArr, fields, varFields, customs, get]);
+  }, [exArr, fields, varFields, customs, get, exerciseRefs]);
+
+  
 
   const lengthenArr = (number, exercise) => {
     const arr = Array(0);
@@ -676,6 +725,8 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
         key={`${exercise}FieldSet`}
         style={{ border: "1px solid grey", margin: "-1px 0", padding: "2px" }}
       >
+      <button onClick={()=>console.log(JSON.stringify(varFields), exerciseRefs.current)}>log varFields</button>
+
         <div style={{ fontWeight: "bold" }}>
           {exercise
             .split("_")
