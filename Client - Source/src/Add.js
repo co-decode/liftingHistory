@@ -305,6 +305,11 @@ function VariationOptions({
 
   useEffect(() => {
     // console.log('one', exerciseRefs.current[exercise])
+    let noOfSets = Object.keys(exerciseRefs.current[exercise]).filter(key=>key.includes("set_")).length
+    if (varFields[exercise].length < noOfSets) {
+      delete exerciseRefs.current[exercise][`set_${noOfSets - 1}`]
+      return;
+    }
     let noOfTemplates = Object.keys(exerciseRefs.current[exercise]).filter(key=>key.includes("template_")).length
     if (varFields[exercise].length < noOfTemplates) {
       delete exerciseRefs.current[exercise][`template_${noOfTemplates - 1}`]
@@ -350,7 +355,7 @@ function VariationOptions({
   return (
     <div>
       {array.map((template, tempNo) => { 
-      console.log('here', array, template)
+      // console.log('here', array, template)
       
         return (
           <div key={`${exercise}Template${tempNo}`}>
@@ -759,8 +764,8 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
 
       if (range.value === "Range") {
         var {from, to} = macroRefs.current[exercise]
-        if (to.value > fields[exercise] || to.value <= from.value ) to.value = fields[exercise]
-        if (from.value >= to.value) from.value = 0
+        if (to.value > fields[exercise] || to.value < from.value ) to.value = fields[exercise]
+        if (from.value > to.value) from.value = 0
         changeFields(from.value - 1, to.value - 1)
       }
       else {

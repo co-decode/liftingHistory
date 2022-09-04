@@ -106,7 +106,8 @@ VERSION 3:
                     DONE FOR Add...
                         DONE macro is broken... fix this.
                             DONE macro function is longer than it needs to be, clean it up
-                        LATER - NOT DONE - for Add, I think I'll need to thoroughly check that submission logic properly rejects bad entry forms...
+                        DONE for ADD: Ensure that update objects and add objects are prepared for postgres, that is, fill multi dimensional arrays of differing lengths with null to ensure they are of the same length.
+                        DONE: Add a variation field for every set, default to 1, send don't send nulls
                     FOR Edit...
                         Fix everything... I'll need to refactor the update method, server side as well.
                         DONE check for multiples within a template
@@ -120,13 +121,16 @@ VERSION 3:
                         DONE Fix the server side update code... done for updating lifts, haven't check newLifts code, or lostLifts
                         DONE Cannot see vars fields for each exercise.
                         DONE Can add templates and custom variations to the lifts objects...
-                        NEXT ->> add templates and custom variations to the newLifts objects and fix the server side wrt the newLifts submission
+                        DONE add templates and custom variations to the newLifts objects and fix the server side wrt the newLifts submission
+                        DONE Fix edit component lostLifts functionality
+                        DONE Fix macros for Edit component
+                        DONE Fix exerciseRef cleaning for sets and templates, check if this is happening for the add component
+                        ->> Ensure that submission logic blocks bad submissions for ADD
+                        Then work on the Accumulator functionality with vars.
 
 
 
-                DONE for ADD: Ensure that update objects and add objects are prepared for postgres, that is, fill multi dimensional arrays of differing lengths with null to ensure they are of the same length.
-
-                Add a variation field for every set, default to 1, send don't send nulls
+                
                 Add support for multi template sessions to the accumulator logic within the graph and tonnage components
 
                 Add a button to go straight to the graph from the log page
