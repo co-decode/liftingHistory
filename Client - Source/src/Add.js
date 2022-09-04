@@ -350,7 +350,7 @@ function VariationOptions({
   return (
     <div>
       {array.map((template, tempNo) => { 
-      // console.log('here', val)
+      console.log('here', array, template)
       
         return (
           <div key={`${exercise}Template${tempNo}`}>
@@ -591,7 +591,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
               },
             })
           }
-        >{varFields[exercise].map((template, tempNo) => 
+        >{varFields[exercise].map((extraFields, tempNo) => 
           <option key={`${exercise}Set${i}Vars_template${tempNo}`} value={tempNo}>{tempNo + 1}</option> )}
         </select></label>
       </div>

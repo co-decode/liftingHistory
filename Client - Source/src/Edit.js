@@ -40,6 +40,8 @@ export default function Edit({
   const [fields, setFields] = useState({});
   const [loading, setLoading] = useState(false)
   const [customAdditions, setCustomAdditions] = useState()
+  const [extraVarFields, setExtraVarFields] = useState()
+  const [templateArrays, setTemplateArrays] = useState()
   const exerciseRefs = useRef({})
   const macroRefs = useRef({})
   const [macroState, setMacroState] = useState({})
@@ -58,6 +60,8 @@ export default function Edit({
     });
   }, [link]);
 
+  
+
   useEffect(() => {
     const session = get.sessions.find((v) => v.sid === edit)
     const receivedDate = new Date(session.date)
@@ -72,44 +76,82 @@ export default function Edit({
       date: correctedDate
     };
     const fieldsInitial = {};
+    const extraVarFieldsInitial = {}
     const customsObject = {};
-    session.exercises.forEach((v) => {
-      const filtered = get[v].find((v) => v.sid === edit);
+    session.exercises.forEach((exercise) => {
+      const filtered = get[exercise].find((sess) => sess.sid === edit);
       // const largestTemplateLength = Math.max(...filtered.variation_templates.map(template=> template.length))
       /* let variationPart = variationObject[v].length - largestTemplateLength > 0                                
       ? filtered.variation_templates.concat(Array(variationObject[v].length - largestTemplateLength).fill("")) 
       : filtered.variation_templates                   << What was the intention of this? */
       const deNulledTemplates = filtered.variation_templates.map(temp=> temp.filter(vari=>vari))
-      updateObject.lifts[v] = {
+      updateObject.lifts[exercise] = {
         mass: filtered.mass,
         reps: filtered.reps,
         variation_templates: deNulledTemplates,
         vars: filtered.vars
       };
-      fieldsInitial[v] = filtered.mass.length;
+      fieldsInitial[exercise] = filtered.mass.length;
+      extraVarFieldsInitial[exercise] = deNulledTemplates.map((template, tempNo) => template.length - variationObject[exercise].length)
+      
 
       let customsComb = [];
-      get[v].forEach((sess) =>
+      get[exercise].forEach((sess) =>
       sess.variation_templates
         .forEach(
           (template) => template.forEach(
           (variation) =>
             !!variation &&                                    
-            !variationObject[v].flat().includes(variation) && 
+            !variationObject[exercise].flat().includes(variation) && 
             !customsComb.includes(variation) &&               
             customsComb.push(variation)
       ) )
     );
-      customsObject[v] = customsComb
+      customsObject[exercise] = customsComb
+
+      
     });
     setFields(fieldsInitial);
     setUpdate(updateObject);
+    setExtraVarFields(extraVarFieldsInitial)
     setCustomAdditions(customsObject)
-  }, [get, edit ]);
+  }, [get, edit]);
+
+  useEffect(() => {
+    if (!extraVarFields) return
+    const session = get.sessions.find((v) => v.sid === edit)
+    const templateArraysInitial = {}
+    session.exercises.forEach((exercise) => {
+      templateArraysInitial[exercise] = templateArray()
+      function templateArray() {
+        // console.log(extraVarFields[exercise], exercise)
+        return extraVarFields[exercise].map( (extraFields) =>
+        Array(variationObject[exercise].length + extraFields) 
+          .fill(null)
+          .map((val, ind) => {
+            if (ind < variationObject[exercise].length) {
+              return variationObject[exercise][ind];
+            } else {
+              if (customAdditions.length) {
+                let output = [...customAdditions[exercise]];
+                customAdditions.forEach((addition) => {
+                  if (!output.includes(addition)) output.push(addition);
+                });
+                return output;
+              }
+              return customAdditions[exercise];
+            }
+          }) )
+      }
+    })
+    setTemplateArrays(templateArraysInitial)
+
+  }, [customAdditions, edit, extraVarFields, get.sessions] )
 
   useEffect(() => {
     setFeedback(null);
   }, [update]);
+
 
   function handleMacro(e, exercise, liftString) {
     e.preventDefault()
@@ -190,8 +232,6 @@ export default function Edit({
                 />
               </>
               {exerciseCall.map((exercise) => {
-
-                
 
                 if (!exerciseRefs.current[exercise]) exerciseRefs.current = {...exerciseRefs.current, [exercise]: {variation: {}}}
                 if (!macroState[exercise]) setMacroState({...macroState, [exercise]: {
@@ -317,7 +357,7 @@ export default function Edit({
                                   id={`${exercise}Set${setNo}mass`}
                                   ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
                                     [exercise]: {...exerciseRefs.current[exercise], 
-                                      [setNo]: {...exerciseRefs.current[exercise][setNo], mass: el}}}}
+                                      [`set_${setNo}`]: {...exerciseRefs.current[exercise][`set_${setNo}`], mass: el}}}}
                                   onChange={(e) => {
                                     setUpdate({
                                       ...update,
@@ -345,7 +385,7 @@ export default function Edit({
                                   id={`${exercise}Set${setNo}reps`}
                                   ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
                                     [exercise]: {...exerciseRefs.current[exercise], 
-                                      [setNo]: {...exerciseRefs.current[exercise][setNo], reps: el}}}}
+                                      [`set_${setNo}`]: {...exerciseRefs.current[exercise][`set_${setNo}`], reps: el}}}}
                                   onChange={(e) => {
                                     setUpdate({
                                       ...update,
@@ -366,6 +406,34 @@ export default function Edit({
                                   }}
                                   defaultValue={filtered.reps[setNo]}
                                 />
+                                <label>Template
+                                  <select
+                                    ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
+                                      [exercise]: {...exerciseRefs.current[exercise], 
+                                        [`set_${setNo}`]: {...exerciseRefs.current[exercise][`set_${setNo}`], template: el}}}}
+                                    onChange={(e) => setUpdate({
+                                      ...update,
+                                      lifts: {
+                                        ...update.lifts,
+                                        [exercise]: {
+                                          ...update.lifts[exercise],
+                                          vars: update.lifts[exercise].vars
+                                          .map((tempNo, ind)=> ind === setNo 
+                                            ? parseInt(e.target.value) 
+                                            : tempNo)
+                                        }
+                                      }
+                                    }) }>
+                                    <option 
+                                      key={`${exercise}Set${setNo}Vars_template$x{tempNo}`} 
+                                      value={/* tempNo */ 0}>{/* tempNo */ 0 + 1}
+                                    </option> 
+                                    <option 
+                                      key={`${exercise}Set${setNo}Vars_template$y{tempNo}`} 
+                                      value={/* tempNo */ 1}>{/* tempNo */ 1 + 1}
+                                    </option> 
+                                  </select>
+                                </label>
                               </div>
                             );
                           })}
@@ -373,22 +441,44 @@ export default function Edit({
                         <div>
                           Variation
                           <div style={{display: "inline-block"}}>
-                            {/* { varFields[exercise].length < 5 && */}
+
+                            {  extraVarFields[exercise].length < 5 &&
                             <button 
-                            // onClick={(e) =>{ e.preventDefault(); setVarFields({...varFields, [exercise]: [...varFields[exercise], 0]})}}
-                            >Add a template</button>
-                            {/* }{ varFields[exercise].length > 1 && */}
+                            onClick={(e) =>{ e.preventDefault(); 
+                              setUpdate({...update, lifts: {...update.lifts, 
+                                [exercise]: {...update.lifts[exercise], 
+                                  variation_templates: [...update.lifts[exercise].variation_templates, Array(variationObject[exercise].length).fill(null) ]
+                                }} })
+                              setExtraVarFields({...extraVarFields,
+                                 [exercise]: [...extraVarFields[exercise], 0]})}}
+                            >Add a template
+                            </button>}
+
+                            {  extraVarFields[exercise].length > 1 &&
                             <button 
-                            // onClick={(e) =>{e.preventDefault(); setVarFields({...varFields, [exercise]: varFields[exercise].slice(0, varFields[exercise].length - 1)})}}
-                            >Subtract a template</button>
-                            {/* } */}
+                            onClick={(e) =>{e.preventDefault(); 
+                              setUpdate({...update, lifts: {...update.lifts, 
+                                [exercise]: {...update.lifts[exercise], 
+                                  variation_templates: update.lifts[exercise].variation_templates
+                                  .slice(0, update.lifts[exercise].variation_templates.length - 1)
+                                }} })
+                              setExtraVarFields({...extraVarFields,
+                                 [exercise]: extraVarFields[exercise]
+                                 .slice(0, extraVarFields[exercise].length - 1)})}}
+                            >Subtract a template
+                            </button>}
+
                           </div>
+
                           <div style={{display:"flex"}}>
-                          {varArray.map((temp, tempNo) => {
+                          {templateArrays && templateArrays[exercise].map((temp, tempNo) => { 
+                            // console.log(templateArrays, exercise, temp, tempNo)
                             return (
                               <div key={`${exercise}template${tempNo}`} style={{display: "inline-block", marginRight:"20px"}}>
                                 Template {`${tempNo + 1}`}
-                                {temp.filter(v=> v !== null).map((v, varNo) => {
+                                {update.lifts[exercise].variation_templates[tempNo] 
+                                && temp.filter(v=> v !== null).map((variation, varNo) => {
+                                  const selectedVariation = update.lifts[exercise].variation_templates[tempNo][varNo]
                                   return (
                                     <div key={`${exercise}_template_${tempNo}_var_${varNo}`}>
                                       <label htmlFor={`${exercise}variation`}>
@@ -398,7 +488,7 @@ export default function Edit({
                                         id={`${exercise}variation`}
                                         ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
                                           [exercise]: {...exerciseRefs.current[exercise], 
-                                            variation: {...exerciseRefs.current[exercise].variation, 
+                                            [`template_${tempNo}`]: {...exerciseRefs.current[exercise][`template_${tempNo}`], 
                                             [varNo]: el}}}}
                                         onChange={(e) => {
                                           let newUpdate
@@ -420,25 +510,35 @@ export default function Edit({
                                           setUpdate(newUpdate);
                                         }}
                                       >
-                                        <option>{v}</option>
-                                        {variationOptions(customAdditions[exercise], exercise, varNo, v)}
+                                        <option>{selectedVariation}</option>
+                                        {variationOptions(customAdditions[exercise], exercise, varNo, selectedVariation)}
                                       </select>
                                     </div>
                                 )})}
-                                {update.lifts[exercise].variation_templates[tempNo].length < 5 &&
-                                <button onClick={() => setUpdate({
+                                {update.lifts[exercise].variation_templates[tempNo] && update.lifts[exercise].variation_templates[tempNo].length < 5 &&
+                                <button onClick={() => {
+                                  setUpdate({
                                         ...update,
                                         lifts: {
                                           ...update.lifts,
                                           [exercise]: {
                                             ...update.lifts[exercise],
                                             variation_templates: 
-                                              update.lifts[exercise].variation_templates.map((template, templateIndex) => templateIndex === tempNo ? template.concat([""]) : template),
+                                              update.lifts[exercise].variation_templates
+                                              .map((template, templateIndex) => 
+                                              templateIndex === tempNo ? template.concat([""]) : template),
                                           },
                                         },
-                                      })}>+</button>
-                                }{ update.lifts[exercise].variation_templates[tempNo].length > variationObject[exercise].length &&
-                                <button onClick={()=> setUpdate({
+                                      })
+                                  setExtraVarFields({
+                                    ...extraVarFields,
+                                    [exercise]: extraVarFields[exercise].map((extraFields, index) => 
+                                    index === tempNo ? extraFields + 1 : extraFields)
+                                  })
+                                    }}>+</button>
+                                }{update.lifts[exercise].variation_templates[tempNo] && update.lifts[exercise].variation_templates[tempNo].length > variationObject[exercise].length &&
+                                <button onClick={()=> {
+                                  setUpdate({
                                         ...update,
                                         lifts: {
                                           ...update.lifts,
@@ -449,41 +549,15 @@ export default function Edit({
                                                 templateIndex === tempNo
                                                 ? template.slice(0, update.lifts[exercise].variation_templates[tempNo].length - 1)
                                                 : template
-                                              )
-                                          },
-                                        },
-                                      })}>-</button>}
+                                              )} } })
+                                  setExtraVarFields({
+                                    ...extraVarFields,
+                                    [exercise]: extraVarFields[exercise].map((extraFields, index) => 
+                                    index === tempNo ? extraFields - 1 : extraFields)
+                                  })
+                                }}>-</button>}
                               </div>
                           )})}
-                         {/*  { update.lifts[exercise].variation_templates
-                           .every(template=> template.length < 5) &&
-                          <button onClick={() => setUpdate({
-                                        ...update,
-                                        lifts: {
-                                          ...update.lifts,
-                                          [exercise]: {
-                                            ...update.lifts[exercise],
-                                            variation_templates: [
-                                              ...update.lifts[exercise].variation_templates,
-                                            ].concat([""]),
-                                          },
-                                        },
-                                      })}>+</button>}
-                          { update.lifts[exercise].variation_templates
-                           .every(template=> template.length > variationObject[exercise].length) &&
-                          <>
-                          <button onClick={()=> setUpdate({
-                                        ...update,
-                                        lifts: {
-                                          ...update.lifts,
-                                          [exercise]: {
-                                            ...update.lifts[exercise],
-                                            variation_templates: [
-                                              ...update.lifts[exercise].variation_templates,
-                                            ].slice(0, update.lifts[exercise].variation_templates.length - 1),
-                                          },
-                                        },
-                                      })}>-</button>*/}
                         </div>{ update.lifts[exercise].variation_templates.some(temp => temp.length > variationObject[exercise].length) &&
                           <><label> New Custom:
                             <input type='text' ref={(el) => customRefs.current[exercise] = el}/>
@@ -804,16 +878,33 @@ export default function Edit({
             {" "}
             Variation
             <div>
-              {/* { varFields[exercise].length < 5 && */}
+              { extraVarFields[exercise].length < 5 && 
               <button 
-              // onClick={(e) =>{ e.preventDefault(); setVarFields({...varFields, [exercise]: [...varFields[exercise], 0]})}}
+              onClick={(e) =>{ 
+                e.preventDefault(); 
+                setUpdate({...update, newLifts: {...update.newLifts, 
+                  [exercise]: {...update.newLifts[exercise], 
+                    variation_templates: [...update.newLifts[exercise].variation_templates, Array(variationObject[exercise].length).fill("null") ]
+                  }} })
+
+                setExtraVarFields({...extraVarFields, 
+                  [exercise]: [...extraVarFields[exercise], 0] })
+                }}
               >Add a template</button>
-              {/* } */}
-              {/* { varFields[exercise].length > 1 && */}
+              }
+              { extraVarFields[exercise].length > 1 &&
               <button 
-              // onClick={(e) =>{e.preventDefault(); setVarFields({...varFields, [exercise]: varFields[exercise].slice(0, varFields[exercise].length - 1)})}}
+              onClick={(e) =>{e.preventDefault(); 
+                setUpdate({...update, newLifts: {...update.newLifts, 
+                  [exercise]: {...update.newLifts[exercise], 
+                    variation_templates: update.newLifts[exercise].variation_templates
+                    .slice(0, update.newLifts[exercise].variation_templates.length - 1)
+                  }} })
+                setExtraVarFields({...extraVarFields, 
+                  [exercise]: extraVarFields[exercise]
+                  .slice(0, extraVarFields[exercise].length - 1)})}}
               >Subtract a template</button>
-              {/* } */}
+              }
             </div>
             {update.newLifts[exercise].variation_templates.map((temp, tempNo) => {
               return (
@@ -1001,6 +1092,8 @@ export default function Edit({
         Cancel and view Breakdown
       </button>
       <button onClick={() => console.log(exerciseRefs.current)}>log exerciseRefs</button><br/>
+      <button onClick={() => console.log(extraVarFields)}>log extraVarFields</button><br/>
+      <button onClick={() => console.log(templateArrays)}>log templateArrays</button><br/>
       <button onClick={() => console.log(update)}>log Update</button><br/>
       <button onClick={() =>submitUpdate(update)}>Submit Update</button><br/>
       {update && exerciseArray

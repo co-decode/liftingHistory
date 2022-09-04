@@ -118,7 +118,9 @@ VERSION 3:
                             DONE Need to pick up the vars array from each template first
 
                         DONE Fix the server side update code... done for updating lifts, haven't check newLifts code, or lostLifts
-                        Cannot see vars fields for each exercise.
+                        DONE Cannot see vars fields for each exercise.
+                        DONE Can add templates and custom variations to the lifts objects...
+                        NEXT ->> add templates and custom variations to the newLifts objects and fix the server side wrt the newLifts submission
 
 
 
