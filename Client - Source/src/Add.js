@@ -719,55 +719,40 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
       });
     }
 
-    function handleMacro(e) { // clean this up, lots of repetition here
+    function handleMacro(e) { 
       e.preventDefault()
       var {fields: col, range, number} = macroRefs.current[exercise]
       
       const target = exerciseRefs.current[exercise]
       function changeFields(from, to) {
-        if (col.value === "Template") {
-          if (number.value > Object.keys(target).filter(key=>key.includes("template_")).length) return
+        function rangeSwitch(targetField) {
           if (range.value === "Even") {
-            Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 0)
-            .forEach((setName)=>target[`set_${setName.slice(4)}`].template.value = number.value - 1)
+            Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 1)
+            .forEach((setName)=>target[`set_${setName.slice(4)}`][targetField].value
+             = (targetField === "template" ? number.value - 1 : number.value))
           }
           else if (range.value === "Odd") {
-            Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 1)
-            .forEach((setName)=>target[`set_${setName.slice(4)}`].template.value = number.value - 1)
+            Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 0)
+            .forEach((setName)=>target[`set_${setName.slice(4)}`][targetField].value
+             = (targetField === "template" ? number.value - 1 : number.value))
           }
           else {
             Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) <= to && key.slice(4) >= from)
-            .forEach((setName)=>target[`set_${setName.slice(4)}`].template.value = number.value - 1)
+            .forEach((setName)=>target[`set_${setName.slice(4)}`][targetField].value
+             = (targetField === "template" ? number.value - 1 : number.value))
           }
+        }
+
+        if (col.value === "Template") {
+          if (number.value > Object.keys(target).filter(key=>key.includes("template_")).length) return
+          rangeSwitch("template")
         }
         else {
           if (col.value !== "Mass") {
-            if (range.value === "Even") {
-              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 0)
-              .forEach((setName)=>target[`set_${setName.slice(4)}`].reps.value = number.value)
-            }
-            else if (range.value === "Odd") {
-              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 1)
-              .forEach((setName)=>target[`set_${setName.slice(4)}`].reps.value = number.value)
-            }
-            else {
-              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) <= to && key.slice(4) >= from)
-              .forEach((setName)=>target[`set_${setName.slice(4)}`].reps.value = number.value)
-            }
+            rangeSwitch("reps")
           }
           if (col.value !== "Reps") {
-            if (range.value === "Even") {
-              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 0)
-              .forEach((setName)=>target[`set_${setName.slice(4)}`].mass.value = number.value)
-            }
-            else if (range.value === "Odd") {
-              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 1)
-              .forEach((setName)=>target[`set_${setName.slice(4)}`].mass.value = number.value)
-            }
-            else {
-              Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) <= to && key.slice(4) >= from)
-              .forEach((setName)=> target[`set_${setName.slice(4)}`].mass.value = number.value)
-            }
+            rangeSwitch("mass")
           }
         }
       }

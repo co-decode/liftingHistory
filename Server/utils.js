@@ -36,7 +36,7 @@ function createInsertFromObject(id, sid, lifts) {
                 tempNo === templates.length - 1 
                 ? acc + `{${template}}` 
                 : acc + `{${template}},`, ``)
-        lifts[exerciseArray[i]].mass.toString()
+        // lifts[exerciseArray[i]].mass.toString()
         output = output.concat(`INSERT INTO ${exerciseArray[i]} (uid, sid, mass, reps, variation_templates, vars) VALUES (${id}, ${sid}, '{${lifts[exerciseArray[i]].mass}}', '{${lifts[exerciseArray[i]].reps}}', '{${variation_templates_string}}', '{${lifts[exerciseArray[i]].vars}}');`)
     }
     return output
@@ -48,7 +48,16 @@ function createUpdateFromObject(sid, lifts) {
     const exerciseArray = Object.keys(lifts)
     let output = ``;
     for (let i = 0; i < exerciseArray.length; i++) {
-        output = output.concat(`UPDATE ${exerciseArray[i]} SET mass = '{${lifts[exerciseArray[i]].mass}}', reps = '{${lifts[exerciseArray[i]].reps}}', variation = '{${lifts[exerciseArray[i]].variation}}' WHERE sid = ${sid};`)
+        const longestTemplateLength = Math.max(...lifts[exerciseArray[i]].variation_templates.map(template=> template.length))
+        const variation_templates_string = lifts[exerciseArray[i]].variation_templates.map(template => {
+            const toBeAdded = longestTemplateLength - template.length
+            // console.log(toBeAdded, longestTemplateLength)
+            return toBeAdded ? template.concat(Array(toBeAdded).fill('null')) : template
+        }).reduce((acc, template, tempNo, templates) => 
+                tempNo === templates.length - 1 
+                ? acc + `{${template}}` 
+                : acc + `{${template}},`, ``)
+        output = output.concat(`UPDATE ${exerciseArray[i]} SET mass = '{${lifts[exerciseArray[i]].mass}}', reps = '{${lifts[exerciseArray[i]].reps}}', variation_templates = '{${variation_templates_string}}', vars = '{${lifts[exerciseArray[i]].vars}}' WHERE sid = ${sid};`)
     }
     return output;
 }

@@ -84,6 +84,7 @@ export default function Edit({
         mass: filtered.mass,
         reps: filtered.reps,
         variation_templates: deNulledTemplates,
+        vars: filtered.vars
       };
       fieldsInitial[v] = filtered.mass.length;
 
@@ -370,7 +371,19 @@ export default function Edit({
                           })}
 
                         <div>
-                          Variation<div style={{display:"flex"}}>
+                          Variation
+                          <div style={{display: "inline-block"}}>
+                            {/* { varFields[exercise].length < 5 && */}
+                            <button 
+                            // onClick={(e) =>{ e.preventDefault(); setVarFields({...varFields, [exercise]: [...varFields[exercise], 0]})}}
+                            >Add a template</button>
+                            {/* }{ varFields[exercise].length > 1 && */}
+                            <button 
+                            // onClick={(e) =>{e.preventDefault(); setVarFields({...varFields, [exercise]: varFields[exercise].slice(0, varFields[exercise].length - 1)})}}
+                            >Subtract a template</button>
+                            {/* } */}
+                          </div>
+                          <div style={{display:"flex"}}>
                           {varArray.map((temp, tempNo) => {
                             return (
                               <div key={`${exercise}template${tempNo}`} style={{display: "inline-block", marginRight:"20px"}}>
@@ -498,28 +511,93 @@ export default function Edit({
   ////
 
   const submitUpdate = (update) => {
+    // Valid mass and reps fields check //
     if (
       Object.keys(update.lifts).some((exercise) =>
-        Object.keys(update.lifts[exercise]).some((arrayKey) =>
-          Object.values(update.lifts[exercise][arrayKey]).some((v) => !v && v !== 0)
+        Object.keys(update.lifts[exercise])
+        .filter(key=>['mass','reps'].includes(key))
+        .some((arrayKey) => Object.values(update.lifts[exercise][arrayKey])
+        .some((v) => !v && v !== 0)
         )
       ) ||
       Object.keys(update.newLifts).some((exercise) =>
-        Object.keys(update.newLifts[exercise]).some((arrayKey) =>
-          Object.values(update.newLifts[exercise][arrayKey]).some((v) => {console.log(update.newLifts[exercise], exercise, arrayKey, v); return !v && v !== 0})
+        Object.keys(update.newLifts[exercise]).filter(key=>['mass','reps'].includes(key))
+        .some((arrayKey) => Object.values(update.newLifts[exercise][arrayKey])
+        .some((v) => !v && v !== 0)
         )
       )
     ) {
-      setFeedback("Incomplete Forms");
+      setFeedback("Incomplete Set Information");
       return;
     }
+    // Valid template fields check //
     if (
-      Object.keys(update.lifts).some(exercise => update.lifts[exercise].variation.length !== Array.from(new Set(update.lifts[exercise].variation)).length)
-      || Object.keys(update.newLifts).some(exercise => update.newLifts[exercise].variation.length !== Array.from(new Set(update.newLifts[exercise].variation)).length)
+      Object.keys(update.lifts).some((exercise) =>
+        update.lifts[exercise].variation_templates
+        .some((template) => template.some((v) => !v.trim())
+        )) 
+      ||
+      Object.keys(update.newLifts).some((exercise) =>
+        update.newLifts[exercise].variation_templates
+        .some((template) => template.some((v) => !v.trim())
+      ))
+    ) {
+      setFeedback("Incomplete Template Fields");
+      return;
+    }
+    // Each template is used check //
+    if (
+      Object.keys(update.lifts).some((exercise) =>
+        update.lifts[exercise].variation_templates
+        .some((template, tempNo) => !update.lifts[exercise].vars.includes(tempNo)))
+      ||
+      Object.keys(update.newLifts).some((exercise) =>
+        update.newLifts[exercise].variation_templates
+        .some((template, tempNo) => !update.newLifts[exercise].vars.includes(tempNo)))
+    ) {
+      setFeedback("Every template must be used")
+      return
+    }
+
+    // Intra template uniqueness check //
+    if ( 
+      Object.keys(update.lifts)
+        .some(exercise => update.lifts[exercise].variation_templates
+        .some((template)=> template.length !== Array.from(new Set(template)).length) )
+      || 
+      Object.keys(update.newLifts)
+        .some(exercise => update.newLifts[exercise].variation_templates
+        .some((template)=> template.length !== Array.from(new Set(template)).length) )
       ){
       setFeedback("Cannot submit multiple identical variations")
       return
     }
+    // Inter template uniqueness check //
+    if (
+      Object.keys(update.lifts).some(exercise => update.lifts[exercise].variation_templates
+        .some((template, tempNo, tempsArray)=> {
+          for (let i = tempNo + 1; i < tempsArray.length; i++) {
+            if (template.every(vari => 
+              tempsArray[i].includes(vari)) 
+              && template.length === tempsArray[i].length) return true
+          }
+          return false
+        } ))
+      || 
+      Object.keys(update.newLifts).some(exercise => update.newLifts[exercise].variation_templates
+        .some((template, tempNo, tempsArray)=> {
+          for (let i = tempNo + 1; i < tempsArray.length; i++) {
+            if (template.every(vari => 
+              tempsArray[i].includes(vari)) 
+              && template.length === tempsArray[i].length) return true
+          }
+          return false
+        } ))
+      ){
+      setFeedback("Cannot submit multiple identical templates")
+      return
+    }
+
     setLoading(true)
 
     axios({
@@ -700,6 +778,24 @@ export default function Edit({
                       });
                     }}
                   />
+                  {/* <label>Template
+                  <select
+                    id={`${exercise}Set${i}Vars`}
+                    type="number"
+                    step="0.25"
+                    required
+                    ref={(el) =>
+                      (exerciseRefs.current = {
+                        ...exerciseRefs.current,
+                        [exercise]: {
+                          ...exerciseRefs.current[exercise],
+                          [`set_${i}`]: { ...exerciseRefs.current[exercise][`set_${i}`], template: el },
+                        },
+                      })
+                    }
+                  >{varFields[exercise].map((template, tempNo) => 
+                    <option key={`${exercise}Set${i}Vars_template${tempNo}`} value={tempNo}>{tempNo + 1}</option> )}
+                  </select></label> */}
                 </div>
               );
             })}
@@ -707,6 +803,18 @@ export default function Edit({
           <div>
             {" "}
             Variation
+            <div>
+              {/* { varFields[exercise].length < 5 && */}
+              <button 
+              // onClick={(e) =>{ e.preventDefault(); setVarFields({...varFields, [exercise]: [...varFields[exercise], 0]})}}
+              >Add a template</button>
+              {/* } */}
+              {/* { varFields[exercise].length > 1 && */}
+              <button 
+              // onClick={(e) =>{e.preventDefault(); setVarFields({...varFields, [exercise]: varFields[exercise].slice(0, varFields[exercise].length - 1)})}}
+              >Subtract a template</button>
+              {/* } */}
+            </div>
             {update.newLifts[exercise].variation_templates.map((temp, tempNo) => {
               return (
                 <div key={`${exercise}_template_${tempNo}`}>
@@ -894,7 +1002,7 @@ export default function Edit({
       </button>
       <button onClick={() => console.log(exerciseRefs.current)}>log exerciseRefs</button><br/>
       <button onClick={() => console.log(update)}>log Update</button><br/>
-      <button onClick={() => submitUpdate(update)}>Submit Update</button><br/>
+      <button onClick={() =>submitUpdate(update)}>Submit Update</button><br/>
       {update && exerciseArray
             .filter(
               (v) =>

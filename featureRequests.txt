@@ -104,8 +104,21 @@ VERSION 3:
 
                 Test and correct the server queries to ensure things are working on that end.
                     DONE FOR Add...
-                        ->> macro is broken... fix this.
-                        ->> for Add, I think I'll need to thoroughly check that submission logic properly rejects bad entry forms...
+                        DONE macro is broken... fix this.
+                            DONE macro function is longer than it needs to be, clean it up
+                        LATER - NOT DONE - for Add, I think I'll need to thoroughly check that submission logic properly rejects bad entry forms...
+                    FOR Edit...
+                        Fix everything... I'll need to refactor the update method, server side as well.
+                        DONE check for multiples within a template
+                        DONE check for multiples between the templates
+                        DONE Check if guard clause is needed for template uniqueness check: NOT needed: for clause prevents it from happening
+                        DONE check that mass and reps checks still work
+                        DONE check that templates have something in each variation field
+                        DONE It is possible to submit a template that doesn't get used, fix this.
+                            DONE Need to pick up the vars array from each template first
+
+                        DONE Fix the server side update code... done for updating lifts, haven't check newLifts code, or lostLifts
+                        Cannot see vars fields for each exercise.
 
 
 
