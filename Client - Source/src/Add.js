@@ -160,7 +160,6 @@ export default function Add({
              
             }
           )});
-      // console.log("var", varArray)
       lifts[exercise] = {
         mass: massArray,
         reps: repArray,
@@ -168,8 +167,43 @@ export default function Add({
         variation_templates: varArray,
       };
     });
-    console.log(lifts)
-    const submission = { date: time, lifts };
+
+
+    // Each template is used check //
+    if (
+      Object.keys(lifts).some((exercise) =>
+        lifts[exercise].variation_templates
+        .some((template, tempNo) => !lifts[exercise].vars.includes(tempNo)))
+    ) {
+      setResponse(`Every template must be used`)
+      return
+    }
+
+    // Intra template uniqueness check //
+    if ( 
+      Object.keys(lifts)
+        .some(exercise => lifts[exercise].variation_templates
+        .some((template)=> template.length !== Array.from(new Set(template)).length) )
+      ){
+      setResponse("Cannot submit multiple identical variations")
+      return
+    }
+    // Inter template uniqueness check //
+    if (
+      Object.keys(lifts).some(exercise => lifts[exercise].variation_templates
+        .some((template, tempNo, tempsArray)=> {
+          for (let i = tempNo + 1; i < tempsArray.length; i++) {
+            if (template.every(vari => 
+              tempsArray[i].includes(vari)) 
+              && template.length === tempsArray[i].length) return true
+          }
+          return false
+        } ))
+      ){
+      setResponse("Cannot submit multiple identical templates")
+      return
+    }
+    // Unique timestamp check //
     if (
       get.sessions?.some((session) => {
         function correctTimezone(dateString) {
@@ -179,12 +213,14 @@ export default function Add({
           );
           return new Date(correction).toISOString().slice(0, 19);
         }
-        return correctTimezone(session.date) === submission.date.slice(0, 19);
+        return correctTimezone(session.date) === time.slice(0, 19);
       })
     ) {
       setResponse("A session has already been recorded for this Timestamp");
       return;
     }
+
+    const submission = { date: time, lifts };
 
     if (Object.keys(submission.lifts).length > 0) {
       post(submission);
@@ -276,7 +312,6 @@ function VariationOptions({
   customs,
 }) {
   const customRef = useRef({});
-  // console.log('high', varFields[exercise])
 
   const [customAdditions, setCustomAdditions] = useState(customs);
   const number = variationObject[exercise].length;
@@ -304,7 +339,6 @@ function VariationOptions({
   let checkChange = exerciseRefs.current[exercise]
 
   useEffect(() => {
-    // console.log('one', exerciseRefs.current[exercise])
     let noOfSets = Object.keys(exerciseRefs.current[exercise]).filter(key=>key.includes("set_")).length
     if (varFields[exercise].length < noOfSets) {
       delete exerciseRefs.current[exercise][`set_${noOfSets - 1}`]
@@ -325,7 +359,6 @@ function VariationOptions({
         })
 
   },[varFields, exercise, exerciseRefs, checkChange])
-  // console.log('low', array)
 
   useEffect(
     () =>{
@@ -355,8 +388,6 @@ function VariationOptions({
   return (
     <div>
       {array.map((template, tempNo) => { 
-      // console.log('here', array, template)
-      
         return (
           <div key={`${exercise}Template${tempNo}`}>
             Template {tempNo + 1} |&nbsp;
@@ -385,7 +416,6 @@ function VariationOptions({
               }
             >
               <option value=""> --- </option>
-              {/* {console.log("val", val)} */}
               {variations.map(vari => <option key={`${exercise}Template${tempNo}varSet${varNo}Option${vari}`}>{vari}</option>
               )}
             </select>

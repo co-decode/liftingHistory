@@ -64,7 +64,7 @@ export default function Breakdown({
         })}
       </fieldset>
       {show.map((exercise) => {
-        const { mass, reps, variation_templates:variation } = get[exercise].find(
+        const { mass, reps, variation_templates:variation, vars } = get[exercise].find(
           (v) => v.sid === edit
         );
         // console.log(exercise, variation)
@@ -93,14 +93,17 @@ export default function Breakdown({
             {mass.map((weight, set) => {
               return (
                 <div key={`${exercise}Set${set}`}>
-                  Set {set + 1}: {weight} kg | {reps[set]} rep
-                  {reps[set] > 1 ? `s` : null} <br />
+                  Set {set + 1}: {weight} kg |&nbsp; 
+                      {reps[set]} rep{reps[set] > 1 ? `s` : null}&nbsp;
+                      Template {vars[set] + 1}
+                      <br />
                 </div>
               );
             })}
-            Variation:{" "}
+            Template:{" "}
             {variation.map((v, i, a) => (
               <strong key={`variation${i}`}>
+                {i + 1}:&nbsp;
                 {v.filter(vari=>!!vari).toString().replace(/,/g, ", ")}
                 {i < a.length - 1 ? ` | ` : null}
               </strong>

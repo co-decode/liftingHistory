@@ -675,12 +675,28 @@ export default function Edit({
   ////
 
   const submitUpdate = (update) => {
-    // At least one lift exists in submission ??
+    // At least one lift exists in submission //
     if (
       Object.keys(update.lifts).concat(Object.keys(update.newLifts)).length === 0
     ) {
       setFeedback("There must be at least one lift in the session")
       return}
+    // Unique timestamp on submission //
+    if (
+      get.sessions?.filter(sess=> sess.sid !== edit).some((session) => {
+        function correctTimezone(dateString) {
+          const dateObject = new Date(dateString);
+          const correction = dateObject.setTime(
+            dateObject.getTime() - 1000 * 60 * dateObject.getTimezoneOffset()
+          );
+          return new Date(correction).toISOString().slice(0, 19);
+        }
+        return correctTimezone(session.date) === update.date.slice(0, 19);
+      })
+    ) {
+      setFeedback("A session has already been recorded for this Timestamp");
+      return;
+    }
     // Valid mass and reps fields check //
     if (
       Object.keys(update.lifts).some((exercise) =>

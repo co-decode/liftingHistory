@@ -12,7 +12,7 @@ import Profile from "./Profile";
 import { backend } from "./utils/variables";
 import Spinner from "./utils/Spinner";
 
-const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
+const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV, TABLE, GRAPH] = [
   "PROFILE",
   "LOG",
   "EDIT",
@@ -21,12 +21,15 @@ const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
   "BREAKDOWN",
   "CALENDAR",
   "EQUIVALENCE",
+  "TABLE",
+  "GRAPH"
 ];
 
 export default function Log() {
   const [get, setGet] = useState(null);
   const [edit, setEdit] = useState(0);
   const [page, setPage] = useState(LOG);
+  const [tonnagePage, setTonnagePage] = useState(TABLE)
   const [prevEdit, setPrevEdit] = useState(null);
   const [dateFilter, setDateFilter] = useState({
     from: null,
@@ -164,9 +167,13 @@ export default function Log() {
 
           
           if (exerciseCall.every((exercise) => {
-            if (!varFilter[exercise].length ) return false; 
-            return !varFilter[exercise].some(vari => get[exercise].find(sess => sess.sid === sidVal).variation.includes(vari))
+            if (!varFilter[exercise].length ) return false; // .flat() VVV is lazy... 
+            return !varFilter[exercise]
+              .some(vari => get[exercise]
+                .find(sess => sess.sid === sidVal)
+                .variation_templates.flat().includes(vari))
           })) return null
+
           return (
             <div
               key={sidVal}
@@ -206,7 +213,7 @@ export default function Log() {
                 if (varFilter[v].length > 0)
                   if (
                     varFilter[v].every(
-                      (vari) => !exerciseData.variation.includes(vari)
+                      (vari) => !exerciseData.variation_templates.flat().includes(vari)
                     )
                   )
                     return null;
@@ -265,7 +272,8 @@ export default function Log() {
           <button onClick={() => setPage(ADD)}>Add an Entry</button>
           {get && (
             <>
-              <button onClick={() => setPage(TONS)}>View Tonnage</button>
+              <button onClick={() => {setPage(TONS); setTonnagePage(TABLE)}}>View Tonnage</button>
+              <button onClick={() => {setPage(TONS); setTonnagePage(GRAPH)}}>View Graph</button>
               <button onClick={() => setPage(CAL)}>View Calendar</button>
             </>
           )}
@@ -352,10 +360,11 @@ export default function Log() {
             let variationsForUser = [];
             get[exercise].forEach((sess) =>
               sess.variation_templates.forEach(
-                (variation) =>
+                (template) => template.forEach(variation => 
+                  variation &&
                   !variationsForUser.includes(variation) &&
                   variationsForUser.push(variation)
-              )
+              ) )
             );
             return(
             <div key={`${exercise}VarFilter`} style={{ display: "block" }}>
@@ -510,7 +519,7 @@ export default function Log() {
           setVarFilter={setVarFilter}
         />
       );
-    else if (page === TONS) return <Tonnage get={get} />;
+    else if (page === TONS) return <Tonnage get={get} tonnagePage={tonnagePage} setTonnagePage={setTonnagePage} />;
     else if (page === CAL)
       return (
         <Calendar

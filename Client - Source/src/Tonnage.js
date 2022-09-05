@@ -4,8 +4,8 @@ import returnTonnage from "./utils/tonnageFunctions";
 import "./Tonnage.css"
 // import { variationObject } from "./utils/variables";
 
-export default function Tonnage({ get }) {
-  const [page, setPage] = useState("TABLE");
+export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
+  // const [page, setPage] = useState("TABLE");
   const [interval, setInterval] = useState(null);
   const [intervalLength, setIntervalLength] = useState([null, null]);
   const [referenceDate, setReferenceDate] = useState(null);
@@ -24,10 +24,10 @@ export default function Tonnage({ get }) {
       <>
         <button
           onClick={() =>
-            page === "TABLE" ? setPage("GRAPH") : setPage("TABLE")
+            tonnagePage === "TABLE" ? setTonnagePage("GRAPH") : setTonnagePage("TABLE")
           }
         >
-          {page === "TABLE" ? `View Graph` : `View Table`}
+          {tonnagePage === "TABLE" ? `View Graph` : `View Table`}
         </button>
       </>
     );
@@ -190,8 +190,8 @@ export default function Tonnage({ get }) {
   }
 
   function returnPage() {
-    if (page === "TABLE") return returnTable();
-    else if (page === "GRAPH")
+    if (tonnagePage === "TABLE") return returnTable();
+    else if (tonnagePage === "GRAPH")
       return (
         <div style={{ width: "65%" }}>
           <Graph get={get} />

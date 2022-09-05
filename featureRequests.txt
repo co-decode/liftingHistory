@@ -85,9 +85,10 @@ VERSION 3:
             DONE We have colours now but GOD are they ugly, give me a localStorage object to store colour preferences with.
         
 
-        ->> Would require major (<- not really...) refactoring, but I could tag each set with a variation template, and make it reasonably quick to assign in entry.
-            THIS I want another variation field, with the same length as the mass and rep fields. The old variation field will become the templates field, which will be an array of arrays, if this is supported by postgres.
-            ->> Refactoring
+        DONE Tag each set with a variation template, and make it reasonably quick to assign in entry.
+            DONE I want another variation field, with the same length as the mass and rep fields. 
+            DONE The old variation field will become the templates field, which will be an array of arrays, if this is supported by postgres.
+            DONE Refactoring
 
             Dump your database first, then just go tinker with that same database...
 
@@ -125,16 +126,21 @@ VERSION 3:
                         DONE Fix edit component lostLifts functionality
                         DONE Fix macros for Edit component
                         DONE Fix exerciseRef cleaning for sets and templates, check if this is happening for the add component
-                        ->> Ensure that submission logic blocks bad submissions for ADD
-                        Then work on the Accumulator functionality with vars.
+                        DONE Ensure that submission logic blocks bad submissions for ADD
+                        DONE Fix breakdown: it doesn't display template tags.
+                        DONE Then work on the Accumulator functionality with vars.
 
 
 
                 
-                Add support for multi template sessions to the accumulator logic within the graph and tonnage components
+                DONE Add support for multi template sessions to the accumulator logic within the graph and tonnage components
 
-                Add a button to go straight to the graph from the log page
+                DONE Add a button to go straight to the graph from the log page
 
+                Deploy on that new site, railroad.. i think.
+                IN V4: 
+                Make a UI... obviously. 
+                Experiment with web sockets and receiving queries from other applications, such as a native mobile application built with kotlin.
 
 
         >> Then go work on the sheet music project.

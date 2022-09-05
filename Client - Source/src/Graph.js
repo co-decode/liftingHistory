@@ -186,7 +186,39 @@ export default function Graph({ get }) {
 
     const getDataset = (/* what, */ input) => {
       function returnExerciseObject(getWhat, sid) {
-        return get[getWhat].find((entry) => entry.sid === sid);
+        const sess =  get[getWhat].find((entry) => entry.sid === sid)
+        // const sidsWithExercise = sessionList.filter((sess) => sess.exercises.includes(input.exercise)).map(sess => sess.sid)
+          // const exercisesObjectsWithSid = get[input.exercise].filter(sess=> sidsWithExercise.includes(sess.sid) )
+          // const sessionsWithVariation = exercisesObjectsWithSid.filter((session) =>
+          //     varFilter.some((variation)=>
+          //       session.variation_templates.flat().includes(variation)))
+              
+          // const sessionsGutted = sessionsWithVariation.map(sess => { 
+        if (varFilter.length){
+          const templatesWithVariation = sess.variation_templates
+            .reduce((acc, template, tempNo) => 
+              varFilter.some(variation => 
+                template.includes(variation)) 
+                ? [...acc, tempNo] 
+                : acc, 
+              [])
+          const indicesOfInterest = sess.vars.reduce((acc, tag, setNo) => 
+            templatesWithVariation.includes(tag) 
+            ? [...acc, setNo] 
+            : acc,
+            [])
+          const guttedSession = {
+            mass: sess.mass.filter((massVal, setNumber)=>indicesOfInterest.includes(setNumber)),
+            reps: sess.reps.filter((repsVal, setNumber)=>indicesOfInterest.includes(setNumber)),
+            vars: sess.vars.filter((varsVal, setNumber)=>indicesOfInterest.includes(setNumber)),
+            variation_templates: sess.variation_templates.filter((temp, tempNo) => templatesWithVariation.includes(tempNo))
+          }
+          return guttedSession
+        }
+          // })
+          // return sessionsGutted
+
+        return sess;
       }
       function totalMassRepsSets(exerciseObject) {
         let output = {mass: [], reps: [], sets: []}

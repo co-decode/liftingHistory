@@ -84,10 +84,34 @@ export default function intervalTon(
               );
 
               
-              if (variationFilter[exercise].length) { //!
-                exerciseObjectsForSid = exerciseObjectsForSid.filter((session) =>
-                  variationFilter[exercise].some((variation)=>session.variation_templates.flat().includes(variation))
-                )}
+              if (variationFilter[exercise].length) {
+                const sessionsWithVariation = exerciseObjectsForSid.filter((session) =>
+                variationFilter[exercise].some((variation)=>
+                  session.variation_templates.flat().includes(variation)))
+                
+                const sessionsGutted = sessionsWithVariation.map(sess => { 
+                  const templatesWithVariation = sess.variation_templates
+                    .reduce((acc, template, tempNo) => 
+                      variationFilter[exercise].some(variation => 
+                        template.includes(variation)) 
+                        ? [...acc, tempNo] 
+                        : acc, 
+                      [])
+                  const indicesOfInterest = sess.vars.reduce((acc, tag, setNo) => 
+                    templatesWithVariation.includes(tag) 
+                    ? [...acc, setNo] 
+                    : acc,
+                    [])
+                  const guttedSession = {
+                    mass: sess.mass.filter((massVal, setNumber)=>indicesOfInterest.includes(setNumber)),
+                    reps: sess.reps.filter((repsVal, setNumber)=>indicesOfInterest.includes(setNumber)),
+                    vars: sess.vars.filter((varsVal, setNumber)=>indicesOfInterest.includes(setNumber)),
+                    variation_templates: sess.variation_templates.filter((temp, tempNo) => templatesWithVariation.includes(tempNo))
+                  }
+                  return guttedSession
+                })
+                exerciseObjectsForSid = sessionsGutted
+                }
 
               const filterZeroes = () => {
                 if (exerciseObjectsForSid.length === 0) return null;
