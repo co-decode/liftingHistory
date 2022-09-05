@@ -37,7 +37,7 @@ const configHEROKU = {
   host: params.hostname,
   port: params.port,
   database: params.pathname.split('/')[1],
-  ssl: true/* { rejectUnauthorized: false } */
+  ssl: { rejectUnauthorized: false }
 };
 
 // const pool = new Pool(configLOCAL);
