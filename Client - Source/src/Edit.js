@@ -8,15 +8,6 @@ const LOG = "LOG";
 
 function variationOptions(customs, exercise, index, existing) {
   if (!variationObject[exercise][index]) {
-    // let variationsForUser = [];
-    //         get[exercise].forEach((sess) =>
-    //           sess.variation.forEach(
-    //             (variation) =>
-    //               !variationObject[exercise].flat().includes(variation) &&
-    //               !variationsForUser.includes(variation) &&
-    //               variationsForUser.push(variation)
-    //           )
-    //         );
     return customs.filter((v) => v !== existing).map((variation)=> <option key={`${exercise}${index}${variation}`}>{variation}</option>)}
     else return variationObject[exercise][index]
     .filter((v) => v !== existing)
