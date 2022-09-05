@@ -5,6 +5,7 @@ const Wrapper = () => {
   
   useEffect(() => {
     function shortcutListener(e) {
+    
       if (e.shiftKey && e.code === "KeyO") {
         e.preventDefault()
         e.stopImmediatePropagation()
@@ -53,13 +54,15 @@ const Wrapper = () => {
   }
 
   useEffect(() => {
+    const appDiv = document.getElementById("appDiv")
+
     if (showCard) {
       document.addEventListener("keydown", handleRemove)
-      document.addEventListener("mousedown", handleRemove)
+      appDiv.addEventListener("mousedown", handleRemove)
     }
     return () => {
       document.removeEventListener("keydown", handleRemove)
-      document.removeEventListener("mousedown", handleRemove)
+      appDiv.removeEventListener("mousedown", handleRemove)
     }
   })
 

@@ -12,7 +12,7 @@ import Profile from "./Profile";
 import { backend } from "./utils/variables";
 import Spinner from "./utils/Spinner";
 
-const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
+const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV, TABLE, GRAPH] = [
   "PROFILE",
   "LOG",
   "EDIT",
@@ -21,36 +21,39 @@ const [PROFILE, LOG, EDIT, TONS, ADD, BREAK, CAL, EQUIV] = [
   "BREAKDOWN",
   "CALENDAR",
   "EQUIVALENCE",
+  "TABLE",
+  "GRAPH"
 ];
 
 export default function Log() {
   const [get, setGet] = useState(null);
   const [edit, setEdit] = useState(0);
   const [page, setPage] = useState(LOG);
+  const [tonnagePage, setTonnagePage] = useState(TABLE)
   const [prevEdit, setPrevEdit] = useState(null);
   const [dateFilter, setDateFilter] = useState({
     from: null,
     to: null,
-    ascending: sessionStorage.getItem("WeightLiftingLogAscending") || true,
+    ascending: null,
   });
   const [user, setUser] = useState(null);
+
   const [varFilter, setVarFilter] = useState({});
+  const [varMenus, setVarMenus] = useState({});
+  const checkRefs = useRef({});
   const [goToMonthYear, setGoToMonthYear] = useState(null);
   const [loading, setLoading] = useState(false);
   const editRefs = useRef({});
   const link = useNavigate();
 
-  const variationObject = {
-    deadlift: [
-      ["Conventional", "Sumo"],
-      ["Double Overhand", "Mixed Grip", "Straps"],
-    ],
-    squat: [["High Bar", "Front", "Low Bar"]],
-    bench: [
-      ["Close Grip", "Standard", "Wide Grip"],
-      ["Flat", "Incline"],
-    ],
-  };
+  // useEffect(() => {
+  //   let output = {}
+  //   if (!get) return
+  //   Object.keys(get).filter(
+  //     (key) => key !== "sessions"
+  //   ).forEach((exercise) => (output[exercise] = []))
+  //   setVarFilter(output)
+  // }, [get])
 
   useEffect(() => {
     axios({
@@ -66,15 +69,24 @@ export default function Log() {
           withCredentials: true,
           url: `${backend}/sessions/${res.data.uid}`,
         }).then((res) => {
-          if (res.data[0].date) {
-            setGet(res.data[0]);
+          if (res.data.sessions) {
+            setGet(res.data);
+            const exercisesForUser = Object.keys(res.data).filter(
+              (key) => key !== "sessions"
+            );
+            function initialFilter() {
+              let output = {};
+              exercisesForUser.forEach((exercise) => (output[exercise] = []));
+              return output;
+            }
+            setVarFilter(initialFilter());
             const earliest = new Date(
-              res.data[0].date
+              res.data.sessions
                 .map((v) => new Date(v.date))
                 .sort((a, b) => a - b)[0]
             );
             const latest = new Date(
-              res.data[0].date
+              res.data.sessions
                 .map((v) => new Date(v.date))
                 .sort((a, b) => b - a)[0]
             );
@@ -87,7 +99,7 @@ export default function Log() {
               )
                 .toISOString()
                 .slice(0, 10),
-              ascending: true,
+              ascending: JSON.parse(localStorage.getItem("WeightLiftingLogAscending")),
             });
           } else {
             setGet(false);
@@ -107,15 +119,17 @@ export default function Log() {
   }, [edit, prevEdit]);
 
   useEffect(() => {
-    if (page === LOG) setVarFilter({});
+    if (page === LOG);
   }, [page]);
 
   function deleteSession(sid) {
     if (!window.confirm("Are you sure you want to delete this session?"))
       return;
-    setLoading(true)
+    const exerciseArray = get.sessions.find(sess => sess.sid === sid).exercises
+    setLoading(true);
     axios({
       method: "delete",
+      data: exerciseArray,
       withCredentials: true,
       url: `${backend}/sessions/${sid}`,
     }).then((res) => {
@@ -125,36 +139,41 @@ export default function Log() {
         url: `${backend}/sessions/${user.uid}`,
       }).then((res) => {
         setLoading(false);
-        setGet(res.data[0]);
+        setGet(res.data);
       });
     });
   }
 
   function returnSid() {
-    let sidList = get.date
+    let sidList = get.sessions
       .filter((v) => v.date >= dateFilter.from && v.date <= dateFilter.to)
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .map((v) => v.sid);
-
-    if (!dateFilter.ascending) {
-      sidList = sidList.reverse();
+      if (!dateFilter.ascending) {
+        sidList = sidList.reverse();
     }
 
     return (
       <div>
         {sidList.map((sidVal) => {
-          let exerciseCall = get.date.filter((v) => v.sid === sidVal)[0]
-            .exercises;
+          let exerciseCall = get.sessions.find(
+            (v) => v.sid === sidVal
+          ).exercises;
           if (
-            exerciseCall.every((exercise) => {
-              if (varFilter[exercise]) {
-                return !get[exercise]
-                  .filter((v) => v.sid === sidVal)[0]
-                  .variation.includes(varFilter[exercise]);
-              } else return false;
-            })
-          )
+            exerciseCall.every((exercise) =>{
+              return varFilter[exercise].includes("HIDE")
+            }) )
             return null;
+
+          
+          if (exerciseCall.every((exercise) => {
+            if (!varFilter[exercise].length ) return false; // .flat() VVV is lazy... 
+            return !varFilter[exercise]
+              .some(vari => get[exercise]
+                .find(sess => sess.sid === sidVal)
+                .variation_templates.flat().includes(vari))
+          })) return null
+
           return (
             <div
               key={sidVal}
@@ -164,7 +183,7 @@ export default function Log() {
             >
               <div>
                 {new Date(
-                  get.date.filter((v) => v.sid === sidVal)[0].date
+                  get.sessions.find((v) => v.sid === sidVal).date
                 ).toLocaleString()}
                 <div>
                   <button onClick={() => deleteSession(sidVal)}>
@@ -188,24 +207,35 @@ export default function Log() {
                   </button>
                 </div>
               </div>
+              <div style={{display:"flex"}}>
               {exerciseCall.map((v) => {
-                const exerciseData = get[v].filter((v) => v.sid === sidVal)[0];
-                if (varFilter[v])
-                  if (!exerciseData.variation.includes(varFilter[v]))
+                const exerciseData = get[v].find((v) => v.sid === sidVal);
+                if (varFilter[v].length > 0)
+                  if (
+                    varFilter[v].every(
+                      (vari) => !exerciseData.variation_templates.flat().includes(vari)
+                    )
+                  )
                     return null;
                 return (
                   <div
                     key={v}
                     style={{ display: "inline-block", marginRight: "20px" }}
                   >
-                    <strong>{v[0].toUpperCase() + v.slice(1)}: </strong>
+                    <strong>
+                      {v
+                        .split("_")
+                        .map((word) => word[0].toUpperCase() + word.slice(1))
+                        .join(" ")}
+                      :{" "}
+                    </strong>
                     <div>
                       Max:{" "}
                       {exerciseData.mass.reduce((acc, item) => {
                         return item > acc ? item : acc;
                       })}{" "}
                       kg
-                    </div>
+                    </div>  
                     <div>
                       Reps:{" "}
                       {exerciseData.reps.reduce((acc, val) => {
@@ -221,11 +251,13 @@ export default function Log() {
                       kg
                     </div>
                     <div>
-                      {exerciseData.variation.toString().replace(/,/, ", ")}
+                      {exerciseData.variation_templates.map((template, ind) => {
+                      return <div key={`${sidVal}${v}template${ind}`}>{template.filter(vari=>!!vari).toString().replace(/,/g, ", ")}</div>})}
                     </div>
                   </div>
                 );
               })}
+              </div>
               <hr />
             </div>
           );
@@ -240,7 +272,8 @@ export default function Log() {
           <button onClick={() => setPage(ADD)}>Add an Entry</button>
           {get && (
             <>
-              <button onClick={() => setPage(TONS)}>View Tonnage</button>
+              <button onClick={() => {setPage(TONS); setTonnagePage(TABLE)}}>View Tonnage</button>
+              <button onClick={() => {setPage(TONS); setTonnagePage(GRAPH)}}>View Graph</button>
               <button onClick={() => setPage(CAL)}>View Calendar</button>
             </>
           )}
@@ -273,13 +306,14 @@ export default function Log() {
         />
         <button
           onClick={() => {
+            const opposite = !dateFilter.ascending
             setDateFilter({
               ...dateFilter,
-              ascending: !dateFilter.ascending,
+              ascending: opposite,
             });
-            sessionStorage.setItem(
+            localStorage.setItem(
               "WeightLiftingLogAscending",
-              !dateFilter.ascending
+              opposite
             );
           }}
         >
@@ -289,30 +323,144 @@ export default function Log() {
     );
   }
   function returnVarFilter() {
+
+    function handleHideAll() {
+      let newVariationFilter = {};
+      if (
+        Object.keys(get).filter((key) => key !== "sessions").every((exercise) =>
+          varFilter[exercise].includes("HIDE")
+        )
+      ) {
+        Object.keys(get).filter((key) => key !== "sessions").forEach(
+          (exercise) => (newVariationFilter[exercise] = [])
+        );
+      } else {
+        Object.keys(get).filter((key) => key !== "sessions").forEach(
+          (exercise) => (newVariationFilter[exercise] = ["HIDE"])
+        );
+        let newVarMenus = {...varMenus}
+        Object.keys(newVarMenus).forEach(exercise=> newVarMenus = {...newVarMenus, [exercise]: false})
+        setVarMenus(newVarMenus)
+      }
+      setVarFilter(newVariationFilter);
+    }
     return (
       <div>
-        {["bench", "deadlift", "squat"].map((exercise) => (
-          <div key={`${exercise}VarFilter`} style={{ display: "inline-block" }}>
-            <label htmlFor={`${exercise}VarFilter`}>
-              {exercise[0].toUpperCase() + exercise.slice(1)}:
-            </label>
-            <select
-              id={`${exercise}VarFilter`}
-              onChange={(e) =>
-                setVarFilter({
-                  ...varFilter,
-                  [exercise]: e.target.value,
-                })
-              }
-            >
-              <option value=""> Show All </option>
-              <option value="HIDE"> Hide All </option>
-              {variationObject[exercise].flat().map((value) => {
-                return <option key={`${value}`}>{value}</option>;
-              })}
-            </select>
-          </div>
-        ))}
+        <button onClick={() => handleHideAll()}>
+          {Object.keys(get).filter((key) => key !== "sessions").every((exercise) =>
+            varFilter[exercise].includes("HIDE")
+          )
+            ? "Show"
+            : "Hide"}{" "}
+          All Exercises
+        </button>
+        {Object.keys(get)
+          .filter((key) => key !== "sessions")
+          .map((exercise) => { 
+            let variationsForUser = [];
+            get[exercise].forEach((sess) =>
+              sess.variation_templates.forEach(
+                (template) => template.forEach(variation => 
+                  variation &&
+                  !variationsForUser.includes(variation) &&
+                  variationsForUser.push(variation)
+              ) )
+            );
+            return(
+            <div key={`${exercise}VarFilter`} style={{ display: "block" }}>
+              <button
+                onClick={() => {
+                  if (varFilter[exercise].includes("HIDE")) {
+                    setVarFilter({
+                      ...varFilter,
+                      [exercise]: [],
+                    });
+                    if (varMenus[exercise])
+                      setVarMenus({ ...varMenus, [exercise]: false });
+                  } else {
+                    setVarFilter({
+                      ...varFilter,
+                      [exercise]: ["HIDE"],
+                    });
+                  }
+                }}
+              >
+                {varFilter[exercise].includes("HIDE") ? "Show" : "Hide"}&nbsp;
+                {exercise
+                  .split("_")
+                  .map((word) => word[0].toUpperCase() + word.slice(1))
+                  .join(" ")}
+              </button>
+              {!varFilter[exercise].includes("HIDE") && (
+                <>
+                  <button
+                    onClick={() => {
+                      if (!varMenus[exercise])
+                        setVarMenus({
+                          ...varMenus,
+                          [exercise]: !varMenus[exercise],
+                        });
+                      else if (
+                        varMenus[exercise] &&
+                        !varFilter[exercise].length
+                      )
+                        setVarMenus({
+                          ...varMenus,
+                          [exercise]: !varMenus[exercise],
+                        });
+                      else {
+                        setVarFilter({ ...varFilter, [exercise]: [] });
+                        Object.keys(checkRefs.current[exercise]).forEach(
+                          (vari) =>
+                            (checkRefs.current[exercise][vari].checked = false)
+                        );
+                      }
+                    }}
+                  >
+                    {varFilter[exercise].length > 0
+                      ? "Show All"
+                      : varMenus[exercise]
+                      ? "Filter <"
+                      : "Filter >"}
+                  </button>
+
+                  {varMenus[exercise] &&
+                    /* variationObject[exercise].flat() */variationsForUser.map((value) => { //!
+                      return (
+                        <label key={`${exercise}_${value}_box`}>
+                          {value}
+                          <input
+                            ref={(el) =>
+                              (checkRefs.current = {
+                                ...checkRefs.current,
+                                [exercise]: {
+                                  ...checkRefs.current[exercise],
+                                  [value]: el,
+                                },
+                              })
+                            }
+                            type="checkbox"
+                            onChange={(e) =>
+                              e.target.checked
+                                ? setVarFilter({
+                                    ...varFilter,
+                                    [exercise]: [...varFilter[exercise], value],
+                                  })
+                                : setVarFilter({
+                                    ...varFilter,
+                                    [exercise]: varFilter[exercise].filter(
+                                      (variation) => variation !== value
+                                    ),
+                                  })
+                            }
+                          />
+                        </label>
+                      );
+                    })}
+                </>
+              )}
+            </div>
+          )})}
       </div>
     );
   }
@@ -344,6 +492,9 @@ export default function Log() {
           setPage={setPage}
           user={user}
           setDateFilter={setDateFilter}
+          dateFilter={dateFilter}
+          varFilter={varFilter}
+          setVarFilter={setVarFilter}
         />
       );
     else if (page === BREAK)
@@ -363,9 +514,12 @@ export default function Log() {
           setPage={setPage}
           setGet={setGet}
           setDateFilter={setDateFilter}
+          dateFilter={dateFilter}
+          varFilter={varFilter}
+          setVarFilter={setVarFilter}
         />
       );
-    else if (page === TONS) return <Tonnage get={get} />;
+    else if (page === TONS) return <Tonnage get={get} tonnagePage={tonnagePage} setTonnagePage={setTonnagePage} />;
     else if (page === CAL)
       return (
         <Calendar
@@ -376,16 +530,21 @@ export default function Log() {
         />
       );
     else if (page === EQUIV) return <Equivalence />;
-    else if (page === PROFILE) return <Profile user={user} />
-    
+    else if (page === PROFILE) return <Profile user={user} />;
   }
 
-  if (get === null) return <><strong>Loading...</strong><Spinner/></>;
+  if (get === null)
+    return (
+      <>
+        <strong>Loading...</strong>
+        <Spinner />
+      </>
+    );
 
   return (
     <div>
       <h1>Lifting Log</h1>
-      {loading && <Spinner/>}
+      {loading && <Spinner />}
       {pageButtons()}
       <Logout />
       {returnComponent()}

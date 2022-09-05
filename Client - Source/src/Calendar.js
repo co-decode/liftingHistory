@@ -1,16 +1,114 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./calendarCSS.css";
 import * as d3 from "d3";
+import {exerciseArray} from "./utils/variables"
 
 export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
   const svgRef = useRef();
+  const [colourState, setColourState] = useState(() => {
+    let output ={}
+    exerciseArray.forEach((exercise, ind) => 
+      output[exercise] = JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] 
+      || "#" + (parseInt("ffffff",  16) * Math.random()).toString(16).replace(/\.\w+$/, "").padStart(6, 0) /* + "50" */)
+    return output
+  })
+  const colorStrings = [
+    `#ff80ed`,
+    `#065535`,
+    `#000000`,
+    `#133337`,
+    `#ffc0cb`,
+    `#ffffff`,
+    `#ffe4e1`,
+    `#008080`,
+    `#ff0000`,
+    `#e6e6fa`,
+    `#ffd700`,
+    `#ffa500`,
+    `#00ffff`,
+    `#ff7373`,
+    `#0000ff`,
+    `#40e0d0`,
+    `#d3ffce`,
+    `#c6e2ff`,
+    `#b0e0e6`,
+    `#f0f8ff`,
+    `#666666`,
+    `#faebd7`,
+    `#bada55`,
+    `#003366`,
+    `#ffff00`,
+    `#fa8072`,
+    `#ffb6c1`,
+    `#c0c0c0`,
+    `#7fffd4`,
+    `#800000`,
+    `#800080`,
+    `#c39797`,
+    `#00ff00`,
+    `#cccccc`,
+    `#eeeeee`,
+    `#f08080`,
+    `#20b2aa`,
+    `#fff68f`,
+    `#333333`,
+    `#ffc3a0`,
+    `#66cdaa`,
+    `#ff00ff`,
+    `#ff6666`,
+    `#c0d6e4`,
+    `#ffdab9`,
+    `#ff7f50`,
+    `#cbbeb5`,
+    `#afeeee`,
+    `#468499`,
+    `#00ced1`,
+    `#008000`,
+    `#f6546a`,
+    `#b4eeb4`,
+    `#b6fcd5`,
+    `#0e2f44`,
+    `#660066`,
+    `#990000`,
+    `#daa520`,
+    `#6897bb`,
+    `#000080`,
+    `#f5f5f5`,
+    `#808080`,
+    `#696969`,
+    `#088da5`,
+    `#8b0000`,
+    `#f5f5dc`,
+    `#ffff66`,
+    `#101010`,
+    `#dddddd`,
+    `#81d8d0`,
+    `#8a2be2`,
+    `#2acaea`,
+    `#0a75ad`,
+    `#ccff00`,
+    `#ff4040`,
+    `#66cccc`,
+    `#420420`,
+    `#ff1493`,
+    `#00ff7f`,
+    `#a0db8e`,
+    `#cc0000`,
+    `#3399ff`,
+    `#794044`,
+    `#999999`
+  ]
 
-  const sortedSessions = get.date.sort(
+
+  const sortedSessions = get.sessions.sort(
     (a, b) => new Date(a.date) - new Date(b.date)
   );
-  const mostRecentSessionDate = new Date(sortedSessions[sortedSessions.length - 1].date); // used to be .at()
+  // !!! MOBILE cannot handle the .at() function... use this instead: sortedSessions[sortedSessions.length-1]
+  const mostRecentSessionDate = new Date(sortedSessions[sortedSessions.length-1].date);
   const [monthYearDate, setMonthYearDate] = useState(goToMonthYear || mostRecentSessionDate);
-  // const mostRecentSessionDate = new Date(2022, 0 , 1);
+
+
+  
 
   useEffect(() => {
     function returnInitialOffset(days, startDay) {
@@ -150,107 +248,10 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
       .range([0, width]);
     // const y = d3.scaleLinear().domain([0, Object.keys(dataObject).length]).range([0, height]);
     d3.selectAll("g > *").remove();
+    d3.selectAll("defs").remove();
     d3.selectAll("text").remove();
-    //////// GRADIENTS
 
-    var defs = svg.append("defs");
-
-    var gradientDS = defs
-      .append("linearGradient")
-      .attr("id", "svgGradient1")
-      .attr("x1", "0%")
-      .attr("x2", "50%")
-      .attr("y1", "50%")
-      .attr("y2", "100%");
-
-    gradientDS
-      .append("stop")
-      .attr("class", "start")
-      .attr("offset", "0%")
-      .attr("stop-color", "#ff000050")
-      .attr("stop-opacity", 1);
-
-    gradientDS
-      .append("stop")
-      .attr("class", "end")
-      .attr("offset", "100%")
-      .attr("stop-color", "#00ff0050")
-      .attr("stop-opacity", 1);
-
-    var gradientSB = defs
-      .append("linearGradient")
-      .attr("id", "svgGradient2")
-      .attr("x1", "0%")
-      .attr("x2", "50%")
-      .attr("y1", "50%")
-      .attr("y2", "100%");
-
-    gradientSB
-      .append("stop")
-      .attr("class", "start")
-      .attr("offset", "0%")
-      .attr("stop-color", "#00ff0050")
-      .attr("stop-opacity", 1);
-
-    gradientSB
-      .append("stop")
-      .attr("class", "end")
-      .attr("offset", "100%")
-      .attr("stop-color", "#0000ff50")
-      .attr("stop-opacity", 1);
-
-    var gradientDB = defs
-      .append("linearGradient")
-      .attr("id", "svgGradient3")
-      .attr("x1", "0%")
-      .attr("x2", "50%")
-      .attr("y1", "50%")
-      .attr("y2", "100%");
-
-    gradientDB
-      .append("stop")
-      .attr("class", "start")
-      .attr("offset", "0%")
-      .attr("stop-color", "#ff000050")
-      .attr("stop-opacity", 1);
-
-    gradientDB
-      .append("stop")
-      .attr("class", "end")
-      .attr("offset", "100%")
-      .attr("stop-color", "#0000ff50")
-      .attr("stop-opacity", 1);
-
-    var gradientAll = defs
-      .append("linearGradient")
-      .attr("id", "svgGradientAll")
-      .attr("x1", "0%")
-      .attr("x2", "50%")
-      .attr("y1", "50%")
-      .attr("y2", "100%");
-
-    gradientAll
-      .append("stop")
-      .attr("class", "start")
-      .attr("offset", "0%")
-      .attr("stop-color", "#ff000050")
-      .attr("stop-opacity", 1);
-
-    gradientAll
-      .append("stop")
-      .attr("class", "end")
-      .attr("offset", "50%")
-      .attr("stop-color", "#00ff0050")
-      .attr("stop-opacity", 1);
-
-    gradientAll
-      .append("stop")
-      .attr("class", "end")
-      .attr("offset", "100%")
-      .attr("stop-color", "#0000ff50")
-      .attr("stop-opacity", 1);
-
-    //////// END GRADIENTS
+    var defs = svg.append("defs"); // <-- For gradients 
 
     svg
       .append("text")
@@ -303,6 +304,8 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
       .attr("text-anchor", "middle")
       .attr("fill", "black")
       .style("font-size", "19px");
+    
+    
 
     Object.values(dataObject).forEach((sessionArray, i) => {
       svg
@@ -320,32 +323,30 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
             (session) => session.dayOfMonth === dayNumber(i, ind)
           );
           if (session) {
-            if (
-              session.exercises.includes("deadlift") &&
-              session.exercises.includes("squat") &&
-              session.exercises.includes("bench")
-            )
-              return "url(#svgGradientAll)";
-            else if (
-              session.exercises.includes("deadlift") &&
-              session.exercises.includes("squat")
-            )
-              return "url(#svgGradient1)";
-            else if (
-              session.exercises.includes("bench") &&
-              session.exercises.includes("squat")
-            )
-              return "url(#svgGradient2)";
-            else if (
-              session.exercises.includes("deadlift") &&
-              session.exercises.includes("bench")
-            )
-              return "url(#svgGradient3)";
-            else if (session.exercises.includes("deadlift")) return "#ff000050";
-            else if (session.exercises.includes("squat")) return "#00ff0050";
-            else if (session.exercises.includes("bench")) return "#0000ff50";
+            var gradient = defs
+              .append("linearGradient")
+              .attr("id", `svgGradient${session.sid}`)
+              .attr("x1", "0%")
+              .attr("x2", "50%")
+              .attr("y1", "50%")
+              .attr("y2", "100%");
+
+            function returnGradient() {
+              session.exercises.forEach((exercise, ind) => {
+                // console.log(exercise, colourForExercise[exercise])
+                gradient
+                  .append("stop")
+                  .attr("offset", `${parseInt(ind * Math.round(100 / (session.exercises.length - 1 || 1)))}%`)
+                  .attr("stop-color", `${colourState[exercise]}`)
+                  .attr("stop-opacity", 1);
+              })
+            }
+            returnGradient()
+
+            return `url(#svgGradient${session.sid})`
+            
           } else if (
-            !session &&
+            (!session &&
             ind === 0 &&
             i <
               shiftGetDay(
@@ -354,10 +355,26 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
                   monthYearDate.getMonth(),
                   1
                 ).getDay()
-              )
+              ))
+            ||
+            (!session &&
+            i + 7 * ind >=
+              shiftGetDay(
+                new Date(
+                  monthYearDate.getFullYear(),
+                  monthYearDate.getMonth(),
+                  1
+                ).getDay()
+              ) +
+                new Date(
+                  monthYearDate.getFullYear(),
+                  monthYearDate.getMonth() + 1,
+                  0
+                ).getDate())
           ) {
             return "#00000050";
-          } else if (
+          } 
+          /* else if (
             !session &&
             i + 7 * ind >=
               shiftGetDay(
@@ -374,7 +391,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
                 ).getDate()
           ) {
             return "#00000050";
-          }
+          } */
           return "transparent";
         })
         .on("click", function (e, d) {
@@ -404,7 +421,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
         .attr("pointer-events", "none")
         .style("font-size", "19px");
     });
-  }, [sortedSessions, monthYearDate, setEdit, setPage]);
+  }, [sortedSessions, monthYearDate, setEdit, setPage, colourState]);
 
   return (
     <>
@@ -413,7 +430,33 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
     </label>
     <div>
       <svg ref={svgRef}></svg>
-    </div>
+    </div> 
+    {Object.keys(get).filter(key=> key !== "sessions").map(exercise => {
+      if (colourState[exercise] === undefined) setColourState({...colourState, [exercise]: null})
+      return (
+          <label key={`color_${exercise}`}>{exercise
+            .split("_")
+            .map((word) => word[0].toUpperCase() + word.slice(1))
+            .join(" ")}
+            <select style={{backgroundColor: colourState[exercise] || /* JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || */ colourState[exercise]}}
+                    onChange={(e)=> setColourState({...colourState, [exercise]: e.target.value})}
+                    defaultValue={JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || colourState[exercise]}>
+              {Object.values(colourState).reduce((acc, color)=> !acc.includes(color) ? [...acc, color] : acc, [])
+                    .concat(colorStrings.filter(color=>!Object.values(colourState).includes(color)))
+                    .map(color=> 
+              <option key={`${exercise}${color}`} style={{backgroundColor: color}}>{color}</option>)}
+            </select>
+          </label>
+        
+      )
+    })}
+    <button onClick={()=>{localStorage.setItem("liftingLogCalendarColors", JSON.stringify(
+      Object.keys(colourState)
+      .filter(ex => Object.keys(get).filter(key=> key !== "sessions").includes(ex))
+      .reduce((obj, ex) => obj = {...obj, [ex]: colourState[ex]},{})
+    ))}}>
+      Save colours
+    </button>
     </>
   );
 }

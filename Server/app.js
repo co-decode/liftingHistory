@@ -11,6 +11,7 @@ const {
   createInsertFromObject,
   createUpdateFromObject,
   createDeleteFromArray,
+  createGetFromExercises
 } = require("./utils");
 
 function makeApp(database,  ) {
@@ -20,10 +21,11 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      origin: ["https://lifting-history-2-container.herokuapp.com", "https://lifting-log.netlify.app"],
+      origin: ["http://localhost:3000"],
       credentials: true,
     })
   );
+  //"https://lifting-history-2-container.herokuapp.com", "https://lifting-log.netlify.app"
   //"https://node-lifting-history2.herokuapp.com"
 
   app.use(express.json());
@@ -47,12 +49,19 @@ function makeApp(database,  ) {
     res.send("Hello, world!")
   })
 
-  app.get("/sessions/:id", (req, res, next) => {
+  app.get("/sessions/:id", async (req, res, next) => {
+    try {
     const id = parseInt(req.params.id);
-    userPool.query(`select json_agg(distinct dl) deadlift, json_agg(distinct sq) squat, json_agg(distinct bp) bench, json_agg(DISTINCT sessions) date FROM deadlift dl FULL JOIN bench bp USING (uid) FULL JOIN squat sq USING (uid) FULL JOIN sessions USING (uid) WHERE uid = ${id};`, (err, result) => {
-      if (err) throw err;
-      res.status(200).json(result.rows);
-    } )
+    const s = new Set()
+    const {rows:sessions} = await userPool.query(`select * from sessions where uid = ${id};`)
+    if (sessions.length === 0) return res.status(200).send("There are no sessions yet")
+    sessions.forEach((v)=> v.exercises.forEach(ex => s.add(ex)))
+    const {rows:exercises} = await userPool.query(createGetFromExercises(Array.from(s), id))
+    // const exercisesObject = exercises[0]
+    return res.status(200).json({sessions, ...exercises[0]});
+    } catch {
+      throw new Error('Something went wrong')
+    }
   });
 
   app.post("/sessions/:id", (req, res, next) => {
@@ -108,8 +117,9 @@ function makeApp(database,  ) {
 
   app.delete("/sessions/:sid", async (req, res, next) => {
     const { sid } = req.params;
+    const exerciseArray = req.body
     try {
-      const returned = await database.deleteQuery(sid);
+      await database.deleteQuery(sid, exerciseArray);
       res.status(200).send("Session removed");
     } catch (error) {
       res.send("Failure");
