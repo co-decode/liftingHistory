@@ -21,11 +21,12 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      origin: ["http://localhost:3000"],
+      origin: ["https://lifting-log.netlify.app"],
       credentials: true,
     })
   );
-  //"https://lifting-history-2-container.herokuapp.com", "https://lifting-log.netlify.app"
+  //"http://localhost:3000"
+  //"https://lifting-history-2-container.herokuapp.com", 
   //"https://node-lifting-history2.herokuapp.com"
 
   app.use(express.json());
