@@ -143,6 +143,9 @@ VERSION 3:
                 Experiment with web sockets and receiving queries from other applications, such as a native mobile application built with kotlin.
 
 
+                    !!! FOR some god forsaken reason, time works differently on the railway server, fiddle with it and fix it.
+                    FIX the null json.PARSE error in the calendar.
+
         >> Then go work on the sheet music project.
 
     DONE: Experiment with the Accumulator logic for the Tonnage and Graph components, try to limit the number of times through the whole function to once for the three datasets.
