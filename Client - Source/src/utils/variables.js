@@ -1,5 +1,10 @@
 export const authenticatedKick = '/log'
 
+export const backend = "https://liftinghistory-production.up.railway.app/"
+// "https://lifting-history-2-container.herokuapp.com"
+// export const backend = "https://node-lifting-history2.herokuapp.com"
+// backend = "http://localhost:3001"
+
 export const exerciseArray = [
     "deadlift", 
     "squat", 
@@ -33,10 +38,7 @@ export const exerciseArray = [
     "back_extension"
 ]
 
-export const backend = "http://localhost:3001"
-// "https://lifting-history-2-container.herokuapp.com"
-// export const backend = "https://node-lifting-history2.herokuapp.com"
-// backend = 
+
 
 export const variationObject = {
     deadlift: [
