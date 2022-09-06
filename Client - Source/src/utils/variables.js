@@ -1,9 +1,9 @@
 export const authenticatedKick = '/log'
 
-export const backend = "http://localhost:3001"
+export const backend = "https://liftinghistory-production.up.railway.app"
 // "https://lifting-history-2-container.herokuapp.com"
 // export const backend = "https://node-lifting-history2.herokuapp.com"
-// backend = "https://liftinghistory-production.up.railway.app"
+// backend = "http://localhost:3001"
 
 export const exerciseArray = [
     "deadlift", 
