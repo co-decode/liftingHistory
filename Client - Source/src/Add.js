@@ -118,7 +118,8 @@ export default function Add({
       new Date(datePart).setTime(
         new Date(datePart).getTime() +
           parseInt(timePart.slice(0, 2)) * 3600000 +
-          parseInt(timePart.slice(3, 5)) * 60000
+          parseInt(timePart.slice(3, 5)) * 60000 +
+          new Date(datePart).getTimezoneOffset() * 60 * 1000
       )
     ).toISOString();
 
@@ -221,6 +222,7 @@ export default function Add({
     }
 
     const submission = { date: time, lifts };
+    console.log(time, new Date(time))
 
     if (Object.keys(submission.lifts).length > 0) {
       post(submission);
@@ -307,6 +309,7 @@ function VariationOptions({
   get,
   exercise,
   exerciseRefs,
+  fields,
   varFields,
   setVarFields,
   customs,
@@ -340,8 +343,10 @@ function VariationOptions({
 
   useEffect(() => {
     let noOfSets = Object.keys(exerciseRefs.current[exercise]).filter(key=>key.includes("set_")).length
-    if (varFields[exercise].length < noOfSets) {
-      delete exerciseRefs.current[exercise][`set_${noOfSets - 1}`]
+    if (fields[exercise] < noOfSets) {
+      const numberToDelete = noOfSets - fields[exercise]
+      Array(numberToDelete).fill(null).forEach((nothing, index)=>
+      delete exerciseRefs.current[exercise][`set_${noOfSets - 1 - index}`])
       return;
     }
     let noOfTemplates = Object.keys(exerciseRefs.current[exercise]).filter(key=>key.includes("template_")).length
@@ -358,7 +363,7 @@ function VariationOptions({
           }}
         })
 
-  },[varFields, exercise, exerciseRefs, checkChange])
+  },[fields, varFields, exercise, exerciseRefs, checkChange])
 
   useEffect(
     () =>{
@@ -808,7 +813,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
         key={`${exercise}FieldSet`}
         style={{ border: "1px solid grey", margin: "-1px 0", padding: "2px" }}
       >
-      <button onClick={()=>console.log(JSON.stringify(varFields), exerciseRefs.current)}>log varFields</button>
+      <button onClick={()=>console.log(JSON.stringify(varFields), exerciseRefs.current, fields)}>log varFields</button>
 
         <div style={{ fontWeight: "bold" }}>
           {exercise
@@ -833,6 +838,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
           <VariationOptions
             get={get}
             exercise={exercise}
+            fields={fields}
             varFields={varFields}
             setVarFields={setVarFields}
             /* variationObject[exercise] */ exerciseRefs={exerciseRefs}

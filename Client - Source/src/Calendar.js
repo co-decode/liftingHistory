@@ -8,7 +8,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
   const [colourState, setColourState] = useState(() => {
     let output ={}
     exerciseArray.forEach((exercise, ind) => 
-      output[exercise] = JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] 
+      output[exercise] = JSON.parse(localStorage.getItem("liftingLogCalendarColors") || JSON.stringify({exercise: null}))[exercise] 
       || "#" + (parseInt("ffffff",  16) * Math.random()).toString(16).replace(/\.\w+$/, "").padStart(6, 0) /* + "50" */)
     return output
   })
@@ -438,9 +438,9 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
             .split("_")
             .map((word) => word[0].toUpperCase() + word.slice(1))
             .join(" ")}
-            <select style={{backgroundColor: colourState[exercise] || /* JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || */ colourState[exercise]}}
+            <select style={{backgroundColor: colourState[exercise] || colourState[exercise]}}
                     onChange={(e)=> setColourState({...colourState, [exercise]: e.target.value})}
-                    defaultValue={JSON.parse(localStorage.getItem("liftingLogCalendarColors"))[exercise] || colourState[exercise]}>
+                    defaultValue={JSON.parse(localStorage.getItem("liftingLogCalendarColors") || JSON.stringify({exercise: null}))[exercise] || colourState[exercise]}>
               {Object.values(colourState).reduce((acc, color)=> !acc.includes(color) ? [...acc, color] : acc, [])
                     .concat(colorStrings.filter(color=>!Object.values(colourState).includes(color)))
                     .map(color=> 

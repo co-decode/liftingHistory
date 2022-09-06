@@ -46,15 +46,6 @@ export default function Log() {
   const editRefs = useRef({});
   const link = useNavigate();
 
-  // useEffect(() => {
-  //   let output = {}
-  //   if (!get) return
-  //   Object.keys(get).filter(
-  //     (key) => key !== "sessions"
-  //   ).forEach((exercise) => (output[exercise] = []))
-  //   setVarFilter(output)
-  // }, [get])
-
   useEffect(() => {
     axios({
       method: "get",
@@ -80,26 +71,23 @@ export default function Log() {
               return output;
             }
             setVarFilter(initialFilter());
-            const earliest = new Date(
-              res.data.sessions
-                .map((v) => new Date(v.date))
-                .sort((a, b) => a - b)[0]
-            );
-            const latest = new Date(
-              res.data.sessions
-                .map((v) => new Date(v.date))
-                .sort((a, b) => b - a)[0]
-            );
+
+            const sortedDates = res.data.sessions
+              .map((v) => new Date(v.date))
+              .sort((a, b) => a - b)
+            const earliest = new Date(sortedDates[0]);
+            const latest = new Date(sortedDates[sortedDates.length - 1]);
+
             setDateFilter({
               from: new Date(earliest.setTime(earliest.getTime()))
                 .toISOString()
                 .slice(0, 10),
               to: new Date(
-                latest.setTime(latest.getTime() + 34 * 60 * 60 * 1000)
+                latest.setTime(latest.getTime() - latest.getTimezoneOffset() * 60 * 1000 + 24 * 60 * 60 * 1000)
               )
                 .toISOString()
                 .slice(0, 10),
-              ascending: JSON.parse(localStorage.getItem("WeightLiftingLogAscending")),
+              ascending: JSON.parse(localStorage.getItem("WeightLiftingLogAscending")||"true"),
             });
           } else {
             setGet(false);
@@ -167,7 +155,7 @@ export default function Log() {
 
           
           if (exerciseCall.every((exercise) => {
-            if (!varFilter[exercise].length ) return false; // .flat() VVV is lazy... 
+            if (!varFilter[exercise].length ) return false; 
             return !varFilter[exercise]
               .some(vari => get[exercise]
                 .find(sess => sess.sid === sidVal)

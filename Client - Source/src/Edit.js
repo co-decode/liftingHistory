@@ -142,10 +142,11 @@ export default function Edit({
   useEffect(() => {
     if (!update) return
     Object.keys(update.lifts).concat(Object.keys(update.newLifts)).forEach(exercise =>{
-      // console.log('one', exerciseRefs.current[exercise])
       let noOfSets = Object.keys(exerciseRefs.current[exercise]).filter(key=>key.includes("set_")).length
-      if (extraVarFields[exercise].length < noOfSets) {
-        delete exerciseRefs.current[exercise][`set_${noOfSets - 1}`]
+      if (fields[exercise] < noOfSets) {
+        const numberToDelete = noOfSets - fields[exercise]
+        Array(numberToDelete).fill(null).forEach((nothing, index)=>
+        delete exerciseRefs.current[exercise][`set_${noOfSets - 1 - index}`])
         return;
       }
       let noOfTemplates = Object.keys(exerciseRefs.current[exercise]).filter(key=>key.includes("template_")).length
@@ -161,7 +162,7 @@ export default function Edit({
               delete exerciseRefs.current[exercise][`template_${tempNo}`][eRLength - 1]
             } } })
     })
-  },[extraVarFields, exerciseRefs, update])
+  },[fields, extraVarFields, exerciseRefs, update])
 
   useEffect(() => {
     setFeedback(null);
@@ -267,9 +268,10 @@ export default function Edit({
             new Date(get.sessions.find((v) => v.sid === sidVal).date).setTime(
               new Date(
                 get.sessions.find((v) => v.sid === sidVal).date
-              ).getTime() +
-                9 * 60 * 1000 * 60 +
-                30 * 60 * 1000
+              ).getTime() -
+                new Date(
+                  get.sessions.find((v) => v.sid === sidVal).date
+                ).getTimezoneOffset() * 60 * 1000
             )
           ).toISOString();
           return (
@@ -775,11 +777,18 @@ export default function Edit({
       return
     }
 
+    const time = () => {
+      const copyDate = update.date
+      const newDate = new Date(copyDate)
+      return new Date(newDate.setTime(newDate.getTime() + newDate.getTimezoneOffset() * 60 * 1000)).toISOString()
+    }
+
+    const submission = {...update, date: time() }
     setLoading(true)
 
     axios({
       method: "PUT",
-      data: update,
+      data: submission,
       withCredentials: true,
       url: `${backend}/sessions/${user.uid}/${edit}`,
     }).then((res) =>

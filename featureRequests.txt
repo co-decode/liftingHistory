@@ -143,8 +143,9 @@ VERSION 3:
                 Experiment with web sockets and receiving queries from other applications, such as a native mobile application built with kotlin.
 
 
-                    !!! FOR some god forsaken reason, time works differently on the railway server, fiddle with it and fix it.
-                    FIX the null json.PARSE error in the calendar.
+                    ATTEMPT 1 FOR some god forsaken reason, time works differently on the railway server, fiddle with it and fix it.
+                    DONE FIX the null json.PARSE error in the calendar.
+                    DONE Sets are broken in the Add component, also in the Edit component, fixed.
 
         >> Then go work on the sheet music project.
 
