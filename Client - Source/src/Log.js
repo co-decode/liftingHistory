@@ -261,7 +261,10 @@ export default function Log() {
           {get && (
             <>
               <button onClick={() => {setPage(TONS); setTonnagePage(TABLE)}}>View Tonnage</button>
-              <button onClick={() => {setPage(TONS); setTonnagePage(GRAPH)}}>View Graph</button>
+              <button onClick={() => { new Promise((resolve) => {
+                setPage(TONS); resolve()}).then(() => setTonnagePage(GRAPH)) }}>
+                  View Graph
+              </button>
               <button onClick={() => setPage(CAL)}>View Calendar</button>
             </>
           )}
