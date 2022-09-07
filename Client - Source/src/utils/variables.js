@@ -58,7 +58,7 @@ export const variationObject = {
     calf: [["Back Loaded", "Front Loaded","Seated"]],
     row: [["Dumbbell", "Barbell","Seal"]],
     shrug: [["Barbell", "Dumbbell"]],
-    pull_up: [["Pull Up, Chin Up, Neutral"]],
+    pull_up: [["Pull Up", "Chin Up", "Neutral"]],
     push_up: [["Standard", "Diamond", "Archer"]],
     dip: [["Bar", "Ring"]],
     abs: [["Knee Raise", "Leg Raise", "Sit Up", "Crunch", ]],
