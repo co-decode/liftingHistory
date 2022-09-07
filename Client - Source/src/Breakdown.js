@@ -12,6 +12,23 @@ export default function Breakdown({
   useEffect(() => {
     setGoToMonthYear(new Date(session.date));
   }, [session, setGoToMonthYear]);
+
+  function sessionAggregates() {
+    const {tonnage, totalReps} = show.reduce((acc, exercise) => {
+      const {mass, reps} = get[exercise].find(sess => sess.sid === edit)
+      acc.tonnage   += mass.reduce((a, v, i) => a + v * reps[i], 0);
+      acc.totalReps += reps.reduce((a, v) => a + v);
+    }, {tonnage: 0, totalReps: 0})
+    return (
+      <div>
+        Session Tonnage:
+        {tonnage}<br/>
+        Session Reps:
+        {totalReps}
+      </div>
+    )
+  }
+
   return (
     <div>
       <button
@@ -63,6 +80,7 @@ export default function Breakdown({
           );
         })}
       </fieldset>
+      {sessionAggregates()}
       {show.map((exercise) => {
         const { mass, reps, variation_templates:variation, vars } = get[exercise].find(
           (v) => v.sid === edit
