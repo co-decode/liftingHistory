@@ -137,15 +137,18 @@ VERSION 3:
 
                 DONE Add a button to go straight to the graph from the log page
 
-                Deploy on that new site, railroad.. i think.
+                DONE Deploy on that new site, railroad.. i think.
+                DONE FOR some god forsaken reason, time works differently on the railway server, fiddle with it and fix it.
+                DONE FIX the null json.PARSE error in the calendar.
+                DONE Sets are broken in the Add component, also in the Edit component, fixed.
+
+                BREAKdown should show tonnage total for the session.
+
                 IN V4: 
                 Make a UI... obviously. 
                 Experiment with web sockets and receiving queries from other applications, such as a native mobile application built with kotlin.
 
 
-                    ATTEMPT 1 FOR some god forsaken reason, time works differently on the railway server, fiddle with it and fix it.
-                    DONE FIX the null json.PARSE error in the calendar.
-                    DONE Sets are broken in the Add component, also in the Edit component, fixed.
 
         >> Then go work on the sheet music project.
 
