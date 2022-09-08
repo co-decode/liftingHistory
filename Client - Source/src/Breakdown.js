@@ -14,17 +14,17 @@ export default function Breakdown({
   }, [session, setGoToMonthYear]);
 
   function sessionAggregates() {
-    const {tonnage, totalReps} = show.reduce((acc, exercise) => {
+    const object = show.reduce((acc, exercise, index) => {
       const {mass, reps} = get[exercise].find(sess => sess.sid === edit)
-      acc.tonnage   += mass.reduce((a, v, i) => a + v * reps[i], 0);
-      acc.totalReps += reps.reduce((a, v) => a + v);
+      return {tonnage:   acc.tonnage   + mass.reduce((a, v, i) => a + v * reps[i], 0),
+              totalReps: acc.totalReps + reps.reduce((a, v)    => a + v)}
     }, {tonnage: 0, totalReps: 0})
     return (
       <div>
         Session Tonnage:
-        {tonnage}<br/>
+        {object.tonnage} kg |&nbsp;
         Session Reps:
-        {totalReps}
+        {object.totalReps}
       </div>
     )
   }

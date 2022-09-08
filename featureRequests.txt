@@ -142,7 +142,9 @@ VERSION 3:
                 DONE FIX the null json.PARSE error in the calendar.
                 DONE Sets are broken in the Add component, also in the Edit component, fixed.
 
-                BREAKdown should show tonnage total for the session.
+                DONE BREAKdown should show tonnage total for the session.
+                
+                Could double the tonnage for unilateral exercises for aggregates...
 
                 IN V4: 
                 Make a UI... obviously. 
