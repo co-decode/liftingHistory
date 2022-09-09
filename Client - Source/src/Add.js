@@ -222,7 +222,7 @@ export default function Add({
     }
 
     const submission = { date: time, lifts };
-    console.log(time, new Date(time))
+    // console.log(time, new Date(time))
 
     if (Object.keys(submission.lifts).length > 0) {
       post(submission);

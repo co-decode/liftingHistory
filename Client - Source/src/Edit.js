@@ -196,7 +196,7 @@ export default function Edit({
               )}}})
           Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 0)
           .forEach((setName)=>{
-            console.log(target, setName)
+            // console.log(target, setName)
             target[`set_${setName.slice(4)}`][targetField].value
            = (targetField === "template" ? number.value - 1 : number.value)})
         }
@@ -757,8 +757,9 @@ export default function Edit({
       setFeedback("Cannot submit multiple identical templates")
       return
     }
+    const time = new Date(update.date).toISOString()
 
-    const submission = {...update }
+    const submission = {...update, date: time}
     setLoading(true)
 
     axios({
