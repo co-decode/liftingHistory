@@ -248,9 +248,9 @@ export default function Edit({
 
     if (range.value === "Range") {
       var {from, to} = macroRefs.current[exercise]
-      if (to.value > fields[exercise] || to.value < from.value ) to.value = fields[exercise]
-      if (from.value > to.value) from.value = 0
-      changeFields(from.value - 1, to.value - 1) // Only differences between Add component and Edit component
+      if (parseInt(to.value) > fields[exercise] || parseInt(to.value) < parseInt(from.value) ) to.value = fields[exercise]
+      if (parseInt(from.value) > parseInt(to.value)) from.value = 1
+      changeFields(from.value - 1, to.value - 1)
     }
     else {
       changeFields(0, fields[exercise] - 1) //

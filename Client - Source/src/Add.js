@@ -799,8 +799,8 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
 
       if (range.value === "Range") {
         var {from, to} = macroRefs.current[exercise]
-        if (to.value > fields[exercise] || to.value < from.value ) to.value = fields[exercise]
-        if (from.value > to.value) from.value = 0
+        if (parseInt(to.value) > fields[exercise] || parseInt(to.value) < parseInt(from.value) ) to.value = fields[exercise]
+        if (parseInt(from.value) > parseInt(to.value)) from.value = 1
         changeFields(from.value - 1, to.value - 1)
       }
       else {
