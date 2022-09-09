@@ -174,26 +174,7 @@ export default function Edit({
     var {fields: col, range, number} = macroRefs.current[exercise]
     
     const target = exerciseRefs.current[exercise]
-    /* function changeFields(from, to) {
-      if (col.value !== "Mass") {
-        Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach((setNo)=>{
-          setUpdate({...update, [liftString]: {...update[liftString], 
-            [exercise]: {...update[liftString][exercise], 
-              reps: [...update[liftString][exercise].reps].map((repsVal, ind) => 
-                ind >= from && ind <= to ? parseInt(number.value) : repsVal
-              )}}})
-          target[setNo].reps.value = number.value
-        })
-      }
-      if (col.value !== "Reps") {
-        setUpdate({...update, [liftString]: {...update[liftString], 
-          [exercise]: {...update[liftString][exercise], 
-            mass: [...update[liftString][exercise].mass].map((massVal, ind) => 
-              ind >= from && ind <= to ? parseInt(number.value) : massVal
-            )}}})
-        Object.keys(target).filter(key=> key !== "variation" && key <= to && key >= from).forEach(setNo=> target[setNo].mass.value = number.value)
-      }
-    } */
+    
     function changeFields(from, to) {
       function rangeSwitch(targetField) {
         if (range.value === "Even") {
@@ -777,7 +758,9 @@ export default function Edit({
       return
     }
 
-    const submission = {...update }
+    const time = new Date(update.date).toISOString()
+
+    const submission = {...update, date: time}
     setLoading(true)
 
     axios({

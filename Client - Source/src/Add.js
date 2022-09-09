@@ -123,6 +123,8 @@ export default function Add({
       )
     ).toISOString();
 
+        console.log(time)
+
     const lifts = {};
     exArr.forEach((exercise) => {
       let repArray = [];
