@@ -777,13 +777,7 @@ export default function Edit({
       return
     }
 
-    const time = () => {
-      const copyDate = update.date
-      const newDate = new Date(copyDate)
-      return new Date(newDate.setTime(newDate.getTime() + newDate.getTimezoneOffset() * 60 * 1000)).toISOString()
-    }
-
-    const submission = {...update, date: time() }
+    const submission = {...update }
     setLoading(true)
 
     axios({
