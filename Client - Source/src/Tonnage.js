@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import Graph from "./Graph";
 import returnTonnage from "./utils/tonnageFunctions";
-import "./Tonnage.css"
+import "./Tonnage.css";
 // import { variationObject } from "./utils/variables";
 
 export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
@@ -9,22 +9,24 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
   const [interval, setInterval] = useState(null);
   const [intervalLength, setIntervalLength] = useState([null, null]);
   const [referenceDate, setReferenceDate] = useState(null);
-  const exercisesForUser = Object.keys(get).filter(key => key !== "sessions")
-  function initialFilter () {
-    let output = {}
-    exercisesForUser.forEach(exercise => output[exercise] = [])
-    return output
+  const exercisesForUser = Object.keys(get).filter((key) => key !== "sessions");
+  function initialFilter() {
+    let output = {};
+    exercisesForUser.forEach((exercise) => (output[exercise] = []));
+    return output;
   }
   const [variationFilter, setVariationFilter] = useState(initialFilter());
-  const [variationMenus, setVariationMenus] = useState({})
-  const checkRefs = useRef({})
+  const [variationMenus, setVariationMenus] = useState({});
+  const checkRefs = useRef({});
 
   function returnPageButtons() {
     return (
       <>
         <button
           onClick={() =>
-            tonnagePage === "TABLE" ? setTonnagePage("GRAPH") : setTonnagePage("TABLE")
+            tonnagePage === "TABLE"
+              ? setTonnagePage("GRAPH")
+              : setTonnagePage("TABLE")
           }
         >
           {tonnagePage === "TABLE" ? `View Graph` : `View Table`}
@@ -33,20 +35,29 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
     );
   }
 
-
   function returnTable() {
     function handleHideAll() {
-      let newVariationFilter = {}
-      if (exercisesForUser.every(exercise => variationFilter[exercise].includes("HIDE"))) {
-        exercisesForUser.forEach(exercise => newVariationFilter[exercise] = [])
+      let newVariationFilter = {};
+      if (
+        exercisesForUser.every((exercise) =>
+          variationFilter[exercise].includes("HIDE")
+        )
+      ) {
+        exercisesForUser.forEach(
+          (exercise) => (newVariationFilter[exercise] = [])
+        );
+      } else {
+        exercisesForUser.forEach(
+          (exercise) => (newVariationFilter[exercise] = ["HIDE"])
+        );
+        let newVariationMenus = { ...variationMenus };
+        Object.keys(newVariationMenus).forEach(
+          (exercise) =>
+            (newVariationMenus = { ...newVariationMenus, [exercise]: false })
+        );
+        setVariationMenus(newVariationMenus);
       }
-      else {
-        exercisesForUser.forEach(exercise => newVariationFilter[exercise] = ["HIDE"])
-        let newVariationMenus = {...variationMenus}
-        Object.keys(newVariationMenus).forEach(exercise=> newVariationMenus = {...newVariationMenus, [exercise]: false})
-        setVariationMenus(newVariationMenus)
-      }
-      setVariationFilter(newVariationFilter)
+      setVariationFilter(newVariationFilter);
     }
 
     return (
@@ -63,9 +74,13 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
             <option value="SESSION">Session</option>
             <option value="CUSTOM">Custom</option>
           </select>
-          <button onClick={()=>handleHideAll()}>
-            {exercisesForUser.every(exercise => variationFilter[exercise].includes("HIDE")) 
-            ? "Show" : "Hide"} All Exercises
+          <button onClick={() => handleHideAll()}>
+            {exercisesForUser.every((exercise) =>
+              variationFilter[exercise].includes("HIDE")
+            )
+              ? "Show"
+              : "Hide"}{" "}
+            All Exercises
           </button>
           {interval === "CUSTOM" && (
             <>
@@ -108,10 +123,13 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
           {exercisesForUser.map((exercise) => {
             let variationsForUser = [];
             get[exercise].forEach((sess) =>
-              sess.variation_templates.forEach(
-                (template) => template.forEach(variation => 
-                !!variation && !variationsForUser.includes(variation) &&
-                  variationsForUser.push(variation))
+              sess.variation_templates.forEach((template) =>
+                template.forEach(
+                  (variation) =>
+                    !!variation &&
+                    !variationsForUser.includes(variation) &&
+                    variationsForUser.push(variation)
+                )
               )
             );
             return (
@@ -119,52 +137,114 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
                 key={`${exercise}VariationFilter`}
                 style={{ display: "block" }}
               >
-                  <button 
-                    onClick={()=>{
-                      if(variationFilter[exercise].includes("HIDE")) {
-                        setVariationFilter({
-                          ...variationFilter,
-                          [exercise]: []  })
-                        if (variationMenus[exercise]) setVariationMenus({...variationMenus, [exercise]: false})
-                      }
-                      else {
-                        setVariationFilter({
-                          ...variationFilter,
-                          [exercise]: ["HIDE"]  })
-                      }
-                    }}>
-                    {variationFilter[exercise].includes("HIDE") ? "Show" : "Hide"}&nbsp; 
-                    {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}
-                  </button>
-                  {!variationFilter[exercise].includes("HIDE") &&
-                  <>
-                    <button onClick={()=>{
-                      if (!variationMenus[exercise])
-                        setVariationMenus({...variationMenus, [exercise]: !variationMenus[exercise]})
-                      else if (variationMenus[exercise] && !variationFilter[exercise].length)
-                        setVariationMenus({...variationMenus, [exercise]: !variationMenus[exercise]})
-                      else{ 
-                        setVariationFilter({...variationFilter, [exercise]: []})
-                        Object.keys(checkRefs.current[exercise]).forEach(vari=> checkRefs.current[exercise][vari].checked = false)
-                      }
-                    }
-                    }>{variationFilter[exercise].length > 0 ? "Show All" : variationMenus[exercise] ? "Filter <" : "Filter >"}</button>
-                  
-                 
-                  {variationMenus[exercise] && /* variationObject[exercise].flat() */variationsForUser.map((value) => {
-                    return <label key={`${exercise}_${value}_box`}>{value}<input ref={(el) => checkRefs.current = {...checkRefs.current, [exercise]: {...checkRefs.current[exercise], [value]: el}}} type="checkbox" onChange={e =>
-                      e.target.checked ? 
+                <button
+                  onClick={() => {
+                    if (variationFilter[exercise].includes("HIDE")) {
                       setVariationFilter({
-                      ...variationFilter,
-                      [exercise]: [...variationFilter[exercise],value]
-                    })
-                      : setVariationFilter({
                         ...variationFilter,
-                        [exercise]: variationFilter[exercise].filter(variation => variation !== value)
-                      })
-                    }/></label>
-                    })}
-                  </>}
+                        [exercise]: [],
+                      });
+                      if (variationMenus[exercise])
+                        setVariationMenus({
+                          ...variationMenus,
+                          [exercise]: false,
+                        });
+                    } else {
+                      setVariationFilter({
+                        ...variationFilter,
+                        [exercise]: ["HIDE"],
+                      });
+                    }
+                  }}
+                >
+                  {variationFilter[exercise].includes("HIDE") ? "Show" : "Hide"}
+                  &nbsp;
+                  {exercise
+                    .split("_")
+                    .map((word) => word[0].toUpperCase() + word.slice(1))
+                    .join(" ")}
+                </button>
+                {!variationFilter[exercise].includes("HIDE") && (
+                  <>
+                    <button
+                      onClick={() => {
+                        if (!variationMenus[exercise])
+                          setVariationMenus({
+                            ...variationMenus,
+                            [exercise]: !variationMenus[exercise],
+                          });
+                        else if (
+                          variationMenus[exercise] &&
+                          !variationFilter[exercise].length
+                        )
+                          setVariationMenus({
+                            ...variationMenus,
+                            [exercise]: !variationMenus[exercise],
+                          });
+                        else {
+                          setVariationFilter({
+                            ...variationFilter,
+                            [exercise]: [],
+                          });
+                          Object.keys(checkRefs.current[exercise]).forEach(
+                            (vari) =>
+                              (checkRefs.current[exercise][
+                                vari
+                              ].checked = false)
+                          );
+                        }
+                      }}
+                    >
+                      {variationFilter[exercise].length > 0
+                        ? "Show All"
+                        : variationMenus[exercise]
+                        ? "Filter <"
+                        : "Filter >"}
+                    </button>
+
+                    {variationMenus[exercise] &&
+                      /* variationObject[exercise].flat() */ variationsForUser.map(
+                        (value) => {
+                          return (
+                            <label key={`${exercise}_${value}_box`}>
+                              {value}
+                              <input
+                                ref={(el) =>
+                                  (checkRefs.current = {
+                                    ...checkRefs.current,
+                                    [exercise]: {
+                                      ...checkRefs.current[exercise],
+                                      [value]: el,
+                                    },
+                                  })
+                                }
+                                type="checkbox"
+                                checked={variationFilter[exercise].includes(value)}
+                                onChange={(e) =>
+                                  e.target.checked
+                                    ? setVariationFilter({
+                                        ...variationFilter,
+                                        [exercise]: [
+                                          ...variationFilter[exercise],
+                                          value,
+                                        ],
+                                      })
+                                    : setVariationFilter({
+                                        ...variationFilter,
+                                        [exercise]: variationFilter[
+                                          exercise
+                                        ].filter(
+                                          (variation) => variation !== value
+                                        ),
+                                      })
+                                }
+                              />
+                            </label>
+                          );
+                        }
+                      )}
+                  </>
+                )}
               </div>
             );
           })}
@@ -175,7 +255,9 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
           <span className="tableTotalMass">Total Mass</span>
           <span className="tableMassPerRep">Mass Per Reps</span>
           <span className="tableMax">Max</span>
-          {interval === "SESSION" ? null : <span className="tableAvMax">Average Max</span>}
+          {interval === "SESSION" ? null : (
+            <span className="tableAvMax">Average Max</span>
+          )}
           <span className="tableRepsPerSet">Reps Per Set</span>
         </div>
         {returnTonnage(

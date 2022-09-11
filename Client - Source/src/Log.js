@@ -431,6 +431,7 @@ export default function Log() {
                               })
                             }
                             type="checkbox"
+                            checked={varFilter[exercise].includes(value)}
                             onChange={(e) =>
                               e.target.checked
                                 ? setVarFilter({

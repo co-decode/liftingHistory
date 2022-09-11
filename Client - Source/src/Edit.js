@@ -174,7 +174,7 @@ export default function Edit({
     var {fields: col, range, number} = macroRefs.current[exercise]
     
     const target = exerciseRefs.current[exercise]
-
+    
     function changeFields(from, to) {
       function rangeSwitch(targetField) {
         if (range.value === "Even") {
@@ -757,6 +757,7 @@ export default function Edit({
       setFeedback("Cannot submit multiple identical templates")
       return
     }
+
     const time = new Date(update.date).toISOString()
 
     const submission = {...update, date: time}
