@@ -37,7 +37,7 @@ function createInsertFromObject(id, sid, lifts) {
                 ? acc + `{${template}}` 
                 : acc + `{${template}},`, ``)
         // lifts[exerciseArray[i]].mass.toString()
-        output = output.concat(`INSERT INTO ${exerciseArray[i]} (uid, sid, mass, reps, variation_templates, vars) VALUES (${id}, ${sid}, '{${lifts[exerciseArray[i]].mass}}', '{${lifts[exerciseArray[i]].reps}}', '{${variation_templates_string}}', '{${lifts[exerciseArray[i]].vars}}');`)
+        output = output.concat(`INSERT INTO ${exerciseArray[i]} (uid, sid, mass, reps, variation_templates, vars) VALUES (${id}, ${sid}, '{${lifts[exerciseArray[i]].mass}}', '{${lifts[exerciseArray[i]].reps}}', '{${variation_templates_string.replace("'", "''")}}', '{${lifts[exerciseArray[i]].vars}}');`)
     }
     return output
 }
