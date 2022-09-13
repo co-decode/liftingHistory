@@ -21,8 +21,8 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      origin: ["https://lifting-log.netlify.app"],
-      // origin: ["http://localhost:3000"],
+      // origin: ["https://lifting-log.netlify.app"],
+      origin: ["http://localhost:3000"],
       credentials: true,
     })
   );
@@ -55,12 +55,35 @@ function makeApp(database,  ) {
     try {
     const id = parseInt(req.params.id);
     const s = new Set()
-    const {rows:sessions} = await userPool.query(`select * from sessions where uid = ${id};`)
+    const {rows:sessions} = await userPool.query(`select sid, date, exercises from sessions where uid = ${id};`)
     if (sessions.length === 0) return res.status(200).send("There are no sessions yet")
     sessions.forEach((v)=> v.exercises.forEach(ex => s.add(ex)))
-    const {rows:exercises} = await userPool.query(createGetFromExercises(Array.from(s), id))
+    // const exercises = Array.from(s)
+    // console.log(Array.from(s))
+    let output = {}
+    // for (let el in Array.from(s)) {
+    //   let {rows} = await userPool.query(`select sid, mass, reps, vars, variation_templates from ${exercise} where uid = ${id};`);
+    //   output = {...output, [exercise]: rows}
+    // }
+    await Array.from(s).reduce(async (acc, exercise, index) => {
+      let {rows} = await userPool.query(`select sid, mass, reps, vars, variation_templates from ${exercise} where uid = ${id};`)
+      // console.log(rows)
+      output = {...output, [exercise]:rows}
+      // console.log(output)
+    })
+
+    // const promiseArray = exercises.map(exercise => userPool.query(`select sid, mass, reps, vars, variation_templates from ${exercise} where uid = ${id};`))
+
+    // const results = await Promise.all(promiseArray)
+    // console.log(results.map(result => result.rows))
+    // let output = results.reduce((acc, result, index) => {
+    //   console.log(index, result.rows, acc)
+    //   return {...acc, [exercises[index]]: result.rows}}, {}) 
+    // console.log(output)
+    
+    // const {rows:exercises} = await userPool.query(createGetFromExercises(Array.from(s), id))
     // const exercisesObject = exercises[0]
-    return res.status(200).json({sessions, ...exercises[0]});
+    return res.status(200).json({sessions, ...output});
     } catch {
       throw new Error('Something went wrong')
     }

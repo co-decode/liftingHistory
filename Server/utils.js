@@ -76,6 +76,17 @@ function createDeleteFromArray(sid, lostLifts) {
 
 // console.log(createDeleteFromArray(19, ["deadlift", "squat"]))
 
+/* function createGetFromExercises(arrayFromSet, uid) {
+    let output = `select`
+    arrayFromSet.forEach((v, i, a) => i === a.length - 1 
+        ? output += (` json_agg(distinct ${v}) ${v}`) 
+        : output += (` json_agg(distinct ${v}) ${v},`))
+    arrayFromSet.forEach((v,i,a) => i === 0
+        ? output += (` FROM ${v}`)
+        : output += (` FULL JOIN ${v} USING (uid)`))
+    output += (` WHERE uid = ${uid};`)
+    return output
+}    */
 function createGetFromExercises(arrayFromSet, uid) {
     let output = `select`
     arrayFromSet.forEach((v, i, a) => i === a.length - 1 
@@ -88,6 +99,11 @@ function createGetFromExercises(arrayFromSet, uid) {
     return output
 }   
 // log(createGetFromExercises(['bench', 'deadlift'], 3))
+// select jsonb_build_object('bicep', jsonb_agg(jsonb_build_object('sid', bicep.sid, 'mass', bicep.mass, 'reps', bicep.reps, 'vars', bicep.vars, 'variation_templates', bicep.variation_templates)), 'tricep', jsonb_agg(jsonb_build_object('sid', tricep.sid, 'mass', tricep.mass, 'reps', tricep.reps, 'vars', tricep.vars, 'variation_templates', tricep.variation_templates))) from bicep,tricep where bicep.sid = tricep.sid;
+// select jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sessions.sid, 'date', sessions.date, 'exercises', sessions.exercises)), 'tricep', jsonb_agg(jsonb_build_object('sid', tricep.sid, 'mass', tricep.mass, 'reps', tricep.reps, 'vars', tricep.vars, 'variation_templates', tricep.variation_templates)), 'deadlift', jsonb_agg(jsonb_build_object('sid', deadlift.sid, 'mass', deadlift.mass, 'reps', deadlift.reps, 'vars', deadlift.vars, 'variation_templates', deadlift.variation_templates))) from sessions,tricep,deadlift where sessions.sid = tricep.sid or sessions.sid = deadlift.sid;
+// select jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sessions.sid, 'date', sessions.date, 'exercises', sessions.exercises)))
+
+
 
 function deleteSessionQuery(sid, exerciseArray) {
     let output = ``

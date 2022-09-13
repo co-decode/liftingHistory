@@ -209,14 +209,15 @@ export default function Add({
     // Unique timestamp check //
     if (
       get.sessions?.some((session) => {
-        function correctTimezone(dateString) {
-          const dateObject = new Date(dateString);
-          const correction = dateObject.setTime(
-            dateObject.getTime() - 1000 * 60 * dateObject.getTimezoneOffset()
-          );
-          return new Date(correction).toISOString().slice(0, 19);
-        }
-        return correctTimezone(session.date) === time.slice(0, 19);
+        // function correctTimezone(dateString) {
+        //   const dateObject = new Date(dateString);
+        //   const correction = dateObject.setTime(
+        //     dateObject.getTime() - 1000 * 60 * dateObject.getTimezoneOffset()
+        //   );
+        //   return new Date(correction).toISOString().slice(0, 19);
+        // }
+        // console.log(session.date.slice(0,19), "=", time.slice(0,19))
+        return session.date.slice(0,19) === time.slice(0, 19);
       })
     ) {
       setResponse("A session has already been recorded for this Timestamp");
@@ -660,6 +661,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
 
     function returnTemplateButton() {
       if (!get.sessions) return null;
+      
       if (get.sessions.every((v) => !v.exercises.includes(exercise)))
         return null;
 
