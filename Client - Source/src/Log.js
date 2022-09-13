@@ -64,12 +64,12 @@ export default function Log() {
             setGet(res.data);
             const exercisesForUser = Object.keys(res.data).filter(
               (key) => key !== "sessions"
-            );
-            function initialFilter() {
-              let output = {};
-              exercisesForUser.forEach((exercise) => (output[exercise] = []));
-              return output;
-            }
+              );
+              function initialFilter() {
+                let output = {};
+                exercisesForUser.forEach((exercise) => (output[exercise] = []));
+                return output;
+              }
             setVarFilter(initialFilter());
 
             const sortedDates = res.data.sessions
@@ -133,6 +133,7 @@ export default function Log() {
   }
 
   function returnSid() {
+    console.log(get, varFilter)
     let sidList = get.sessions
       .filter((v) => v.date >= dateFilter.from && v.date <= dateFilter.to)
       .sort((a, b) => new Date(a.date) - new Date(b.date))
@@ -149,6 +150,7 @@ export default function Log() {
           ).exercises;
           if (
             exerciseCall.every((exercise) =>{
+              console.log(varFilter, exercise, varFilter[exercise], varFilter.bicep)
               return varFilter[exercise].includes("HIDE")
             }) )
             return null;

@@ -55,7 +55,7 @@ export const variationObject = {
     tricep: [["Overhead", "Push Down"], ["Dumbbell", "Barbell"]],
     grip: [["Hang", "Hold", "Wrist Curl"]],
     lunge: [["Standard", "Split", "Bulgarian"]],
-    calf: [["Back Loaded", "Front Loaded","Seated"]],
+    calf: [["Dumbbell","Back Loaded", "Front Loaded","Seated"]],
     row: [["Dumbbell", "Barbell","Seal"]],
     shrug: [["Barbell", "Dumbbell"]],
     pull_up: [["Pull Up", "Chin Up", "Neutral"]],

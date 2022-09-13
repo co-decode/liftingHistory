@@ -67,15 +67,16 @@ function makeApp(database,  ) {
     // }
     await Array.from(s).reduce(async (acc, exercise, index) => {
       let {rows} = await userPool.query(`select sid, mass, reps, vars, variation_templates from ${exercise} where uid = ${id};`)
-      // console.log(rows)
+      // console.log(index, exercise)
       output = {...output, [exercise]:rows}
       // console.log(output)
-    })
+    }, {})
 
     // const promiseArray = exercises.map(exercise => userPool.query(`select sid, mass, reps, vars, variation_templates from ${exercise} where uid = ${id};`))
 
     // const results = await Promise.all(promiseArray)
-    // console.log(results.map(result => result.rows))
+    // console.log(
+    // results.map(result => result.rows)
     // let output = results.reduce((acc, result, index) => {
     //   console.log(index, result.rows, acc)
     //   return {...acc, [exercises[index]]: result.rows}}, {}) 
@@ -83,7 +84,15 @@ function makeApp(database,  ) {
     
     // const {rows:exercises} = await userPool.query(createGetFromExercises(Array.from(s), id))
     // const exercisesObject = exercises[0]
-    return res.status(200).json({sessions, ...output});
+    function repeat() {
+      if (Object.keys(output).length !== Array.from(s).length)
+        {setTimeout(repeat,0)}
+      else if (Object.keys(output).length === Array.from(s).length){
+        return res.status(200).json({sessions, ...output});
+      }
+    }
+    // console.log(Object.keys(output), Array.from(s))
+    repeat()
     } catch {
       throw new Error('Something went wrong')
     }
