@@ -103,7 +103,50 @@ function createGetFromExercises(arrayFromSet, uid) {
 // select jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sessions.sid, 'date', sessions.date, 'exercises', sessions.exercises)), 'tricep', jsonb_agg(jsonb_build_object('sid', tricep.sid, 'mass', tricep.mass, 'reps', tricep.reps, 'vars', tricep.vars, 'variation_templates', tricep.variation_templates)), 'deadlift', jsonb_agg(jsonb_build_object('sid', deadlift.sid, 'mass', deadlift.mass, 'reps', deadlift.reps, 'vars', deadlift.vars, 'variation_templates', deadlift.variation_templates))) from sessions,tricep,deadlift where sessions.sid = tricep.sid or sessions.sid = deadlift.sid;
 // select jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sessions.sid, 'date', sessions.date, 'exercises', sessions.exercises)))
 
-
+function createGet(uid, everySingleExercise = [
+    "deadlift", 
+    "squat", 
+    "bench",
+    "overhead_press",
+    "bicep",
+    "tricep",
+    "grip",
+    "lunge",
+    "calf",
+    "row",
+    "shrug",
+    "pull_up",
+    "push_up",
+    "dip",
+    "abs",
+    "lateral_raise",
+    "good_morning",
+    "face_pull",
+    "hip_thrust",
+    "hip_abduction",
+    "adductors",
+    "reverse_flies",
+    "rotator_cuff",
+    "pull_over",
+    "neck",
+    "nordic",
+    "reverse_nordic",
+    "leg_curl",
+    "flies",
+    "back_extension"
+]) {
+    let output = `select (select jsonb_build_object('sid', sessions.sid, 'date', sessions.date, 'exercises', sessions.exercises)) session`
+    everySingleExercise.forEach(exercise => {
+        output = output.concat(`, (select jsonb_build_object('mass', ${exercise}.mass, 'reps', ${exercise}.reps, 'vars', ${exercise}.vars, 'variation_templates', ${exercise}.variation_templates)) ${exercise}`)
+    })
+    output = output.concat(` from sessions`)
+    everySingleExercise.forEach(exercise => {
+        output = output.concat(` FULL JOIN ${exercise} ON ${exercise}.sid = sessions.sid`)
+    })
+    output = output.concat(` WHERE sessions.uid = ${uid};`)
+    return output
+}
+// log(createGet(3))
 
 function deleteSessionQuery(sid, exerciseArray) {
     let output = ``
@@ -112,4 +155,4 @@ function deleteSessionQuery(sid, exerciseArray) {
     return output
 }
 
-module.exports = {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray, createGetFromExercises, deleteSessionQuery}
+module.exports = {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray, createGetFromExercises, deleteSessionQuery, createGet}
