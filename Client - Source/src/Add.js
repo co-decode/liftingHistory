@@ -471,7 +471,7 @@ function VariationOptions({
           <label>
             {" "}
             Custom entry
-            <input type="text" placeholder="too" ref={customRef} />
+            <input type="text" placeholder="Variation" ref={customRef} />
           </label>
           <button
             type="button"
@@ -481,7 +481,7 @@ function VariationOptions({
               setCustomAdditions([...customAdditions, customRef.current.value])
             }
           >
-            add custom
+            Add Custom Tag
           </button>
         </div>
       )}
@@ -817,7 +817,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
         key={`${exercise}FieldSet`}
         style={{ border: "1px solid grey", margin: "-1px 0", padding: "2px" }}
       >
-      <button onClick={()=>console.log(JSON.stringify(varFields), exerciseRefs.current, fields)}>log varFields</button>
+      {/* <button onClick={()=>console.log(JSON.stringify(varFields), exerciseRefs.current, fields)}>log varFields</button> */}
 
         <div style={{ fontWeight: "bold" }}>
           {exercise
@@ -890,7 +890,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
           </>
         )}
         {varFields && varFields[exercise] && addSubtractTemplates()}
-        {returnTemplateButton()}
+        {/* {returnTemplateButton()} */}
       </div>
     );
   });
