@@ -59,7 +59,7 @@ export default function Edit({
     const correctedDate = new Date(
       receivedDate.setTime(
         receivedDate.getTime() - receivedDate.getTimezoneOffset() * 60 * 1000))
-        .toISOString()
+        .toISOString().slice(0,19)
     const updateObject = {
       lifts: {},
       newLifts: {},

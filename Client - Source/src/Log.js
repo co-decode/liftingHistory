@@ -133,7 +133,6 @@ export default function Log() {
   }
 
   function returnSid() {
-    console.log(get, varFilter)
     let sidList = get.sessions
       .filter((v) => v.date >= dateFilter.from && v.date <= dateFilter.to)
       .sort((a, b) => new Date(a.date) - new Date(b.date))
@@ -150,7 +149,6 @@ export default function Log() {
           ).exercises;
           if (
             exerciseCall.every((exercise) =>{
-              console.log(varFilter, exercise, varFilter[exercise], varFilter.bicep)
               return varFilter[exercise].includes("HIDE")
             }) )
             return null;
