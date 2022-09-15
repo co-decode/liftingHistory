@@ -16,6 +16,7 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
     return output;
   }
   const [variationFilter, setVariationFilter] = useState(initialFilter());
+  const [showVariationFilter, setShowVariationFilter] = useState(false)
   const [variationMenus, setVariationMenus] = useState({});
   const checkRefs = useRef({});
 
@@ -74,6 +75,10 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
             <option value="SESSION">Session</option>
             <option value="CUSTOM">Custom</option>
           </select>
+          <button onClick={() => setShowVariationFilter(!showVariationFilter)}>
+            {showVariationFilter ? "Hide Filter" : "Show Filter"}
+          </button>
+          
           <button onClick={() => handleHideAll()}>
             {exercisesForUser.every((exercise) =>
               variationFilter[exercise].includes("HIDE")
@@ -82,6 +87,7 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
               : "Hide"}{" "}
             All Exercises
           </button>
+          <br/>
           {interval === "CUSTOM" && (
             <>
               <label htmlFor={`IntervalLength`}>Interval Length</label>
@@ -120,7 +126,7 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
               />
             </>
           )}
-          {exercisesForUser.map((exercise) => {
+          {showVariationFilter && exercisesForUser.map((exercise) => {
             let variationsForUser = [];
             get[exercise].forEach((sess) =>
               sess.variation_templates.forEach((template) =>

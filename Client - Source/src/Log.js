@@ -39,6 +39,7 @@ export default function Log() {
   const [user, setUser] = useState(null);
 
   const [varFilter, setVarFilter] = useState({});
+  const [showVarFilter, setShowVarFilter] = useState(false)
   const [varMenus, setVarMenus] = useState({});
   const checkRefs = useRef({});
   const [goToMonthYear, setGoToMonthYear] = useState(null);
@@ -310,6 +311,9 @@ export default function Log() {
         >
           Reverse Order
         </button>
+        <button onClick={() => {
+          setShowVarFilter(!showVarFilter)
+        }}>{showVarFilter ? "Hide Filter" : "Show Filter"}</button>
       </>
     );
   }
@@ -465,7 +469,7 @@ export default function Log() {
             <>
               <fieldset>
                 {returnDateFilter()}
-                {returnVarFilter()}
+                {showVarFilter && returnVarFilter()}
               </fieldset>
               {returnSid()}
             </>

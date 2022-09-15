@@ -275,7 +275,7 @@ export default function Add({
         onKeyDown={(e) => e.code === "Enter" && e.preventDefault()}
         onSubmit={(e) => handleSubmit(e)}
       >
-        <label>
+        {/* <label>
           Download a file:
           <a href={`${fileURL}`} download={"hello.json"}>
             CLICK ME
@@ -286,7 +286,7 @@ export default function Add({
           Upload a file:
           <input type="file" ref={fileRef} />
         </label>
-        <button onClick={() => readFile()}>Output file read</button>
+        <button onClick={() => readFile()}>Output file read</button> */}
         {/* <div>{!!blob && console.log(JSON.parse(blob))}</div> */}
         <br />
         <DateInput dateRefs={dateRefs} />

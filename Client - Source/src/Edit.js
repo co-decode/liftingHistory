@@ -1228,11 +1228,11 @@ export default function Edit({
       >
         Cancel and view Breakdown
       </button>
-      <button onClick={() => console.log(exerciseRefs.current)}>log exerciseRefs</button><br/>
+      {/* <button onClick={() => console.log(exerciseRefs.current)}>log exerciseRefs</button><br/>
       <button onClick={() => console.log(extraVarFields)}>log extraVarFields</button><br/>
       <button onClick={() => console.log(templateArrays)}>log templateArrays</button><br/>
-      <button onClick={() => console.log(update)}>log Update</button><br/>
-      <button onClick={() =>submitUpdate(update)}>Submit Update</button><br/>
+      <button onClick={() => console.log(update)}>log Update</button><br/> */}
+      <button onClick={() =>submitUpdate(update)}>Submit Update</button><br/><br/>
       {update && exerciseArray
             .filter(
               (v) =>
