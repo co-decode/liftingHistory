@@ -55,8 +55,8 @@ function makeApp(database,  ) {
   app.get("/sessions/:id", async (req, res, next) => {
     try {
     const id = parseInt(req.params.id);
+    console.log(createGet(id))
     let {rows} = await userPool.query(createGet(id))
-    console.log(rows)
     let output = rows[0]
       Object.keys(output).filter(key => output[key] === null).forEach(nullKey => delete output[nullKey])
     return res.status(200).json(output)
