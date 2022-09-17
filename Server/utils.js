@@ -167,8 +167,8 @@ function createGet(uid, exerciseArray = [
         "back_extension"
     ]) {
     let output = `SELECT jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises)) sessions`
-    exerciseArray.forEach((exercise, index, arr) => {
-        output = output.concat(`, (select jsonb_agg(jsonb_build_object('sid', sid, 'mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates)) from ${exercise}) ${exercise}`)
+    exerciseArray.forEach((exercise) => {
+        output = output.concat(`, (select jsonb_agg(jsonb_build_object('sid', sid, 'mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates)) from ${exercise}) "${exercise}"`)
     })
     output = output.concat(` FROM sessions where uid = ${uid};`)
     return output
