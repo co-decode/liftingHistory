@@ -6,7 +6,7 @@ _An application for recording weightlifting data, tracking progress and planning
 
 **In the Back End:**
 
-- Evironment: Docker
+- Environment: Docker
 - Database: PostgreSQL
 - Server: NodeJS, Express, PG, passportJS, bcrypt
 
@@ -19,7 +19,7 @@ _An application for recording weightlifting data, tracking progress and planning
 
 **Deployment:**
 
-- Database and Server: Heroku
+- Database and Server: Railway
 - Client: Netlify
 
 Testing: Jest, React Testing Library, Supertest

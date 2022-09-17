@@ -55,25 +55,10 @@ function makeApp(database,  ) {
   app.get("/sessions/:id", async (req, res, next) => {
     try {
     const id = parseInt(req.params.id);
-    const s = new Set()
-    const {rows:sessions} = await userPool.query(`select sid, date, exercises from sessions where uid = ${id};`)
-    if (sessions.length === 0) return res.status(200).send("There are no sessions yet")
-    sessions.forEach((v)=> v.exercises.forEach(ex => s.add(ex)))
-    let output = {}
-    await Array.from(s).reduce(async (acc, exercise, index) => {
-      let {rows} = await userPool.query(`select sid, mass, reps, vars, variation_templates from ${exercise} where uid = ${id};`)
-      output = {...output, [exercise]:rows}
-    }, {})
-    function repeat() {
-      if (Object.keys(output).length !== Array.from(s).length)
-        {setTimeout(repeat,0)}
-      else if (Object.keys(output).length === Array.from(s).length){
-        return res.status(200).json({sessions, ...output});
-      }
-    }
-    repeat()
-    // const {rows: bigBoyObject} = await userPool.query(createGet(3))
-    // return res.status(200).json(bigBoyObject)
+    let {rows} = await userPool.query(createGet(id))
+    let output = rows[0]
+      Object.keys(output).filter(key => output[key] === null).forEach(nullKey => delete output[nullKey])
+    return res.status(200).json(output)
     } catch {
       throw new Error('Something went wrong')
     }
