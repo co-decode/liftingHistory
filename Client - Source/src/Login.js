@@ -52,29 +52,37 @@ export default function Login() {
     }).then(res=>{setResponse(res.data?.message)}).then(callServer)
   }
 
-  
-
   return (
-    <>
-    {loading ? <><p>"Awaiting server response..."</p><Spinner/></> :
-      <>
-        <h1>Lifting Log</h1>
-        <div>
-          <label htmlFor="username">Username: </label>
-          <input type="text" id="username" name="username" required onChange={e=>handleChangeUser(e)}/>
-        </div>
-        <div>
-          <label htmlFor="password">Password: </label>
-          <input type={showPassword ? "text" : "password"} id="password" name="password" required onChange={e=>handleChangePass(e)}/>
-        </div>
-        <div>
-        <button onClick={()=>setShowPassword(!showPassword)}>{`${showPassword ? "Hide" : "Show"} Password`}</button>
-          <button type="submit" onClick={login}>Login</button>
-        </div>
-      <button onClick={() => link("/register")}>Go to Register</button>
-      <strong>{response}</strong>
-      </>
-    }
-    </>
+  <>
+    <div className="navbar">
+      <h1>Lifting Log</h1>
+    {loading && 
+    <div className="login_loading">
+      <Spinner/>
+      <p>Awaiting server response...</p>
+    </div>}
+    </div>
+    <div className="login_container">
+      <h1>Login with an existing account</h1>
+      <div>
+        <label htmlFor="username">Username: </label>
+        <input type="text" id="username" name="username" required onChange={e=>handleChangeUser(e)}/>
+      </div>
+      <div>
+        <label htmlFor="password">Password: </label>
+        <input type={showPassword ? "text" : "password"} id="password" name="password" required onChange={e=>handleChangePass(e)}/>
+      <button className="show_password" onClick={(e)=>{e.target.classList.toggle("eye_shut"); setShowPassword(!showPassword)}}>
+      </button>
+      </div>
+      <div className="button_container">
+        <button className="login_register" type="submit" onClick={login}>Login</button>
+        <button className="to_register_login" onClick={() => link("/register")}>New Account</button>
+      </div>
+    </div>
+    <strong>{response}</strong>
+    <div className="preload"> 
+      <button className="show_password eye_shut"/>
+    </div>
+  </>
   );
 }

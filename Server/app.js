@@ -22,8 +22,8 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      origin: ["https://lifting-log.netlify.app"],
-      // origin: ["http://localhost:3000"],
+      // origin: ["https://lifting-log.netlify.app"],
+      origin: ["http://localhost:3000"],
       credentials: true,
     })
   );

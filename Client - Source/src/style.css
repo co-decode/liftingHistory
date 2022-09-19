@@ -1,7 +1,12 @@
+@font-face {
+  font-family: "Cute Font";
+  src: url("./Fonts/cutefont-regular-webfont.woff2");
+}
 html {
   background-color: var(--b);
   color: var(--f);
-  font-family: "Lucida Sans Unicode";
+  /* font-family: "Lucida Sans Unicode"; */
+  font-family: "Cute Font";
   
   --bg: darkgrey;
   --b: white;

@@ -51,41 +51,53 @@ export default function Register() {
     });
   };
 
-  if (loading) return <><strong>Awaiting server response...</strong><Spinner/></>;
+  // if (loading) return <><strong>Awaiting server response...</strong><Spinner/></>;
 
   return (
     <>
+      <div className="navbar">
       <h1>Lifting Log</h1>
-      <div>
-        <label htmlFor="username">Username: </label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          required
-          onChange={(e) => handleChangeUser(e)}
-          />
+      {loading && 
+    <div className="login_loading">
+      <Spinner/>
+      <p>Awaiting server response...</p>
+    </div>}
       </div>
-      <div>
-        <label htmlFor="password">Password: </label>
-        <input
-          type={showPassword ? "text" : "password"}
-          id="password"
-          name="password"
-          required
-          onChange={(e) => handleChangePass(e)}
-          />
-      </div>
-      <div>
-        <button onClick={() => setShowPassword(!showPassword)}>{`${
-          showPassword ? "Hide" : "Show"
-        } Password`}</button>
+      <div className="login_container">
+          <h1>Register a New Account</h1>
+        <div>
+          <label htmlFor="username">Username: </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            required
+            onChange={(e) => handleChangeUser(e)}
+            />
+        </div>
+        <div>
+          <label htmlFor="password">Password: </label>
+          <input
+            type={showPassword ? "text" : "password"}
+            id="password"
+            name="password"
+            required
+            onChange={(e) => handleChangePass(e)}
+            />
+          <button className="show_password" onClick={(e)=>{e.target.classList.toggle("eye_shut"); setShowPassword(!showPassword)}}>
+          </button>
+        </div>
+          {/* <button onClick={() => setShowPassword(!showPassword)}>{`${
+            showPassword ? "Hide" : "Show"
+          } Password`}</button> */}
 
-        <button type="submit" onClick={register}>
-          Register
-        </button>
+        <div className="button_container">
+          <button className="login_register" type="submit" onClick={register}>
+            Register
+          </button>
+        <button className="to_register_login" onClick={() => link("/login")}>Cancel</button>
+        </div>
       </div>
-      <button onClick={() => link("/login")}>Go to Login</button>
       <strong>{response}</strong>
     </>
   );

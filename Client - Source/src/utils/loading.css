@@ -1,7 +1,7 @@
 .spinner {
     border: 2px transparent solid;
-    border-top-color: grey;
-    border-right-color: grey;
+    border-top-color: #c1c1c1;
+    border-right-color: white;
     height: 20px;
     width: 20px;
     border-radius:50%;
