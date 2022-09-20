@@ -1,9 +1,21 @@
+/* Contents
+Login and Register - Line 46
+Spinner - Line 178
+Log - Line 196
+
+
+
+*/
 @font-face {
   font-family: "Cute Font";
   src: url("../Fonts/cutefont-regular-webfont.woff2");
 }
 html {
   height: 100%;
+  font-family: "Cute Font";
+}
+
+button {
   font-family: "Cute Font";
 }
 
@@ -25,12 +37,14 @@ h1 {
 }
 
 .navbar {
+  z-index: 1000;
   width: 100%;
   height: 50px;
   background-color: #353535;
   display: flex;
 }
 
+/* Login and Register Pages */
 .login_container {
   width: 620px;
   background-color: #353535;
@@ -101,7 +115,6 @@ h1 {
   border: #c1c1c1 solid 5px;
   background-color: transparent;
   font-size: 48px;
-  font-family: "Cute Font";
   color: white;
 }
 .login_container .button_container .login_register:hover {
@@ -112,7 +125,6 @@ h1 {
   height: 60px;
   background-color: transparent;
   font-size: 48px;
-  font-family: "Cute Font";
   color: white;
   border: 5px #c1c1c1 solid;
 }
@@ -154,6 +166,241 @@ h1 {
   to {
     transform: rotate(1turn);
   }
+}
+/* Log */
+.page_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.navbar.log {
+  color: white;
+}
+.navbar.log h1 {
+  margin-right: 30px;
+}
+.navbar.log div h2 {
+  font-size: 32px;
+  margin: 0;
+}
+.navbar.log .center_text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 25px;
+}
+.navbar.log .center_text.h2:hover {
+  background-color: #555;
+  cursor: pointer;
+}
+.navbar.log .profile {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+}
+.navbar.log .profile .dropstem {
+  z-index: 20;
+  height: 100%;
+  background-color: #353535;
+  display: flex;
+  align-items: center;
+}
+.navbar.log .profile h3 {
+  font-size: 24px;
+  margin: 0;
+  background-color: #353535;
+  z-index: 100;
+}
+.navbar.log .profile:hover .dropdown {
+  pointer-events: all;
+  transform: translateY(150px);
+  z-index: 1;
+}
+.navbar.log .profile .dropdown {
+  z-index: 1;
+  pointer-events: none;
+  font-size: 32px;
+  position: absolute;
+  right: 0;
+  top: -100px;
+  height: 100px;
+  width: 180px;
+  text-align: center;
+  background-color: #353535;
+  display: flex;
+  flex-direction: column;
+  border-bottom-left-radius: 5px;
+  transition: transform 0.3s;
+}
+.navbar.log .profile .dropdown .log_out {
+  background-color: #353535;
+  border: none;
+  height: 50px;
+  font-size: 32px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.navbar.log .profile .dropdown .log_out .spinner {
+  height: 30px;
+  width: 30px;
+}
+.navbar.log .profile .dropdown .log_out:hover {
+  background-color: #555;
+}
+.navbar.log .profile .dropdown div {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.navbar.log .profile .dropdown div:hover {
+  background-color: #555;
+}
+.navbar.log .profile .dropdown .change_password {
+  font-size: 24px;
+}
+
+.log_container {
+  transition: margin-left 0.3s;
+}
+
+.active_filter {
+  margin-left: calc(100% - 1000px);
+}
+
+.exercise_filter {
+  transition: left 0.3s;
+  position: fixed;
+  width: calc(100% - 1000px);
+  height: 100%;
+  background-color: #353535;
+  left: calc(-100% + 1000px);
+  display: flex;
+}
+.exercise_filter.active_exercise_filter {
+  left: 0px;
+}
+.exercise_filter .filter_set {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+.exercise_filter .filter_set::-webkit-scrollbar {
+  display: none;
+}
+.exercise_filter .filter_set button {
+  width: fit-content;
+  font-size: 32px;
+  color: white;
+  background-color: #353535;
+  border: none;
+  border-radius: 5px;
+}
+.exercise_filter .filter_set button:hover {
+  background-color: #555;
+}
+
+.filter_bar {
+  width: 1000px;
+  height: 50px;
+  background-color: #353535;
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+}
+.filter_bar h1 {
+  margin-right: 20px;
+}
+.filter_bar label {
+  font-size: 32px;
+  color: white;
+  padding-left: 20px;
+  padding-right: 10px;
+}
+.filter_bar input {
+  width: 135px;
+  text-indent: 0.2ch;
+  height: 30px;
+  background-color: #c1c1c1;
+  border: none;
+  border-radius: 5px;
+  font-size: 24px;
+  font-family: "Cute Font";
+}
+.filter_bar select {
+  background-color: #c1c1c1;
+  border: none;
+  border-radius: 5px;
+  font-size: 26px;
+  height: 30px;
+  line-height: 3px;
+  font-family: "Cute Font";
+}
+.filter_bar select option {
+  font-family: "Cute Font";
+}
+.filter_bar button {
+  color: white;
+  font-size: 32px;
+  font-family: "Cute Font";
+  background-color: transparent;
+  border: none;
+  margin-right: auto;
+  margin-left: auto;
+}
+.filter_bar button:hover {
+  border-radius: 5px;
+  background-color: #555;
+}
+
+.all_entries_container {
+  width: 1000px;
+  border: #353535 4px solid;
+  background-color: #d9d9d9;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+
+.entry_container {
+  font-size: 32px;
+  margin: auto;
+  padding-top: 10px;
+  width: 900px;
+}
+.entry_container .top_line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.entry_container .top_line button {
+  font-size: 32px;
+  border: none;
+  background-color: transparent;
+}
+.entry_container .top_line button:hover {
+  background-color: #999;
+  border-radius: 5px;
+}
+.entry_container .top_line button.delete {
+  padding: 0 4px;
+  background-color: #fd6363;
+  border-radius: 5px;
+}
+.entry_container .top_line button.delete:hover {
+  background-color: #fd0000;
+}
+.entry_container .exercise_line {
+  display: flex;
+  justify-content: space-around;
 }
 
 /*# sourceMappingURL=Style.css.map */

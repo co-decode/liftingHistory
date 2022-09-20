@@ -45,6 +45,8 @@ export default function Log() {
   const [goToMonthYear, setGoToMonthYear] = useState(null);
   const [loading, setLoading] = useState(false);
   const editRefs = useRef({});
+  const log_container_ref = useRef()
+  const exercise_filter_ref = useRef()
   const link = useNavigate();
 
   useEffect(() => {
@@ -163,20 +165,27 @@ export default function Log() {
                 .variation_templates.flat().includes(vari))
           })) return null
 
+          const baseTimeString = new Date(
+            get.sessions.find((v) => v.sid === sidVal).date
+          ).toLocaleString()
+
           return (
             <div
+              className="entry_container"
               key={sidVal}
               ref={(element) => {
                 editRefs.current = { ...editRefs.current, [sidVal]: element };
               }}
             >
-              <div>
-                {new Date(
-                  get.sessions.find((v) => v.sid === sidVal).date
-                ).toLocaleString()}
-                <div>
-                  <button onClick={() => deleteSession(sidVal)}>
-                    Delete this session
+              <div className="top_line">
+                {baseTimeString.slice(0,6) + baseTimeString.slice(8,15) + baseTimeString.slice(18)}
+                  <button
+                    onClick={() => {
+                      setEdit(sidVal);
+                      setPage(BREAK);
+                    }}
+                  >
+                    View Breakdown
                   </button>
                   <button
                     onClick={() => {
@@ -186,17 +195,11 @@ export default function Log() {
                   >
                     Edit this session
                   </button>
-                  <button
-                    onClick={() => {
-                      setEdit(sidVal);
-                      setPage(BREAK);
-                    }}
-                  >
-                    View Breakdown
+                  <button className="delete" onClick={() => deleteSession(sidVal)}>
+                    Delete this session
                   </button>
-                </div>
               </div>
-              <div style={{display:"flex"}}>
+              <div className="exercise_line">
               {exerciseCall.map((v) => {
                 const exerciseData = get[v].find((v) => v.sid === sidVal);
                 if (varFilter[v].length > 0)
@@ -258,23 +261,28 @@ export default function Log() {
     if (page === LOG) {
       return (
         <>
-          <button onClick={() => setPage(ADD)}>Add an Entry</button>
+        <div className="center_text h2" tabIndex={1} onClick={() => setPage(ADD)}><h2>Add a New Entry</h2></div>
+          {/* <button onClick={() => setPage(ADD)}>Add an Entry</button> */}
           {get && (
             <>
-              <button onClick={() => {setPage(TONS); setTonnagePage(TABLE)}}>View Tonnage</button>
-              <button onClick={() => { new Promise((resolve) => {
-                setPage(TONS); resolve()}).then(() => setTonnagePage(GRAPH)) }}>
-                  View Graph
-              </button>
-              <button onClick={() => setPage(CAL)}>View Calendar</button>
+              <div className="center_text h2" onClick={() => setPage(CAL)}>
+          <h2>Go to Calendar</h2>
+        </div>
+        <div className="center_text h2" onClick={() => 
+          {setPage(TONS); setTonnagePage(TABLE)}}>
+          <h2>View Tonnage</h2>
+        </div>
+        <div className="center_text h2" onClick={() => 
+          { new Promise((resolve) => {setPage(TONS); resolve()}).then(() => setTonnagePage(GRAPH)) }}><h2>View Graph</h2></div>
             </>
           )}
-          <button onClick={() => setPage(EQUIV)}>View Calculator</button> <br />
-          <button onClick={() => setPage(PROFILE)}>Change Password</button>
+          <div className="center_text h2" onClick={() => setPage(EQUIV)}><h2>Go to Calculator</h2></div>
+          {/* <button onClick={() => setPage(PROFILE)}>Change Password</button> */}
         </>
       );
     } else if (page) {
-      return <button onClick={() => setPage(LOG)}>Go Back</button>;
+      return <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
+      // <button onClick={() => setPage(LOG)}>Go Back</button>;
     }
   }
   function returnDateFilter() {
@@ -296,24 +304,29 @@ export default function Log() {
           defaultValue={`${dateFilter.to}`}
           onChange={(e) => setDateFilter({ ...dateFilter, to: e.target.value })}
         />
-        <button
-          onClick={() => {
-            const opposite = !dateFilter.ascending
+        <label htmlFor="order">Order:</label>
+        <select id="order"
+          defaultValue={dateFilter.ascending}
+          onChange={(e) => {
+            console.log(e.target.value, typeof e.target.value)
+            // const opposite = !dateFilter.ascending
             setDateFilter({
               ...dateFilter,
-              ascending: opposite,
+              ascending: JSON.parse(e.target.value),
             });
             localStorage.setItem(
               "WeightLiftingLogAscending",
-              opposite
+              e.target.value
             );
-          }}
-        >
-          Reverse Order
-        </button>
+          }}>
+          <option value="false">Newest</option>
+          <option value="true">Oldest</option>
+        </select>
         <button onClick={() => {
           setShowVarFilter(!showVarFilter)
-        }}>{showVarFilter ? "Hide Filter" : "Show Filter"}</button>
+          log_container_ref.current.classList.toggle("active_filter")
+          exercise_filter_ref.current.classList.toggle("active_exercise_filter")
+        }}>{showVarFilter ? "Close Exercise Filter" : "Open Exercise Filter"}</button>
       </>
     );
   }
@@ -340,9 +353,10 @@ export default function Log() {
       setVarFilter(newVariationFilter);
     }
     return (
-      <div>
+      <div className="filter_set">
+        <button>Close Exercise Filter</button>
         <button onClick={() => handleHideAll()}>
-          {Object.keys(get).filter((key) => key !== "sessions").every((exercise) =>
+        {Object.keys(get).filter((key) => key !== "sessions").every((exercise) =>
             varFilter[exercise].includes("HIDE")
           )
             ? "Show"
@@ -465,15 +479,24 @@ export default function Log() {
     if (page === LOG) {
       return (
         <>
-          {get ? (
-            <>
-              <fieldset>
-                {returnDateFilter()}
-                {showVarFilter && returnVarFilter()}
-              </fieldset>
-              {returnSid()}
-            </>
-          ) : (
+          {get ? 
+          (<>
+            <div className="log_container" ref={log_container_ref}>
+              <div className="filter_bar">
+                <h1>Filter</h1>
+                  {returnDateFilter()}
+              </div>
+                {/* <fieldset> */}
+                {/* </fieldset> */}
+              <div className="all_entries_container">
+                {returnSid()}
+              </div>
+            </div>
+            <div className="exercise_filter" ref={exercise_filter_ref}>
+                  {showVarFilter && returnVarFilter()}
+
+            </div>
+          </>) : (
             "There's nothing here yet! Add some entries."
           )}
         </>
@@ -538,11 +561,19 @@ export default function Log() {
     );
 
   return (
-    <div>
-      <h1>Lifting Log</h1>
+    <div className="page_container">
+      <div className="navbar log">
+         <h1>Lifting Log</h1>
+        {pageButtons()}
+        <div className="center_text profile">
+          <div className="dropstem"><h3>Logged in as {user.username}</h3></div>
+          <div className="dropdown"><Logout />{/* <span>Log Out</span> */}<div className="change_password"><span>Change Password</span></div></div>
+        </div>
+      </div>
+      
+
       {loading && <Spinner />}
-      {pageButtons()}
-      <Logout />
+      {/* <Logout /> */}
       {returnComponent()}
     </div>
   );

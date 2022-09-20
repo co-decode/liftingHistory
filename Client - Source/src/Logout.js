@@ -18,7 +18,7 @@ export default function Logout() {
 
     return(
         <>
-            <button onClick={logout}>{loading ? <Spinner/> : `Log Out`}</button>
+            <button className="log_out" onClick={logout}>{loading ? <Spinner/> : `Log Out`}</button>
             
         </>
     )
