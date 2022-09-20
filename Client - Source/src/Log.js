@@ -47,7 +47,18 @@ export default function Log() {
   const editRefs = useRef({});
   const log_container_ref = useRef()
   const exercise_filter_ref = useRef()
+  const [scrollPosition, setScrollPosition] = useState(0)
   const link = useNavigate();
+
+  function scrollListener() {
+    const position = window.scrollY
+    setScrollPosition(position)
+  }
+  
+  useEffect(() => {
+    window.addEventListener("scroll", scrollListener, {passive:true})
+    return () => window.removeEventListener("scroll", scrollListener)
+  },[])
 
   useEffect(() => {
     axios({
@@ -354,7 +365,11 @@ export default function Log() {
     }
     return (
       <div className="filter_set">
-        <button>Close Exercise Filter</button>
+        <button onClick={()=>{
+          setShowVarFilter(!showVarFilter)
+          log_container_ref.current.classList.toggle("active_filter")
+          exercise_filter_ref.current.classList.toggle("active_exercise_filter")
+        }}>Close Exercise Filter</button>
         <button onClick={() => handleHideAll()}>
         {Object.keys(get).filter((key) => key !== "sessions").every((exercise) =>
             varFilter[exercise].includes("HIDE")
@@ -431,10 +446,11 @@ export default function Log() {
                       : varMenus[exercise]
                       ? "Filter <"
                       : "Filter >"}
-                  </button>
+                  </button> <br/>
 
                   {varMenus[exercise] &&
-                    /* variationObject[exercise].flat() */variationsForUser.map((value) => { //!
+                  <div>{
+                    variationsForUser.map((value) => {
                       return (
                         <label key={`${exercise}_${value}_box`}>
                           {value}
@@ -467,6 +483,7 @@ export default function Log() {
                         </label>
                       );
                     })}
+                  </div>}
                 </>
               )}
             </div>
@@ -486,16 +503,16 @@ export default function Log() {
                 <h1>Filter</h1>
                   {returnDateFilter()}
               </div>
-                {/* <fieldset> */}
-                {/* </fieldset> */}
               <div className="all_entries_container">
                 {returnSid()}
               </div>
             </div>
             <div className="exercise_filter" ref={exercise_filter_ref}>
                   {showVarFilter && returnVarFilter()}
-
             </div>
+            {scrollPosition > 50 &&
+            <div className="return_to_top" onClick={() =>window.scrollTo({top:0, behavior:"smooth"})}><span>{'\u2191'}</span></div>
+            }
           </>) : (
             "There's nothing here yet! Add some entries."
           )}
@@ -555,8 +572,13 @@ export default function Log() {
   if (get === null)
     return (
       <>
-        <strong>Loading...</strong>
-        <Spinner />
+        <div className="page_container">
+        <div className="navbar log">
+         <h1>Lifting Log</h1>
+         <div className="center_text h2"><h2>Loading</h2></div>
+         <div className="center_text h2"><Spinner /></div>
+        </div>
+      </div>
       </>
     );
 
