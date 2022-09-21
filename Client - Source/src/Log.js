@@ -47,18 +47,38 @@ export default function Log() {
   const editRefs = useRef({});
   const log_container_ref = useRef()
   const exercise_filter_ref = useRef()
-  const [scrollPosition, setScrollPosition] = useState(0)
+  const [windowInfo, setWindowInfo] = useState({scrollPosition: null, screenWidth: null})
   const link = useNavigate();
 
-  function scrollListener() {
-    const position = window.scrollY
-    setScrollPosition(position)
-  }
   
   useEffect(() => {
+    function scrollListener() {
+      const position = window.scrollY
+      setWindowInfo({...windowInfo, scrollPosition: position})
+    }
+    function resizeListener() {
+      const screenWidth = window.innerWidth
+      console.log('resize')
+      setWindowInfo({...windowInfo, screenWidth})
+    }
     window.addEventListener("scroll", scrollListener, {passive:true})
-    return () => window.removeEventListener("scroll", scrollListener)
-  },[])
+    window.addEventListener("resize", resizeListener, {passive:true})
+    return () =>{ 
+      window.removeEventListener("scroll", scrollListener)
+      window.removeEventListener("resize", resizeListener)
+    }
+  },[windowInfo])
+
+  useEffect(() => {
+    if(!log_container_ref.current || !exercise_filter_ref.current ) return
+    if (showVarFilter){
+    log_container_ref.current.classList.add("active_filter")
+    exercise_filter_ref.current.classList.add("active_exercise_filter")
+  } else {
+    log_container_ref.current.classList.remove("active_filter")
+    exercise_filter_ref.current.classList.remove("active_exercise_filter")
+  }
+  }, [showVarFilter])
 
   useEffect(() => {
     axios({
@@ -121,7 +141,9 @@ export default function Log() {
   }, [edit, prevEdit]);
 
   useEffect(() => {
-    if (page === LOG);
+    if (page !== LOG){
+      setShowVarFilter(false)
+    };
   }, [page]);
 
   function deleteSession(sid) {
@@ -272,28 +294,32 @@ export default function Log() {
     if (page === LOG) {
       return (
         <>
-        <div className="center_text h2" tabIndex={1} onClick={() => setPage(ADD)}><h2>Add a New Entry</h2></div>
-          {/* <button onClick={() => setPage(ADD)}>Add an Entry</button> */}
+        <div className="center_text h2" tabIndex={1} onClick={() => setPage(ADD)}>
+          <h2>{windowInfo.screenWidth < 1200 ? "New Entry" : "Add a New Entry"}</h2>
+        </div>
           {get && (
             <>
-              <div className="center_text h2" onClick={() => setPage(CAL)}>
-          <h2>Go to Calendar</h2>
+        <div className="center_text h2" onClick={() => setPage(CAL)}>
+          <h2>{windowInfo.screenWidth < 1200 ? "Calendar" : "Go to Calendar"}</h2>
         </div>
         <div className="center_text h2" onClick={() => 
           {setPage(TONS); setTonnagePage(TABLE)}}>
-          <h2>View Tonnage</h2>
+          <h2>{windowInfo.screenWidth < 1200 ? "Tonnage" : "View Tonnage"}</h2>
         </div>
         <div className="center_text h2" onClick={() => 
-          { new Promise((resolve) => {setPage(TONS); resolve()}).then(() => setTonnagePage(GRAPH)) }}><h2>View Graph</h2></div>
+          { new Promise((resolve) => {setPage(TONS); resolve()}).then(() => setTonnagePage(GRAPH)) }}>
+          <h2>{windowInfo.screenWidth < 1200 ? "Graph" : "View Graph"}</h2>
+        </div>
             </>
           )}
-          <div className="center_text h2" onClick={() => setPage(EQUIV)}><h2>Go to Calculator</h2></div>
+        <div className="center_text h2" onClick={() => setPage(EQUIV)}>
+          <h2>{windowInfo.screenWidth < 1200 ? "Calculator" : "Go to Calculator"}</h2>
+        </div>
           {/* <button onClick={() => setPage(PROFILE)}>Change Password</button> */}
         </>
       );
     } else if (page) {
       return <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
-      // <button onClick={() => setPage(LOG)}>Go Back</button>;
     }
   }
   function returnDateFilter() {
@@ -335,8 +361,9 @@ export default function Log() {
         </select>
         <button onClick={() => {
           setShowVarFilter(!showVarFilter)
-          log_container_ref.current.classList.toggle("active_filter")
-          exercise_filter_ref.current.classList.toggle("active_exercise_filter")
+          // log_container_ref.current.classList.toggle("active_filter")
+
+          // exercise_filter_ref.current.classList.toggle("active_exercise_filter")
         }}>{showVarFilter ? "Close Exercise Filter" : "Open Exercise Filter"}</button>
       </>
     );
@@ -379,7 +406,7 @@ export default function Log() {
           All Exercises
         </button>
         {Object.keys(get)
-          .filter((key) => key !== "sessions")
+          .filter((key) => key !== "sessions").sort()
           .map((exercise) => { 
             let variationsForUser = [];
             get[exercise].forEach((sess) =>
@@ -510,7 +537,7 @@ export default function Log() {
             <div className="exercise_filter" ref={exercise_filter_ref}>
                   {showVarFilter && returnVarFilter()}
             </div>
-            {scrollPosition > 50 &&
+            {windowInfo.scrollPosition > 50 &&
             <div className="return_to_top" onClick={() =>window.scrollTo({top:0, behavior:"smooth"})}><span>{'\u2191'}</span></div>
             }
           </>) : (

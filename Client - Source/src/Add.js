@@ -20,11 +20,12 @@ export default function Add({
   const [exArr, setExArr] = useState([]);
   const [response, setResponse] = useState(null);
   const [user, setUser] = useState(null);
-  const [redirect, setRedirect] = useState(false);
+  const [redirect, setRedirect] = useState(true);
   const [loading, setLoading] = useState(false);
   const link = useNavigate();
 
   useEffect(() => {
+    setLoading(true)
     axios({
       method: "get",
       withCredentials: true,
@@ -32,6 +33,7 @@ export default function Add({
     }).then((res) => {
       if (!res.data) link("/login");
       else if (res.data) {
+        setLoading(false)
         setUser(res.data);
       }
     });
@@ -253,24 +255,30 @@ export default function Add({
 
   let fileURL = URL.createObjectURL(downloadableFile);
 
-  if (!user)
-    return (
-      <>
-        <strong>Loading...</strong>
-        <Spinner />
-      </>
-    );
+  // if (!user)
+  //   return (
+  //     <>
+  //       <strong>Loading...</strong>
+  //       <Spinner />
+  //     </>
+  //   );
 
   return (
-    <div>
+    <>
+    <div className="exercise_list_container">
+
+      <div className="exercise_list">
       <ExerciseAdd exArr={exArr} setExArr={setExArr} />
-      <label>
+      </div>
+    </div>
+    <div className="add_container">
+      {/* <label>
         Redirect on submit
         <input
           type="checkbox"
           onChange={(e) => setRedirect(e.target.checked)}
         />
-      </label>
+      </label> */}
       <form
         onKeyDown={(e) => e.code === "Enter" && e.preventDefault()}
         onSubmit={(e) => handleSubmit(e)}
@@ -288,7 +296,6 @@ export default function Add({
         </label>
         <button onClick={() => readFile()}>Output file read</button> */}
         {/* <div>{!!blob && console.log(JSON.parse(blob))}</div> */}
-        <br />
         <DateInput dateRefs={dateRefs} />
         <ExerciseFieldSets
           exerciseRefs={exerciseRefs}
@@ -297,14 +304,15 @@ export default function Add({
           blob={blob}
         />
         {exArr.length ? (
-          <button type="submit">Submit</button>
+          <button className="add_submit" type="submit">Submit</button>
         ) : (
-          <div>Add some exercises!</div>
+          <div>Add an exercise!</div>
         )}
       </form>
       {response && response}
       {loading && <Spinner />}
     </div>
+    </>
   );
 }
 
@@ -394,18 +402,18 @@ function VariationOptions({
     [varFields, exercise, number, customAdditions, customs]
   );
   return (
-    <div>
+    <div className="template_container">
       {array.map((template, tempNo) => { 
         return (
-          <div key={`${exercise}Template${tempNo}`}>
-            Template {tempNo + 1} |&nbsp;
+          <div className="template_line" key={`${exercise}Template${tempNo}`}>
+            Template {tempNo + 1}
           {template.map((variations, varNo) => 
           <div
             style={{ display: "inline-block" }}
             key={`${exercise}Template${tempNo}VariationDiv${varNo}`}
           >
             <label htmlFor={`${exercise}Template${tempNo}Variation${varNo}`}>
-              {varNo === 0 ? "Variation " : null}
+              {varNo === 0 ? "Tag " : null}
               {varNo + 1}:
             </label>
             <select
@@ -467,11 +475,10 @@ function VariationOptions({
       })}
       
       {!!varFields[exercise] && (
-        <div>
+        <div className="custom_container">
           <label>
-            {" "}
-            Custom entry
-            <input type="text" placeholder="Variation" ref={customRef} />
+            Custom tag{" "}
+            <input type="text" className="variation" placeholder="Variation" ref={customRef} />
           </label>
           <button
             type="button"
@@ -492,9 +499,9 @@ function VariationOptions({
 function ExerciseAdd({ exArr, setExArr }) {
   return (
     <>
-      {exerciseArray.map((exercise) => {
+      {exerciseArray.sort().map((exercise) => {
         return (
-          <div style={{ display: "inline-block" }} key={`${exercise}Add`}>
+          <div style={{display:"flex", justifyContent:"space-between"}} key={`${exercise}Add`}>
             <label htmlFor={`${exercise}Add`}>
               {exercise
                 .split("_")
@@ -502,7 +509,7 @@ function ExerciseAdd({ exArr, setExArr }) {
                 .join(" ")}
               :{" "}
             </label>
-            <input
+            <input style={{marginRight:"10px"}}
               id={`${exercise}Add`}
               type="checkbox"
               onClick={() =>
@@ -511,7 +518,6 @@ function ExerciseAdd({ exArr, setExArr }) {
                   : setExArr([...exArr, exercise])
               }
             />
-            &nbsp;|&nbsp;
           </div>
         );
       })}
@@ -585,12 +591,13 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
     arr.length = number;
     arr.fill(null);
     return arr.map((v, i) => (
-      <div key={`${exercise}${i}`}>
+      <div className="set_line" key={`${exercise}${i}`}>
         <strong>Set {i+1}: </strong>
         <label>Mass
         <input
           id={`${exercise}Set${i}Mass`}
           type="number"
+          max="999"
           step="0.25"
           required
           ref={(el) =>
@@ -607,6 +614,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
         <input
           id={`${exercise}Set${i}Reps`}
           type="number"
+          max="999"
           step="0.25"
           required
           ref={(el) =>
@@ -814,8 +822,8 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
 
     return (
       <div
+        className="exercise_fieldset"
         key={`${exercise}FieldSet`}
-        style={{ border: "1px solid grey", margin: "-1px 0", padding: "2px" }}
       >
       {/* <button onClick={()=>console.log(JSON.stringify(varFields), exerciseRefs.current, fields)}>log varFields</button> */}
 
@@ -825,7 +833,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
             .map((word) => word[0].toUpperCase() + word.slice(1))
             .join(" ")}
         </div>
-        <label htmlFor={`${exercise}Sets`}>Sets</label>
+        <label htmlFor={`${exercise}Sets`}>Sets&nbsp;
         <input
           id={`${exercise}Sets`}
           type="number"
@@ -833,11 +841,59 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
           max={20}
           onChange={(e) =>
             e.target.value >= 0 && e.target.value <= 20
-              ? setFields({ ...fields, [exercise]: parseInt(e.target.value) })
-              : null
+            ? setFields({ ...fields, [exercise]: parseInt(e.target.value) })
+            : null
           }
           placeholder={fields[exercise] ? fields[exercise] : 0}
-        />
+          />
+          </label>
+        
+        {!!fields[exercise] && (
+          <div className="number_container">
+            <div className="macro_container">
+              <div className="top_line"> 
+              Fill
+              <select style={{width:"9ch"}}
+                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], fields: e.target.value}})} 
+                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {fields: el}}}
+                defaultValue={macroState[exercise].fields}>
+                <option>Mass</option>
+                <option>Reps</option>
+                <option>Both</option>
+                <option>Template</option>
+              </select>&nbsp;
+              with <input type="number" max="999" min="0" 
+                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], number: e.target.value}})} 
+                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], number: el}}} style={{ width: "5ch", textIndent: "0.5ch" }} 
+                defaultValue={macroState[exercise].number}/> for&nbsp;
+              <select style={{width:"7ch"}}
+                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], range: e.target.value}})} 
+                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], range: el}}}
+                defaultValue={macroState[exercise].range}>
+                <option>All</option>
+                <option>Range</option>
+                <option>Even</option>
+                <option>Odd</option>
+              </select>
+              </div> 
+              <div className="bottom_line"> 
+              { macroState[exercise].range === "Range" && <div>
+              {": Sets "}
+              <input type="number" max="20" min="0" 
+                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], from: e.target.value}})}
+                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], from: el}}} style={{ width: "5ch" }} 
+                defaultValue={macroState[exercise].from}/> to&nbsp;
+              <input type="number" max="20" min="0" 
+                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], to: e.target.value}})}
+                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], to: el}}} style={{ width: "5ch" }} 
+                defaultValue={macroState[exercise].to}/>
+              </div>}
+              <button type="" onClick={(e)=> handleMacro(e)}>Go</button>
+              </div>
+            </div>
+            {lengthenArr(fields[exercise], exercise)}
+          </div>
+        )}
         {varFields && varFields[exercise] !== undefined && (
           <VariationOptions
             get={get}
@@ -849,46 +905,6 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
             customs={customs[exercise]}
           />
         )}{" "}
-        {!!fields[exercise] && (
-          <>
-            <div>
-              Fill
-              <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], fields: e.target.value}})} 
-                      ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {fields: el}}}
-                      defaultValue={macroState[exercise].fields}>
-                <option>Mass</option>
-                <option>Reps</option>
-                <option>Both</option>
-                <option>Template</option>
-              </select>&nbsp;
-              with <input type="number" max="999" min="0" 
-                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], number: e.target.value}})} 
-                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], number: el}}} style={{ width: "9ch" }} 
-                defaultValue={macroState[exercise].number}/> for&nbsp;
-              <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], range: e.target.value}})} 
-                      ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], range: el}}}
-                      defaultValue={macroState[exercise].range}>
-                <option>All</option>
-                <option>Range</option>
-                <option>Even</option>
-                <option>Odd</option>
-              </select>
-              { macroState[exercise].range === "Range" && <>
-              {": Sets "}
-              <input type="number" max="20" min="0" 
-                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], from: e.target.value}})}
-                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], from: el}}} style={{ width: "5ch" }} 
-                defaultValue={macroState[exercise].from}/> to&nbsp;
-              <input type="number" max="20" min="0" 
-                onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], to: e.target.value}})}
-                ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], to: el}}} style={{ width: "5ch" }} 
-                defaultValue={macroState[exercise].to}/>
-              </>}
-              <button type="" onClick={(e)=> handleMacro(e)}>Go</button>
-            </div>
-            {lengthenArr(fields[exercise], exercise)}
-          </>
-        )}
         {varFields && varFields[exercise] && addSubtractTemplates()}
         {/* {returnTemplateButton()} */}
       </div>
@@ -898,8 +914,8 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
 
 function DateInput({ dateRefs }) {
   return (
-    <>
-      <label htmlFor="date">Date of Session</label>
+    <div>
+      <label htmlFor="date"><h1>Date of Session</h1></label>
       <input
         id="date"
         type="date"
@@ -921,6 +937,6 @@ function DateInput({ dateRefs }) {
           .padStart(2, "0")}`}
         ref={(el) => (dateRefs.current = { ...dateRefs.current, time: el })}
       />
-    </>
+    </div>
   );
 }
