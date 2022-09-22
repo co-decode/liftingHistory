@@ -3,6 +3,8 @@ Login and Register - Line 51
 Spinner - Line 186
 Log - Line 200
 Add - Line 540
+Table - Line 776
+Graph - Line 888
 
 */
 @font-face {
@@ -14,6 +16,15 @@ html {
   font-family: "Cute Font";
   scrollbar-width: thin;
   font-size: 32px;
+}
+html::-webkit-scrollbar {
+  width: 5px;
+}
+html::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+}
+html::-webkit-scrollbar-track {
+  background-color: #353535;
 }
 
 button {
@@ -35,6 +46,27 @@ h1 {
   margin: 0;
   margin-left: 25px;
   color: white;
+}
+
+select {
+  font-family: "Cute Font";
+  font-size: 24px;
+  background-color: #c1c1c1;
+  border-radius: 5px;
+  border: none;
+}
+
+button {
+  font-size: 24px;
+  border: black 1px solid;
+  font-family: "Cute Font";
+}
+
+input {
+  font-family: "Cute Font";
+  background-color: #d9d9d9;
+  border: none;
+  border-radius: 5px;
 }
 
 .navbar {
@@ -435,8 +467,8 @@ h1 {
   width: 80px;
   height: 80px;
   position: fixed;
-  right: 50px;
-  bottom: 50px;
+  right: 30px;
+  bottom: 30px;
   font-size: 50px;
   color: #d9d9d9;
   display: flex;
@@ -469,6 +501,18 @@ h1 {
 }
 .exercise_list label {
   color: white;
+}
+
+.add_spinner {
+  display: flex;
+  justify-content: center;
+  margin-left: 250px;
+  margin-top: 10px;
+}
+.add_spinner .spinner {
+  border-top-color: #353535;
+  border-right-color: black;
+  padding: 0;
 }
 
 .add_container {
@@ -512,7 +556,7 @@ h1 {
 .add_container .exercise_fieldset button {
   background-color: #c1c1c1;
   border-radius: 5px;
-  font-size: 24px;
+  font-size: 28px;
 }
 .add_container .exercise_fieldset input.variation {
   text-indent: 1ch;
@@ -546,17 +590,23 @@ h1 {
   width: 100%;
 }
 .add_container .exercise_fieldset .template_line {
-  overflow-x: auto;
-  scrollbar-width: thin;
-  white-space: nowrap;
   padding-left: 10px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 .add_container .exercise_fieldset .template_line select, .add_container .exercise_fieldset .template_line option {
   font-family: "Cute Font";
   font-size: 25px;
   width: fit-content;
 }
-.add_container .exercise_fieldset .template_line::-webkit-scrollbar {
+.add_container .exercise_fieldset .template_line .tag_container {
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  display: inline-block;
+}
+.add_container .exercise_fieldset .template_line .tag_container::-webkit-scrollbar {
   display: none;
 }
 .add_container .exercise_fieldset .custom_container {
@@ -572,7 +622,7 @@ h1 {
   align-items: center;
 }
 .add_container form .add_submit {
-  width: 150px;
+  width: fit-content;
   border-radius: 5px;
   border: #353535 2px solid;
   background-color: #5fb95f;
@@ -581,8 +631,150 @@ h1 {
   bottom: 50px;
   right: 20px;
 }
+.add_container form .date_container label h1 {
+  margin: 0 auto;
+  width: fit-content;
+}
+.add_container form .date_container input {
+  height: fit-content;
+}
+.add_container .return_to_top.add_component {
+  left: 270px;
+  right: 20px;
+}
 .add_container h1 {
   color: black;
+}
+
+/* Tonnage section */
+.tonnage_container {
+  width: 100%;
+}
+
+.tonnage_table_container {
+  height: calc(100% - 250px);
+  margin-left: 230px;
+  color: black;
+  transition: margin-left 0.3s;
+}
+.tonnage_table_container .tableGridContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+}
+.tonnage_table_container .tableGridContainer.top_line {
+  border-bottom: #353535 5px solid;
+}
+.tonnage_table_container strong {
+  margin-left: 5px;
+}
+.tonnage_table_container.active_tonnage_table_container {
+  margin-left: 0;
+}
+.tonnage_table_container .sidebar {
+  top: 0;
+  position: fixed;
+  background-color: #353535;
+  height: 100%;
+  width: 230px;
+  left: 0;
+  transition: left 0.3s;
+}
+.tonnage_table_container .options_container {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  color: white;
+  margin-top: 50px;
+  height: calc(100% - 50px);
+}
+.tonnage_table_container .options_container::-webkit-scrollbar {
+  width: 5px;
+}
+.tonnage_table_container .options_container::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+}
+.tonnage_table_container .options_container.active_options_container {
+  left: -230px;
+}
+.tonnage_table_container .options_container fieldset {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  padding-left: 5px;
+}
+.tonnage_table_container .options_container fieldset button {
+  color: white;
+  background-color: transparent;
+  border: none;
+  font-size: 32px;
+}
+.tonnage_table_container .options_container fieldset label {
+  font-size: 32px;
+}
+.tonnage_table_container .options_container fieldset div > label {
+  font-size: 24px;
+}
+.tonnage_table_container .options_container fieldset select {
+  background-color: #d9d9d9;
+}
+.tonnage_table_container .options_container fieldset input {
+  background-color: #d9d9d9;
+  font-family: "Cute Font";
+  font-size: 24px;
+  text-indent: 0.5ch;
+  border: none;
+  border-radius: 5px;
+}
+.tonnage_table_container .options_container fieldset input[maxLength="2"] {
+  width: 3ch;
+}
+.tonnage_table_container .options_container fieldset .filter button {
+  font-size: 24px;
+}
+
+/* Graph section */
+.graph_page_container {
+  width: 100%;
+  height: calc(100% - 50px);
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+}
+.graph_page_container fieldset {
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+.graph_page_container_2 {
+  height: 100%;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+.graph_page_container_2 select {
+  background-color: #d9d9d9;
+}
+.graph_page_container_2 input {
+  background-color: #d9d9d9;
+  font-size: 22px;
+}
+.graph_page_container_2 .top_line {
+  display: flex;
+  justify-content: space-between;
+}
+
+.graph_container {
+  background-color: #d9d9d9;
+  overflow: auto;
+  scrollbar-width: none;
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+}
+.graph_container::-webkit-scrollbar {
+  display: none;
 }
 
 /*# sourceMappingURL=Style.css.map */

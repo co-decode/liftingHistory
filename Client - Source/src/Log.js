@@ -318,8 +318,16 @@ export default function Log() {
           {/* <button onClick={() => setPage(PROFILE)}>Change Password</button> */}
         </>
       );
+    } else if (page === TONS) {
+        return (
+        <>
+          <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
+          <div className="center_text h2" onClick={() => tonnagePage === TABLE ? setTonnagePage(GRAPH) : setTonnagePage(TABLE)}>
+            <h2>View {tonnagePage === TABLE ? "Graph" : "Table"}</h2>
+          </div>
+        </> )
     } else if (page) {
-      return <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
+        return <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
     }
   }
   function returnDateFilter() {
@@ -580,6 +588,7 @@ export default function Log() {
           dateFilter={dateFilter}
           varFilter={varFilter}
           setVarFilter={setVarFilter}
+          windowInfo={windowInfo}
         />
       );
     else if (page === TONS) return <Tonnage get={get} tonnagePage={tonnagePage} setTonnagePage={setTonnagePage} />;
@@ -608,21 +617,21 @@ export default function Log() {
       </div>
       </>
     );
-
   return (
     <div className="page_container">
       <div className="navbar log">
          <h1>Lifting Log</h1>
         {pageButtons()}
         <div className="center_text profile">
-          <div className="dropstem"><h3>Logged in as {user.username}</h3></div>
-          <div className="dropdown"><Logout />{/* <span>Log Out</span> */}<div className="change_password"><span>Change Password</span></div></div>
+          <div className="dropstem">
+            <h3>{user.username.length > 6 ? `${user.username}` : `Logged in as ${user.username}`}</h3>
+          </div>
+          <div className="dropdown"><Logout /><div className="change_password"><span>Change Password</span></div></div>
         </div>
       </div>
       
 
       {loading && <Spinner />}
-      {/* <Logout /> */}
       {returnComponent()}
     </div>
   );

@@ -82,6 +82,7 @@ export default function Graph({ get }) {
       };
     return {
       responsive: true,
+      maintainAspectRatio:false,
       interaction: {
         mode: "index",
         intersect: false,
@@ -403,7 +404,7 @@ export default function Graph({ get }) {
     return (
       <>
         <label>
-          Interval
+          Interval:&nbsp;
           <select
             onChange={(e) => setInput({ ...input, interval: e.target.value })}
           >
@@ -413,19 +414,7 @@ export default function Graph({ get }) {
             <option>CUSTOM</option>
           </select>
         </label>
-        <label>
-          Exercise
-          <select
-            onChange={(e) => setInput({ ...input, exercise: e.target.value })}
-          >
-            <option value="ALL">All</option>
-            {Object.keys(get).filter(key => key !== "sessions").map((exercise)=> 
-              <option key={`${exercise}_option`} value={`${exercise}`}>
-                {exercise.split("_").map(
-                  word=>word[0].toUpperCase() + word.slice(1)).join(" ")}</option>
-            )}
-          </select>
-        </label>
+        
       </>
     );
   }
@@ -444,13 +433,13 @@ export default function Graph({ get }) {
         )
       )
       return (
-      <div>
+      <>
          {variationsForUser.map(variation => 
             <label key={variation}>{variation}
               <input type="checkbox" onChange={(e)=> e.target.checked ? setVarFilter([...varFilter, variation]) : setVarFilter([...varFilter].filter(vari => vari !== variation))}/>
             </label>
          )}
-      </div>
+      </>
     )
   }}
 
@@ -459,7 +448,7 @@ export default function Graph({ get }) {
     else
       return (
         <div>
-          <label htmlFor={`IntervalLength`}>Interval Length</label>
+          <label htmlFor={`IntervalLength`}>Interval Length:&nbsp;</label>
           <input
             id={`IntervalLength`}
             placeholder={intervalLength[1] === "WEEKS" ? "1" : "7"}
@@ -475,7 +464,7 @@ export default function Graph({ get }) {
                   ])
             }
           />
-          <label htmlFor={`intervalLengthIn...`}>in...</label>
+          <label htmlFor={`intervalLengthIn...`}>&nbsp;in...&nbsp;</label>
           <select
             id={`intervalLengthIn...`}
             onChange={(e) =>
@@ -485,7 +474,7 @@ export default function Graph({ get }) {
             <option value="DAYS">DAYS</option>
             <option value="WEEKS">WEEKS</option>
           </select>
-          <label htmlFor={`BeginReferenceDate`}>Reference Date</label>
+          <label htmlFor={`BeginReferenceDate`}>&nbsp;Reference Date:&nbsp;</label>
           <input
             id={`BeginReferenceDate`}
             type="date"
@@ -502,9 +491,9 @@ export default function Graph({ get }) {
 
   function returnDataRange() {
     return (
-      <div>
+      <div style={{display:"inline"}}>
         <label>
-          From:
+          From:&nbsp;
           <input
             type="date"
             defaultValue={dataRange.earliest}
@@ -514,7 +503,7 @@ export default function Graph({ get }) {
           />
         </label>
         <label>
-          To:
+          To:&nbsp;
           <input
             type="date"
             defaultValue={dataRange.latest}
@@ -538,14 +527,31 @@ export default function Graph({ get }) {
   }
 
   return (
-    <div>
+    <div className="graph_page_container_2" style={{}}>
+      <div className="top_line">
+        <label>
+          Exercise:&nbsp;
+          <select
+            onChange={(e) => setInput({ ...input, exercise: e.target.value })}
+          >
+            <option value="ALL">All</option>
+            {Object.keys(get).filter(key => key !== "sessions").sort().map((exercise)=> 
+              <option key={`${exercise}_option`} value={`${exercise}`}>
+                {exercise.split("_").map(
+                  word=>word[0].toUpperCase() + word.slice(1)).join(" ")}</option>
+            )}
+          </select>
+        </label>
+        {returnVarControls()}
+        </div>
       <fieldset>
         {returnInputControls()}
-        {returnCustomControls()}
-        {returnVarControls()}
         {returnDataRange()}
+        {returnCustomControls()}
       </fieldset>
+      <div className="graph_container">
       <Line options={options} data={data} />
+      </div>
     </div>
   );
 }

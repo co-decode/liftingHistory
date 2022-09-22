@@ -3,6 +3,8 @@ Login and Register - Line 51
 Spinner - Line 186
 Log - Line 200
 Add - Line 540
+Table - Line 776
+Graph - Line 888
 
 */
 
@@ -17,6 +19,17 @@ html {
     font-family: "Cute Font";
     scrollbar-width:thin;
     font-size: 32px;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #c1c1c1;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: #353535;
+    }
 }
 
 button {
@@ -40,6 +53,27 @@ h1 {
     margin-left: 25px;
     color: white;
 }
+
+select {
+    font-family: "Cute Font";
+    font-size: 24px;
+    background-color: #c1c1c1;
+    border-radius:5px;
+    border: none;
+}
+
+button {
+    font-size: 24px;
+    border: black 1px solid;
+    font-family: "Cute Font";
+}
+input {
+    font-family: "Cute Font";
+    background-color: #d9d9d9;
+    border: none;
+    border-radius: 5px;
+}
+
 
 .navbar {
     z-index:1000;
@@ -527,8 +561,8 @@ h1 {
     width:80px;
     height: 80px;
     position:fixed;
-    right: 50px;
-    bottom:50px;
+    right: 30px;
+    bottom:30px;
     font-size:50px;
     color: #d9d9d9;
     display:flex;
@@ -563,6 +597,18 @@ h1 {
     label {
         color: white;
 
+    }
+}
+
+.add_spinner {
+    display:flex;
+    justify-content: center;
+    margin-left:250px;
+    margin-top:10px;
+    .spinner {
+        border-top-color: #353535;
+        border-right-color: black;
+        padding:0;
     }
 }
 
@@ -604,6 +650,7 @@ h1 {
         border: 4px #353535 solid;
         background-color:#d9d9d9;
         margin-bottom:-4px;
+        // font-size:32px;
 
         input, select {
             background-color: #c1c1c1;
@@ -614,8 +661,10 @@ h1 {
         button {
             background-color: #c1c1c1;
             border-radius:5px;
-            font-size: 24px;
+            font-size: 28px;
         }
+
+        
 
         input.variation {
             text-indent: 1ch;
@@ -650,6 +699,8 @@ h1 {
                 grid-template-columns: 0.5fr 1fr 1fr 1fr;
                 justify-items:center;
                 width: 100%;
+
+
             }
         }
 
@@ -657,20 +708,31 @@ h1 {
             width: 100%;
         }
         .template_line {
-            overflow-x: auto;
-            scrollbar-width: thin;
-            white-space: nowrap;
             padding-left: 10px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+
             select, option {
                 font-family:"Cute Font";
                 font-size: 25px;
                 // height: 20px;
                 width: fit-content;
             }
+            
+            .tag_container {
+                overflow-x: auto;
+                scrollbar-width: none;
+                white-space: nowrap;
+                display:inline-block;
+                // width: 100%;
 
-            &::-webkit-scrollbar {
-                display:none;
+                &::-webkit-scrollbar {
+                    display:none;
+                }
+                
             }
+
         }
         .custom_container {
             display:flex;
@@ -688,7 +750,7 @@ h1 {
         align-items: center;
 
         .add_submit {
-            width: 150px;
+            width: fit-content;
             border-radius: 5px;
             border: #353535 2px solid;
             background-color:#5fb95f;
@@ -697,8 +759,193 @@ h1 {
             bottom: 50px;
             right: 20px;
         }
+
+        .date_container {
+            label h1 {
+                margin:0 auto;
+                // color: red;
+                width: fit-content;
+            } 
+            input {
+                height:fit-content;
+            }
+        }
+
+    }
+    .return_to_top.add_component {
+        left: 270px;
+        right: 20px
     }
     h1 {
         color:black;
+    }
+}
+
+/* Tonnage section */
+
+.tonnage_container{
+    width: 100%;
+}
+
+
+.tonnage_table_container {
+    height: calc(100% - 250px);
+    margin-left:230px;
+    color: black;
+    transition: margin-left 0.3s;
+
+    .tableGridContainer {
+        display: flex;
+
+        // width: 100%;
+        // grid-template-columns: repeat(7, auto);
+        justify-content: space-around;
+        align-items: center;
+        text-align: center;
+
+        &.top_line {
+            border-bottom:#353535 5px solid;
+        }
+    }
+
+    strong {
+        margin-left:5px;
+    }
+
+    &.active_tonnage_table_container {
+        margin-left: 0;
+    }
+
+    .sidebar {
+        top: 0 ;
+        position:fixed;
+        background-color: #353535;
+        height: 100%;
+        width: 230px;
+        left:0;
+        transition: left 0.3s;
+        
+        
+    }
+    
+    .options_container {
+        overflow-y:auto;
+        scrollbar-width: thin;
+        color: white;
+        margin-top: 50px;
+        height:calc(100% - 50px);
+        
+        &::-webkit-scrollbar {
+            width: 5px
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: #c1c1c1;
+        }
+        &.active_options_container {
+            left:-230px;
+        }
+        
+        fieldset {
+            margin:0;
+            border: 0;
+            padding:0;
+            padding-left: 5px;
+
+
+            button {
+                color: white;
+                background-color: transparent;
+                border: none;
+                font-size:32px;
+            }
+
+            label {
+                font-size: 32px;
+            }
+
+            div > label {
+                font-size: 24px;
+            }
+
+            select {
+                background-color: #d9d9d9;
+
+            }
+
+            input {
+                background-color: #d9d9d9;
+                font-family:"Cute Font";
+                font-size: 24px;
+                text-indent: 0.5ch;
+                border:none;
+                border-radius:5px;
+                
+                &[maxLength='2'] {
+                    width:3ch;
+                    
+                }
+            }
+
+            .filter button {
+                font-size: 24px;
+            }
+            
+        }
+
+    }
+}
+
+/* Graph section */
+
+.graph_page_container {
+    width: 100%; 
+    height: calc(100% - 50px);
+    position:fixed;
+    align-items: center;
+    justify-content: center;
+
+    fieldset {
+        padding: 0;
+        margin:0;
+
+        border: none;
+
+    }
+    
+}
+
+.graph_page_container_2 {
+
+    select {
+        background-color: #d9d9d9;
+    }
+
+    input {
+        background-color: #d9d9d9;
+        // font-family:"Cute"
+        font-size: 22px;
+    }
+
+    height:100%; 
+    display:flex;
+    width: 100%;
+    flex-direction:column;
+
+    .top_line {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+.graph_container {
+    background-color: #d9d9d9;
+    overflow:auto;
+    scrollbar-width: none;
+    width: auto;
+    max-width:100%;
+    height:100%;
+
+    &::-webkit-scrollbar {
+        display:none;
     }
 }
