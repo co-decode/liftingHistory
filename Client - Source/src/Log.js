@@ -47,7 +47,9 @@ export default function Log() {
   const editRefs = useRef({});
   const log_container_ref = useRef()
   const exercise_filter_ref = useRef()
-  const [windowInfo, setWindowInfo] = useState({scrollPosition: null, screenWidth: null})
+  const cal_container_ref = useRef()
+  const cal_colour_ref = useRef()
+  const [windowInfo, setWindowInfo] = useState({scrollPosition: null, screenWidth: null, screenHeight:null})
   const link = useNavigate();
 
   
@@ -58,8 +60,9 @@ export default function Log() {
     }
     function resizeListener() {
       const screenWidth = window.innerWidth
+      const screenHeight = window.innerHeight
       console.log('resize')
-      setWindowInfo({...windowInfo, screenWidth})
+      setWindowInfo({...windowInfo, screenWidth, screenHeight})
     }
     window.addEventListener("scroll", scrollListener, {passive:true})
     window.addEventListener("resize", resizeListener, {passive:true})
@@ -291,6 +294,7 @@ export default function Log() {
     );
   }
   function pageButtons() {
+    const goBack = <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
     if (page === LOG) {
       return (
         <>
@@ -321,13 +325,24 @@ export default function Log() {
     } else if (page === TONS) {
         return (
         <>
-          <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
+          {goBack}
           <div className="center_text h2" onClick={() => tonnagePage === TABLE ? setTonnagePage(GRAPH) : setTonnagePage(TABLE)}>
             <h2>View {tonnagePage === TABLE ? "Graph" : "Table"}</h2>
           </div>
         </> )
+    } else if (page === CAL) {
+        return (
+          <>
+          {goBack}
+          <div className="center_text h2" onClick={() => {
+            cal_container_ref.current.classList.toggle("calendar_container_active")
+            cal_colour_ref.current.classList.toggle("colour_container_active")}}>
+            <h2>Colours</h2>
+          </div>
+          </>
+        )
     } else if (page) {
-        return <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
+        return goBack
     }
   }
   function returnDateFilter() {
@@ -400,6 +415,7 @@ export default function Log() {
     }
     return (
       <div className="filter_set">
+        
         <button onClick={()=>{
           setShowVarFilter(!showVarFilter)
           log_container_ref.current.classList.toggle("active_filter")
@@ -427,6 +443,7 @@ export default function Log() {
             );
             return(
             <div key={`${exercise}VarFilter`} style={{ display: "block" }}>
+              <div>
               <button
                 onClick={() => {
                   if (varFilter[exercise].includes("HIDE")) {
@@ -450,9 +467,10 @@ export default function Log() {
                   .map((word) => word[0].toUpperCase() + word.slice(1))
                   .join(" ")}
               </button>
+              </div>
               {!varFilter[exercise].includes("HIDE") && (
                 <>
-                  <button
+                  <button className="filter"
                     onClick={() => {
                       if (!varMenus[exercise])
                         setVarMenus({
@@ -484,7 +502,7 @@ export default function Log() {
                   </button> <br/>
 
                   {varMenus[exercise] &&
-                  <div>{
+                  <div className="variation_container">{
                     variationsForUser.map((value) => {
                       return (
                         <label key={`${exercise}_${value}_box`}>
@@ -599,6 +617,9 @@ export default function Log() {
           setPage={setPage}
           setEdit={setEdit}
           goToMonthYear={goToMonthYear}
+          cal_container_ref={cal_container_ref}
+          cal_colour_ref={cal_colour_ref}
+          windowInfo={windowInfo}
         />
       );
     else if (page === EQUIV) return <Equivalence />;

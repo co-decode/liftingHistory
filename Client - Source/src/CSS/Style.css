@@ -1,10 +1,11 @@
 /* Contents
 Login and Register - Line 51
 Spinner - Line 186
-Log - Line 200
+Log - Line 236
 Add - Line 540
 Table - Line 776
 Graph - Line 888
+Calendar - Line 979
 
 */
 @font-face {
@@ -339,7 +340,6 @@ input {
   margin-top: 50px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   width: 100%;
   overflow-y: scroll;
   scrollbar-width: thin;
@@ -356,6 +356,9 @@ input {
   border: none;
   border-radius: 5px;
 }
+.exercise_filter .filter_set button.filter {
+  font-size: 24px;
+}
 .exercise_filter .filter_set button:hover {
   background-color: #555;
 }
@@ -363,6 +366,15 @@ input {
   font-size: 20px;
   color: white;
   margin-left: 5px;
+}
+.exercise_filter .filter_set .variation_container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.exercise_filter .filter_set .variation_container label {
+  white-space: nowrap;
+  font-size: 24px;
 }
 
 .filter_bar {
@@ -794,6 +806,115 @@ input {
 }
 .graph_container::-webkit-scrollbar {
   display: none;
+}
+
+/* Calendar Section */
+.rectangle:hover {
+  stroke-width: 2px;
+  stroke: black;
+}
+
+.rectangle.with_session {
+  cursor: pointer;
+}
+
+.calendar_page_container .calendar_container {
+  position: absolute;
+  display: flex;
+  transform: translateX(-50%);
+  left: 50%;
+  transition: left 0.3s;
+  animation: to_center 0.3s ease forwards;
+}
+.calendar_page_container .calendar_container.calendar_container_active {
+  left: calc(50% + 100px);
+  animation: to_right 0.3s ease forwards;
+}
+.calendar_page_container .calendar_container .calendar {
+  border-left: #353535 15px solid;
+  border-right: #353535 15px solid;
+}
+.calendar_page_container .calendar_container .calendar_control {
+  position: absolute;
+  font-size: 28px;
+  top: 0;
+  right: 15px;
+  outline: none;
+  border: none;
+}
+.calendar_page_container .calendar_container .calendar_control input {
+  font-size: 24px;
+}
+.calendar_page_container .calendar_container .calendar_control input:focus {
+  outline: none;
+}
+.calendar_page_container .colour_container {
+  background-color: #353535;
+  position: fixed;
+  top: 0;
+  left: -200px;
+  width: 200px;
+  height: 100%;
+  transition: left 0.3s;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+.calendar_page_container .colour_container.colour_container_active {
+  left: 0;
+}
+.calendar_page_container .colour_container .colour_frame {
+  margin-top: 50px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.calendar_page_container .colour_container .colour_frame::-webkit-scrollbar {
+  display: none;
+}
+.calendar_page_container .colour_container .colour_frame .colour_scroll {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.calendar_page_container .colour_container .colour_frame .colour_scroll::-webkit-scrollbar {
+  background-color: #353535;
+  width: 5px;
+}
+.calendar_page_container .colour_container .colour_frame .colour_scroll::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+}
+.calendar_page_container .colour_container .colour_frame label {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  pointer-events: none;
+  user-select: none;
+  text-indent: 10px;
+}
+.calendar_page_container .colour_container .colour_frame select {
+  position: absolute;
+  width: 100%;
+  color: white;
+  border: #353535 5px solid;
+  pointer-events: all;
+  scrollbar-width: thin;
+  z-index: -1;
+}
+.calendar_page_container .colour_container .colour_frame option {
+  width: 100%;
+}
+.calendar_page_container .colour_container .colour_frame button {
+  align-self: center;
+  width: 95%;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 5px;
+  background-color: #555;
+  color: white;
 }
 
 /*# sourceMappingURL=Style.css.map */

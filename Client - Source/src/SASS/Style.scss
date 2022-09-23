@@ -1,10 +1,11 @@
 /* Contents
 Login and Register - Line 51
 Spinner - Line 186
-Log - Line 200
+Log - Line 236
 Add - Line 540
 Table - Line 776
 Graph - Line 888
+Calendar - Line 979
 
 */
 
@@ -399,7 +400,6 @@ input {
     }
 
     &.active_exercise_filter {
-        $distance: calc(50% - 500px);
         left: 0px;
     }
 
@@ -409,7 +409,7 @@ input {
         margin-top:50px;
         display:flex;
         flex-direction: column;
-        gap:20px;
+        // gap:20px;
         width:100%;
 
         overflow-y:scroll;
@@ -418,6 +418,7 @@ input {
         &::-webkit-scrollbar {
             display:none;
         }
+
         
         button {
             width:fit-content;
@@ -430,6 +431,10 @@ input {
             border: none;
             border-radius: 5px;
 
+            &.filter {
+                font-size:24px;
+            }
+
 
             &:hover {
                 background-color: #555;
@@ -440,6 +445,17 @@ input {
             font-size: 20px;
             color: white;
             margin-left:5px;
+        }
+
+        .variation_container {
+            display:flex;
+            justify-content: space-around;
+            flex-wrap:wrap;
+
+            label {
+                white-space: nowrap;
+                font-size: 24px;
+            }
         }
 
     }
@@ -915,7 +931,6 @@ input {
         margin-left: 1%;
 
         .data_range {
-            // flex-grow: 1;
             display:grid;
             grid-template-columns: 1fr 1fr 1fr 1fr;
             justify-items: center;
@@ -974,4 +989,165 @@ input {
     &::-webkit-scrollbar {
         display:none;
     }
+}
+
+/* Calendar Section */
+
+// @keyframes to_right {
+//     from {
+//         transform: translateX(-50%);
+//         left:50%;
+//     }
+//     to {
+//         transform: translateX(-100%);
+//         left:100%;
+//     }
+// }
+// @keyframes to_center {
+//     from {
+//         transform: translateX(-100%);
+//         left:100%;
+//     }
+//     to {
+//         transform: translateX(-50%);
+//         left:50%;
+//     }
+// }
+
+.rectangle:hover {
+    stroke-width: 2px;
+    stroke: black;
+}
+.rectangle.with_session {
+    cursor: pointer;
+}
+
+.calendar_page_container {
+    // width: 100%;
+
+    .calendar_container {
+        position: absolute;
+        display: flex;
+        transform: translateX(-50%);
+        left:50%;
+        // width: 100%;
+        transition:left 0.3s;
+        animation: to_center 0.3s ease forwards;
+        
+        &.calendar_container_active {
+            left: calc(50% + 100px);
+            animation: to_right 0.3s ease forwards;
+        }
+        
+        .calendar {
+            border-left:#353535 15px solid;
+            border-right:#353535 15px solid;
+        }
+    
+        .calendar_control {
+            position:absolute;
+            font-size:28px;
+            top:0;
+            right:15px;
+            outline:none;
+            border:none;
+    
+            
+            input {
+                font-size: 24px;
+    
+                // width: 7ch;
+                // text-indent: 0.5ch;
+                
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+    }
+
+    .colour_container {
+        background-color:#353535;
+        position:fixed;
+        top:0;
+        left: -200px;
+        width: 200px;
+        height: 100%;
+        transition: left 0.3s;
+
+        color: white;
+        display: flex;
+        flex-direction: column;
+
+        &.colour_container_active {
+            left:0;
+        }
+
+        .colour_frame {
+
+            margin-top:50px;
+            height:100%;
+            display:flex;
+            flex-direction: column;
+            justify-content: space-between  ;
+            
+            overflow-y:auto;
+            scrollbar-width: none;
+            
+            &::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .colour_scroll {
+                height:100%;
+                overflow-y:auto;
+                scrollbar-width: thin;
+                
+                &::-webkit-scrollbar {
+                    background-color: #353535;
+                    width: 5px;
+                }
+    
+                &::-webkit-scrollbar-thumb {
+                    background-color: #c1c1c1;
+                }
+            }
+
+            label {
+                display: flex;
+                justify-content: space-between;
+                position:relative;
+                pointer-events: none;
+                user-select: none;
+                text-indent: 10px;
+            }
+    
+            select {
+                position: absolute;
+                width: 100%;
+                color:white;
+                border:#353535 5px solid;
+                pointer-events: all;
+                scrollbar-width: thin;
+                z-index:-1;
+            }
+    
+            option {
+                width: 100%;
+            }
+    
+            button {
+                align-self: center;
+                width: 95%;
+                box-sizing: border-box;
+                border: 0;
+                border-radius: 5px;
+                background-color: #555;
+                color: white;
+    
+            }
+        }
+
+    }
+
 }

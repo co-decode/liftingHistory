@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import Graph from "./Graph";
 import returnTonnage from "./utils/tonnageFunctions";
-import "./Tonnage.css";
 // import { variationObject } from "./utils/variables";
 
 export default function Tonnage({ get, tonnagePage, setTonnagePage }) {

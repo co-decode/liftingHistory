@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./calendarCSS.css";
 import * as d3 from "d3";
 import {exerciseArray} from "./utils/variables"
 
-export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
+export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowInfo, cal_container_ref, cal_colour_ref }) {
   const svgRef = useRef();
   const [colourState, setColourState] = useState(() => {
     let output ={}
@@ -232,16 +231,16 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
           (session) => session.dayOfWeek === convertDayToNumber(dayName)
         ))
     );
-    const rectSize = 80;
     const { width, height } = {
-      width: 800,
-      height: 600,
+      height: (window.innerHeight - 50),
+      width: 4 * (window.innerHeight - 50) / 3,
     };
+    const rectSize = 0.1 * width;
     const svg = d3
       .select(svgRef.current)
-      .attr("width", "800px")
+      .attr("width", width)
       .attr("height", height)
-      .style("background-color", "grey");
+      .style("background-color", "#d9d9d9");
     const x = d3
       .scaleLinear()
       .domain([0, Object.keys(dataObject).length])
@@ -258,7 +257,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
       .attr("x", width / 2)
       .attr("y", 25)
       .attr("text-anchor", "middle")
-      .attr("font-size", "20px")
+      .attr("font-size", "32px")
       .attr("fill", "black")
       .text(`${monthYearDate.getFullYear()} - ${monthYearDate.getMonth() + 1}`);
     svg
@@ -267,9 +266,9 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
       .data([0, 1])
       .join("text")
       .text((d) => (d ? ">" : "<"))
-      .attr("x", (d) => /* width / 2 - 60 + 120 * d */ `${50 - 10 + 20 * d}%`)
+      .attr("x", (d) => /* width / 2 - 60 + 120 * d */ `${50 - 15 + 30 * d}%`)
       .attr("y", 18)
-      .attr("font-size", "20px")
+      .attr("font-size", "32px")
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "central")
       .attr("stroke", "black")
@@ -303,7 +302,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
       .attr("y", 50)
       .attr("text-anchor", "middle")
       .attr("fill", "black")
-      .style("font-size", "19px");
+      .style("font-size", "32px");
     
     
 
@@ -317,7 +316,12 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
         .attr("y", (d, j) => j * (rectSize + 10) + 60)
         .attr("width", rectSize)
         .attr("height", rectSize)
-        .attr("class", (d, ind) => `rectangle`)
+        .attr("class", (d, ind) =>  {
+          const session = sessionArray.find(
+            (session) => session.dayOfMonth === dayNumber(i, ind)
+          );
+          return session ? `rectangle with_session` : `rectangle`
+          })
         .attr("fill", (d, ind) => {
           const session = sessionArray.find(
             (session) => session.dayOfMonth === dayNumber(i, ind)
@@ -419,19 +423,35 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
         .attr("text-anchor", "middle")
         .attr("fill", "black")
         .attr("pointer-events", "none")
-        .style("font-size", "19px");
+        .style("font-size", "32px");
     });
-  }, [sortedSessions, monthYearDate, setEdit, setPage, colourState]);
+  }, [sortedSessions, monthYearDate, setEdit, setPage, colourState, windowInfo]);
 
+  // const monthString = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
   return (
-    <>
-    <label> Go to: 
-    <input type="date" onChange={(e)=>setMonthYearDate(new Date(e.target.value))}/>
-    </label>
-    <div>
-      <svg ref={svgRef}></svg>
-    </div> 
-    {Object.keys(get).filter(key=> key !== "sessions").map(exercise => {
+    <div className="calendar_page_container">
+      <div className="calendar_container" ref={cal_container_ref}>
+      <svg className="calendar" ref={svgRef}/>
+      {/* <div className="calendar_control">
+        <label > Go to: &nbsp;
+        <select>
+          {monthString.map(month => <option key={month}>{month}</option>)}
+        </select>
+        </label> 
+        <input type="number" pattern="\d{4}" placeholder="yyyy" maxlength="4" minlength="4" defaultValue={new Date(Date.now()).getFullYear()}/>
+      </div> */}
+
+      <label className="calendar_control"> Go to: &nbsp;
+        <input 
+          type="date" 
+          onChange={(e)=> e.target.value && setMonthYearDate(new Date(e.target.value))}/>
+      </label> 
+      </div>
+      <div className="colour_container" ref={cal_colour_ref}>
+        <div className="colour_frame">
+
+      <div className="colour_scroll">
+    {Object.keys(get).filter(key=> key !== "sessions").sort().map(exercise => {
       if (colourState[exercise] === undefined) setColourState({...colourState, [exercise]: null})
       return (
           <label key={`color_${exercise}`}>{exercise
@@ -444,19 +464,23 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear }) {
               {Object.values(colourState).reduce((acc, color)=> !acc.includes(color) ? [...acc, color] : acc, [])
                     .concat(colorStrings.filter(color=>!Object.values(colourState).includes(color)))
                     .map(color=> 
-              <option key={`${exercise}${color}`} style={{backgroundColor: color}}>{color}</option>)}
+              <option key={`${exercise}${color}`} style={{backgroundColor: color}} value={color}>{/* color */}</option>)}
             </select>
           </label>
         
       )
     })}
+    </div>
     <button onClick={()=>{localStorage.setItem("liftingLogCalendarColors", JSON.stringify(
       Object.keys(colourState)
       .filter(ex => Object.keys(get).filter(key=> key !== "sessions").includes(ex))
       .reduce((obj, ex) => obj = {...obj, [ex]: colourState[ex]},{})
-    ))}}>
+      ))}}>
+      
       Save colours
     </button>
-    </>
+      </div>
+      </div>
+    </div>
   );
 }
