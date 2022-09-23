@@ -435,7 +435,7 @@ export default function Graph({ get }) {
       return (
       <>
          {variationsForUser.map(variation => 
-            <label key={variation}>{variation}
+            <label key={variation}>{variation}&nbsp;
               <input type="checkbox" onChange={(e)=> e.target.checked ? setVarFilter([...varFilter, variation]) : setVarFilter([...varFilter].filter(vari => vari !== variation))}/>
             </label>
          )}
@@ -447,34 +447,38 @@ export default function Graph({ get }) {
     if (input.interval !== "CUSTOM") return null;
     else
       return (
-        <div>
-          <label htmlFor={`IntervalLength`}>Interval Length:&nbsp;</label>
+        <>
+        <div className="what?">
+            <label htmlFor={`IntervalLength`}>Interval Length:&nbsp;
           <input
             id={`IntervalLength`}
             placeholder={intervalLength[1] === "WEEKS" ? "1" : "7"}
             onChange={(e) =>
               intervalLength[1] === "WEEKS"
-                ? setIntervalLength([
-                    parseInt(e.target.value) * 7,
-                    intervalLength[1],
-                  ])
-                : setIntervalLength([
-                    parseInt(e.target.value),
-                    intervalLength[1],
-                  ])
+              ? setIntervalLength([
+                parseInt(e.target.value) * 7,
+                intervalLength[1],
+              ])
+              : setIntervalLength([
+                parseInt(e.target.value),
+                intervalLength[1],
+              ])
             }
-          />
-          <label htmlFor={`intervalLengthIn...`}>&nbsp;in...&nbsp;</label>
+            />
+          </label>
+          <label htmlFor={`intervalLengthIn...`}>&nbsp;in...&nbsp;
           <select
             id={`intervalLengthIn...`}
             onChange={(e) =>
               setIntervalLength([intervalLength[0], e.target.value])
             }
-          >
+            >
             <option value="DAYS">DAYS</option>
             <option value="WEEKS">WEEKS</option>
           </select>
-          <label htmlFor={`BeginReferenceDate`}>&nbsp;Reference Date:&nbsp;</label>
+          </label>
+        </div>
+          <label htmlFor={`BeginReferenceDate`}>&nbsp;Reference Date:&nbsp;
           <input
             id={`BeginReferenceDate`}
             type="date"
@@ -484,14 +488,18 @@ export default function Graph({ get }) {
               e.target.value.length === 10 &&
               setReferenceDate(e.target.value)
             }
-          />
-        </div>
+            />
+            </label>
+        </>
       );
   }
 
   function returnDataRange() {
     return (
-      <div style={{display:"inline"}}>
+      <>
+        <div>
+          Date Range  &nbsp;
+        </div>
         <label>
           From:&nbsp;
           <input
@@ -503,7 +511,7 @@ export default function Graph({ get }) {
           />
         </label>
         <label>
-          To:&nbsp;
+        To:&nbsp;
           <input
             type="date"
             defaultValue={dataRange.latest}
@@ -513,8 +521,7 @@ export default function Graph({ get }) {
           />
         </label>
         <label>
-          {" "}
-          Apply Date Range
+          Apply&nbsp;
           <input
             type="checkbox"
             onClick={() =>
@@ -522,7 +529,7 @@ export default function Graph({ get }) {
             }
           />
         </label>
-      </div>
+      </>
     );
   }
 
@@ -542,11 +549,17 @@ export default function Graph({ get }) {
             )}
           </select>
         </label>
-        {returnVarControls()}
+        <div className="top_line variations">
+          {returnVarControls()}
         </div>
+      </div>
       <fieldset>
         {returnInputControls()}
-        {returnDataRange()}
+        <div className="data_range">
+          {returnDataRange()}
+        </div>
+      </fieldset>
+      <fieldset className="bottom_line">
         {returnCustomControls()}
       </fieldset>
       <div className="graph_container">

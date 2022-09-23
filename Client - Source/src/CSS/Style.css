@@ -745,6 +745,17 @@ input {
   padding: 0;
   margin: 0;
   border: none;
+  display: flex;
+  justify-content: space-between;
+  margin-left: 1%;
+}
+.graph_page_container fieldset .data_range {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  justify-items: center;
+}
+.graph_page_container fieldset.bottom_line {
+  margin-right: 1%;
 }
 
 .graph_page_container_2 {
@@ -762,11 +773,19 @@ input {
 }
 .graph_page_container_2 .top_line {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  margin-left: 1%;
+}
+.graph_page_container_2 .top_line.variations {
+  display: flex;
+  justify-content: space-around;
+  flex-grow: 1;
 }
 
 .graph_container {
   background-color: #d9d9d9;
+  padding: 10px;
+  border-top: #353535 5px solid;
   overflow: auto;
   scrollbar-width: none;
   width: auto;
