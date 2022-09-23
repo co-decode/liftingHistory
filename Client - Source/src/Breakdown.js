@@ -8,6 +8,7 @@ export default function Breakdown({
   setGoToMonthYear,
 }) {
   const session = get.sessions.find((v) => v.sid === edit);
+  const sessionDate = new Date(session.date)
   const [show, setShow] = useState(session.exercises);
   useEffect(() => {
     setGoToMonthYear(new Date(session.date));
@@ -20,17 +21,22 @@ export default function Breakdown({
               totalReps: acc.totalReps + reps.reduce((a, v)    => a + v)}
     }, {tonnage: 0, totalReps: 0})
     return (
+      <>
       <div>
-        Session Tonnage:
-        {object.tonnage} kg |&nbsp;
-        Session Reps:
+        Session Tonnage:&nbsp;
+        {object.tonnage} kg
+      </div>
+      <div>
+        Session Reps:&nbsp;
         {object.totalReps}
       </div>
+      </>
     )
   }
 
   return (
-    <div>
+    <div className="breakdown_container">
+      <div>
       <button
         onClick={() => {
           setPage("EDIT");
@@ -54,12 +60,13 @@ export default function Breakdown({
       >
         Return to Calendar at Month
       </button>
-      <br />
-      {new Date(session.date).toLocaleString()}
-      <fieldset style={{ display: "inline-block" }}>
+      </div>
+      <h1>{sessionDate.toDateString() + ", " + sessionDate.toLocaleTimeString().slice(0,4) + " pm"}</h1>
+      <div className="session_aggregates">{sessionAggregates()}</div>
+      <div className="show_exercises">
         {session.exercises.map((exercise) => {
           return (
-            <div style={{ display: "inline-block" }} key={`${exercise}Toggle`}>
+            <div key={`${exercise}Toggle`}>
               <label htmlFor={`${exercise}Toggle`}>
                 {exercise
                   .split("_")
@@ -79,8 +86,7 @@ export default function Breakdown({
             </div>
           );
         })}
-      </fieldset>
-      {sessionAggregates()}
+      </div>
       {show.map((exercise) => {
         const { mass, reps, variation_templates:variation, vars } = get[exercise].find(
           (v) => v.sid === edit
@@ -89,42 +95,65 @@ export default function Breakdown({
         const totalReps = reps.reduce((a, v) => a + v);
         const tonnage = mass.reduce((a, v, i) => a + v * reps[i], 0);
         return (
-          <div key={`${exercise}`}>
+          <div key={`${exercise}`} className="exercise_container">
+            <h2>
             <strong>
               {exercise
                 .split("_")
                 .map((word) => word[0].toUpperCase() + word.slice(1))
                 .join(" ")}
-              {`: `}
-            </strong>{" "}
-            <br />
-            Max: {mass.reduce((a, v) => Math.max(a, v))} kg
-            {` | `}
-            Total Reps: {totalReps}
-            {` | `}
-            {`Tonnage: `}
-            {tonnage} kg <br />
-            {`Average Mass: `}
-            {(tonnage / totalReps).toFixed(1)} kg / r{` | `}
-            {`Average Reps: `}
+            </strong>
+            </h2>
+            <div className="top_line">
+              <div>
+            Max:&nbsp;{mass.reduce((a, v) => Math.max(a, v))} kg
+              </div>
+              <div>
+            Total Reps:&nbsp;{totalReps}
+              </div>
+              <div>
+            Tonnage:&nbsp;{tonnage} kg 
+              </div>
+            </div>
+            <div className="second_line">
+              <div>
+            Average Mass:&nbsp;
+            {(tonnage / totalReps).toFixed(1)} kg / r
+              </div>
+              <div>
+            Average Reps:&nbsp;
             {(totalReps / reps.length).toFixed(2)} r / s
+              </div>
+            </div>
             {mass.map((weight, set) => {
               return (
-                <div key={`${exercise}Set${set}`}>
-                  Set {set + 1}: {weight} kg |&nbsp; 
-                      {reps[set]} rep{reps[set] > 1 ? `s` : null}&nbsp;
-                      Template {vars[set] + 1}
-                      <br />
+                <div key={`${exercise}Set${set}`} className="set_lines">
+                  <div>
+                    <strong>
+                  Set&nbsp;{set + 1}: 
+                    </strong>
+                  </div>
+                  <div>
+                  {weight}&nbsp;kg
+                  </div>
+                  <div>
+                      {reps[set]}&nbsp;rep{reps[set] > 1 ? `s` : null}
+                  </div>
+                  <div>
+                      Template&nbsp;{vars[set] + 1}
+                  </div>
                 </div>
               );
             })}
-            Template:{" "}
+            Templates:&nbsp;
             {variation.map((v, i, a) => (
+              <div>
               <strong key={`variation${i}`}>
-                {i + 1}:&nbsp;
+                {i + 1}&nbsp;
                 {v.filter(vari=>!!vari).toString().replace(/,/g, ", ")}
-                {i < a.length - 1 ? ` | ` : null}
+                {/* {i < a.length - 1 ? ` | ` : null} */}
               </strong>
+              </div>
             ))}
             <hr />
           </div>

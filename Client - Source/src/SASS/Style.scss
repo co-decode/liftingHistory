@@ -6,6 +6,7 @@ Add - Line 540
 Table - Line 776
 Graph - Line 888
 Calendar - Line 979
+Breakdown - Line 1156f
 
 */
 
@@ -1150,4 +1151,60 @@ input {
 
     }
 
+}
+
+/* Breakdown Section */
+
+.breakdown_container {
+    width: 80%;
+    background-color:#d9d9d9;
+    border-right:#353535 5px solid;
+    border-left:#353535 5px solid;
+
+    display:flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    h1 {
+        color: black;
+        width:fit-content;
+        margin:0;
+    }
+
+    .session_aggregates {
+        width: 100%;
+        font-size:42px;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .show_exercises {
+        width: 100%;
+        display:flex;
+        justify-content: space-evenly;
+    }
+
+    .exercise_container {
+        width: 80%;
+        font-size: 42px;
+        h2 {
+            margin:0;
+            text-align:center;
+        }
+
+        .top_line {
+            display:flex;
+            justify-content: space-between;
+        }
+        .second_line {
+            display:flex;
+            justify-content: space-between;
+        }
+        .set_lines {
+            display:grid;
+            grid-template-columns: repeat(4,1fr);
+            justify-content: space-between;
+        }
+    }
 }
