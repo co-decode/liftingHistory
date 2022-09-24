@@ -77,7 +77,8 @@ const Wrapper = () => {
       <h4>Welcome!</h4>
       <p>Click anywhere or hit any Key to Continue</p>
       <aside>
-        <span>Hotkeys:</span> <br /><br />
+        <br/>
+        <span>Hotkeys:</span>
         <pre>Options:            shift + o</pre>
         <pre>Highlighter:        shift + h</pre>
         <pre>Filter:             shift + f</pre>

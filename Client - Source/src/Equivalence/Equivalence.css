@@ -1,5 +1,6 @@
 div#appDiv {
   position: relative;
+  padding-top:25px;
   height: 100% /* 740px */;
   width: 100%;
   display: grid;
@@ -22,11 +23,13 @@ div#wrapper {
   margin-left: 0;
   left: 0;
   z-index: 1;
-  background-color: white;
+  background-color: #c1c1c1;
   transition: transform 0.3s;
 }
 #wrapper > h1 {
   margin: auto;
+  margin-top: 50px;
+  color:black;
   /* grid-column: 2 / 3; */
 }
 #wrapper > h4 {
@@ -205,4 +208,27 @@ input[type=checkbox]:focus {} */
 }
 #filterRowDiv > input {
   margin-left: 0;
+}
+
+
+.equiv_button_container {
+  position:absolute;
+  display: flex;
+}
+
+
+
+#appDiv input {
+  font-size:28px;
+  height:min-content;
+  width:6ch;
+  text-indent: 0.5ch;
+}
+
+#appDiv button {
+  border:none;
+  background-color: #d9d9d9;
+  border-radius:5px;
+  font-size:28px;
+  
 }

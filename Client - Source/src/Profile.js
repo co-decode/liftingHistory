@@ -41,21 +41,22 @@ export default function Profile({user}) {
         }).then(res=> {setResponse(res.data); setLoading(false)})
     }
   return (
-    <>
-      <h1> Welcome {user.username}</h1>
+    <div className="profile_container">
+      <h1> Welcome, {user.username}</h1>
+      <hr/>
       <form onSubmit={(e)=>handleSubmit(e)}>
         <label>
-          New password
+          New password:&nbsp;
           <input type="text" required onChange={(e)=> {setResponse(null); setInput({...input, 1: e.target.value})}}/>
         </label>
         <label>
-          Confirm password
+          Confirm password:&nbsp;
           <input type="text" required onChange={(e)=> {setResponse(null); setInput({...input, 2: e.target.value})}}/>
         </label>
         <button>Submit Change</button>
       </form>
       {response}
       {loading && <Spinner/>}
-    </>
+    </div>
   );
 }

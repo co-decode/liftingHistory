@@ -6,10 +6,16 @@ export default function Breakdown({
   setEdit,
   setPage,
   setGoToMonthYear,
+  windowInfo
 }) {
   const session = get.sessions.find((v) => v.sid === edit);
   const sessionDate = new Date(session.date)
   const [show, setShow] = useState(session.exercises);
+
+  useEffect(() => {
+    window.scrollTo(0,0)
+  },[])
+
   useEffect(() => {
     setGoToMonthYear(new Date(session.date));
   }, [session, setGoToMonthYear]);
@@ -36,14 +42,14 @@ export default function Breakdown({
 
   return (
     <div className="breakdown_container">
-      <div>
-      <button
+      <div className="button_container">
+      {/* <button
         onClick={() => {
           setPage("EDIT");
         }}
       >
         Edit this Session
-      </button>
+      </button> */}
       <button
         onClick={() => {
           setEdit(0);
@@ -71,27 +77,26 @@ export default function Breakdown({
                 {exercise
                   .split("_")
                   .map((word) => word[0].toUpperCase() + word.slice(1))
-                  .join(" ")}
-              </label>
+                  .join(" ")}&nbsp;
               <input
                 type="checkbox"
                 id={`${exercise}Toggle`}
                 defaultChecked
                 onChange={(e) =>
                   e.target.checked
-                    ? setShow([...show, exercise])
-                    : setShow([...show].filter((v) => v !== exercise))
+                  ? setShow([...show, exercise])
+                  : setShow([...show].filter((v) => v !== exercise))
                 }
-              />
+                />
+                </label>
             </div>
           );
         })}
       </div>
-      {show.map((exercise) => {
+      {show.map((exercise,ind,arr) => {
         const { mass, reps, variation_templates:variation, vars } = get[exercise].find(
           (v) => v.sid === edit
         );
-        // console.log(exercise, variation)
         const totalReps = reps.reduce((a, v) => a + v);
         const tonnage = mass.reduce((a, v, i) => a + v * reps[i], 0);
         return (
@@ -155,10 +160,13 @@ export default function Breakdown({
               </strong>
               </div>
             ))}
-            <hr />
+            {ind < arr.length - 1 && <hr/>}
           </div>
         );
       })}
+      {windowInfo.scrollPosition > 50 &&
+            <div className="return_to_top" onClick={() =>window.scrollTo({top:0, behavior:"smooth"})}><span>{'\u2191'}</span></div>
+            }
     </div>
   );
 }

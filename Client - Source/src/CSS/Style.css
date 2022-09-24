@@ -6,7 +6,8 @@ Add - Line 540
 Table - Line 776
 Graph - Line 888
 Calendar - Line 979
-Breakdown - Line 1156f
+Breakdown - Line 1156
+Profile - Line 1248
 
 */
 @font-face {
@@ -62,6 +63,7 @@ button {
   font-size: 24px;
   border: black 1px solid;
   font-family: "Cute Font";
+  background-color: transparent;
 }
 
 input {
@@ -434,6 +436,8 @@ input {
 .all_entries_container {
   width: 1000px;
   border: #353535 4px solid;
+  padding-bottom: 5px;
+  margin-bottom: 25px;
   background-color: #d9d9d9;
   box-sizing: border-box;
   display: flex;
@@ -825,11 +829,9 @@ input {
   transform: translateX(-50%);
   left: 50%;
   transition: left 0.3s;
-  animation: to_center 0.3s ease forwards;
 }
 .calendar_page_container .calendar_container.calendar_container_active {
   left: calc(50% + 100px);
-  animation: to_right 0.3s ease forwards;
 }
 .calendar_page_container .calendar_container .calendar {
   border-left: #353535 15px solid;
@@ -921,9 +923,12 @@ input {
 /* Breakdown Section */
 .breakdown_container {
   width: 80%;
+  margin-top: 25px;
+  margin-bottom: 25px;
   background-color: #d9d9d9;
   border-right: #353535 5px solid;
   border-left: #353535 5px solid;
+  border-bottom: #353535 5px solid;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -933,6 +938,23 @@ input {
   width: fit-content;
   margin: 0;
 }
+.breakdown_container .button_container {
+  background-color: #353535;
+  width: 100%;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+.breakdown_container .button_container button {
+  background-color: transparent;
+  border: 0;
+  margin: 0;
+  color: white;
+  font-size: 28px;
+}
+.breakdown_container .button_container button:hover {
+  background-color: #555;
+}
 .breakdown_container .session_aggregates {
   width: 100%;
   font-size: 42px;
@@ -941,6 +963,9 @@ input {
 }
 .breakdown_container .show_exercises {
   width: 100%;
+  margin-top: 10px;
+  background-color: #353535;
+  color: white;
   display: flex;
   justify-content: space-evenly;
 }
@@ -963,7 +988,59 @@ input {
 .breakdown_container .exercise_container .set_lines {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
+}
+.breakdown_container .return_to_top {
+  transform: translateX(50%);
+  right: 5%;
+}
+
+/* Profile section */
+.profile_container {
+  background-color: #353535;
+  border: #555 5px double;
+  border-radius: 5px;
+  margin-top: 25px;
+  color: white;
+  width: 40%;
+  padding: 15px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.profile_container h1 {
+  text-align: center;
+  margin-left: 0;
+}
+.profile_container hr {
+  width: 80%;
+  color: #555;
+}
+.profile_container form {
+  display: flex;
+  flex-direction: column;
+}
+.profile_container label {
+  display: flex;
   justify-content: space-between;
+  padding: 15px;
+}
+.profile_container label input {
+  width: 40%;
+  font-size: 32px;
+  text-align: center;
+}
+.profile_container button {
+  color: white;
+  border: #555 5px solid;
+  margin: 0;
+  font-size: 48px;
+  margin-top: 15px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.profile_container button:hover {
+  background-color: #555;
 }
 
 /*# sourceMappingURL=Style.css.map */

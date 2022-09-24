@@ -182,7 +182,7 @@ export default function Log() {
 
     return (
       <div>
-        {sidList.map((sidVal) => {
+        {sidList.map((sidVal, ind, arr) => {
           let exerciseCall = get.sessions.find(
             (v) => v.sid === sidVal
           ).exercises;
@@ -219,6 +219,7 @@ export default function Log() {
                     onClick={() => {
                       setEdit(sidVal);
                       setPage(BREAK);
+
                     }}
                   >
                     View Breakdown
@@ -286,7 +287,7 @@ export default function Log() {
                 );
               })}
               </div>
-              <hr />
+              {ind < arr.length - 1 && <hr/>}
             </div>
           );
         })}
@@ -338,6 +339,52 @@ export default function Log() {
             cal_container_ref.current.classList.toggle("calendar_container_active")
             cal_colour_ref.current.classList.toggle("colour_container_active")}}>
             <h2>Colours</h2>
+          </div>
+          </>
+        )
+    } else if (page === BREAK) {
+        return (
+          <>
+          {goBack}
+          <div className="center_text h2" 
+            onClick={() => {
+                setEdit(0);
+                setPage(LOG);
+            }}>
+            <h2>Edit this Session</h2>
+          </div>
+          </>
+        )
+    } else if (page === EQUIV) {
+        return (
+          <>
+          {goBack}
+          <div className="center_text h2" 
+            onClick={() => {
+              const options = document.getElementById("options");
+              options.style.getPropertyValue("display") === "grid"
+                ? options.style.setProperty("display", "none")
+                : options.style.setProperty("display", "grid");
+            }}>
+            <h2>Options</h2>
+          </div>
+          <div className="center_text h2" 
+            onClick={() => {
+              const options = document.getElementById("highlightDiv");
+              options.style.getPropertyValue("display") === "grid"
+                ? options.style.setProperty("display", "none")
+                : options.style.setProperty("display", "grid");
+            }}>
+            <h2>Highlighter</h2>
+          </div>
+          <div className="center_text h2" 
+            onClick={() => {
+              const options = document.getElementById("filter");
+              options.style.getPropertyValue("display") === "grid"
+                ? options.style.setProperty("display", "none")
+                : options.style.setProperty("display", "grid");
+            }}>
+            <h2>Filter</h2>
           </div>
           </>
         )
@@ -594,6 +641,7 @@ export default function Log() {
           setEdit={setEdit}
           setPage={setPage}
           setGoToMonthYear={setGoToMonthYear}
+          windowInfo={windowInfo}
         />
       );
     else if (page === ADD)
@@ -647,7 +695,13 @@ export default function Log() {
           <div className="dropstem">
             <h3>{user.username.length > 6 ? `${user.username}` : `Logged in as ${user.username}`}</h3>
           </div>
-          <div className="dropdown"><Logout /><div className="change_password"><span>Change Password</span></div></div>
+          <div className="dropdown">
+            <Logout />
+            <div className="change_password" 
+              onClick={() => setPage(PROFILE)}>
+              <span>Change Password</span>
+            </div>
+          </div>
         </div>
       </div>
       

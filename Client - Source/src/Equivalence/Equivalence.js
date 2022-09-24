@@ -98,36 +98,6 @@ function App() {
 
   return (
     <>
-      <button
-        onClick={() => {
-          const options = document.getElementById("options");
-          options.style.getPropertyValue("display") === "grid"
-            ? options.style.setProperty("display", "none")
-            : options.style.setProperty("display", "grid");
-        }}
-      >
-        Toggle Options
-      </button>
-      <button
-        onClick={() => {
-          const options = document.getElementById("highlightDiv");
-          options.style.getPropertyValue("display") === "grid"
-            ? options.style.setProperty("display", "none")
-            : options.style.setProperty("display", "grid");
-        }}
-      >
-        Toggle Highlighter
-      </button>
-      <button
-        onClick={() => {
-          const options = document.getElementById("filter");
-          options.style.getPropertyValue("display") === "grid"
-            ? options.style.setProperty("display", "none")
-            : options.style.setProperty("display", "grid");
-        }}
-      >
-        Toggle Filter
-      </button>
       <div id="appDiv">
         <form>
           <TableParameters
