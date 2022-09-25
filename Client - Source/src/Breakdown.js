@@ -152,7 +152,7 @@ export default function Breakdown({
             })}
             Templates:&nbsp;
             {variation.map((v, i, a) => (
-              <div>
+              <div key={`${exercise}variation${i}`}>
               <strong key={`variation${i}`}>
                 {i + 1}&nbsp;
                 {v.filter(vari=>!!vari).toString().replace(/,/g, ", ")}

@@ -21,7 +21,7 @@ export default function Add({
   const [exArr, setExArr] = useState([]);
   const [response, setResponse] = useState(null);
   const [user, setUser] = useState(null);
-  const [redirect, setRedirect] = useState(true);
+  const [redirect, setRedirect] = useState(false);
   const [loading, setLoading] = useState(false);
   const link = useNavigate();
 
@@ -60,7 +60,7 @@ export default function Add({
       url: `${backend}/sessions/${user.uid}`,
     })
       .then((res) => {
-        setLoading(false);
+        // setLoading(false);
         setResponse(res.data);
       })
       .then((res) =>
@@ -316,7 +316,11 @@ export default function Add({
         onClick={() =>window.scrollTo({top:0, behavior:"smooth"})}>
         <span>{'\u2191'}</span>
       </div>}
-      {response && response}
+      {response && 
+      <div className="feedback_container_add">
+        {response}
+      </div>
+      }
       {loading && <div className="add_spinner"><Spinner /></div>}
     </div>
     </>

@@ -214,7 +214,7 @@ export default function Log() {
               }}
             >
               <div className="top_line">
-                {baseTimeString.slice(0,6) + baseTimeString.slice(8,15) + baseTimeString.slice(18)}
+                {baseTimeString.slice(0,6) + baseTimeString.slice(8,16) + baseTimeString.slice(19)}
                   <button
                     onClick={() => {
                       setEdit(sidVal);
@@ -348,8 +348,7 @@ export default function Log() {
           {goBack}
           <div className="center_text h2" 
             onClick={() => {
-                setEdit(0);
-                setPage(LOG);
+              setPage(EDIT)
             }}>
             <h2>Edit this Session</h2>
           </div>
@@ -631,6 +630,7 @@ export default function Log() {
           dateFilter={dateFilter}
           varFilter={varFilter}
           setVarFilter={setVarFilter}
+          windowInfo={windowInfo}
         />
       );
     else if (page === BREAK)

@@ -1,14 +1,15 @@
-/* Contents
+/* 
+    Contents
 Login and Register - Line 51
 Spinner - Line 186
 Log - Line 236
-Add - Line 540
+Add - Line 591
 Table - Line 776
 Graph - Line 888
 Calendar - Line 979
 Breakdown - Line 1156
 Profile - Line 1248
-
+Edit - Line 1304
 */
 @font-face {
   font-family: "Cute Font";
@@ -215,6 +216,7 @@ input {
   color: white;
 }
 .navbar.log h1 {
+  line-height: 50px;
   margin-right: 30px;
 }
 .navbar.log div h2 {
@@ -226,6 +228,8 @@ input {
   justify-content: center;
   align-items: center;
   padding: 0 25px;
+  padding-top: 2px;
+  box-sizing: border-box;
 }
 .navbar.log .center_text.h2:hover {
   background-color: #555;
@@ -318,23 +322,17 @@ input {
 }
 
 .active_filter {
-  margin-left: calc(100% - 1000px);
+  margin-left: 250px;
 }
 
 .exercise_filter {
   transition: left 0.3s;
   position: fixed;
-  width: calc(100% - 1000px);
+  width: 250px;
   height: 100%;
   background-color: #353535;
-  left: calc(-100% + 1000px);
+  left: -250px;
   display: flex;
-}
-@media (width < 1250px) {
-  .exercise_filter {
-    width: 250px;
-    left: -250px;
-  }
 }
 .exercise_filter.active_exercise_filter {
   left: 0px;
@@ -344,7 +342,7 @@ input {
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-width: thin;
 }
 .exercise_filter .filter_set::-webkit-scrollbar {
@@ -524,11 +522,16 @@ input {
   display: flex;
   justify-content: center;
   margin-left: 250px;
-  margin-top: 10px;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 25px;
+  z-index: 10000;
+  background-color: rgba(53, 53, 53, 0.3137254902);
+  border-radius: 5px;
 }
 .add_spinner .spinner {
-  border-top-color: #353535;
-  border-right-color: black;
+  border-top-color: #d9d9d9;
+  border-right-color: #c1c1c1;
   padding: 0;
 }
 
@@ -648,6 +651,12 @@ input {
   bottom: 50px;
   right: 20px;
 }
+.add_container form .date_container {
+  margin-bottom: 10px;
+}
+.add_container form .date_container label {
+  padding: 0;
+}
 .add_container form .date_container label h1 {
   margin: 0 auto;
   width: fit-content;
@@ -661,6 +670,17 @@ input {
 }
 .add_container h1 {
   color: black;
+}
+
+.feedback_container_add {
+  position: fixed;
+  bottom: 10px;
+  background-color: rgba(253, 99, 99, 0.1450980392);
+  font-variant: small-caps;
+  text-align: center;
+  border-radius: 5px;
+  padding: 0 15px !important;
+  margin-left: 250px;
 }
 
 /* Tonnage section */
@@ -1041,6 +1061,244 @@ input {
 }
 .profile_container button:hover {
   background-color: #555;
+}
+
+/* Edit section */
+.edit_page_container {
+  position: absolute;
+  left: 205px;
+  top: 50px;
+  display: flex;
+  justify-content: center;
+  width: calc(100% - 205px);
+}
+
+.edit_container {
+  background-color: #d9d9d9;
+  border-right: #353535 5px solid;
+  border-left: #353535 5px solid;
+  border-bottom: #353535 5px solid;
+  width: 90%;
+}
+.edit_container div {
+  margin: 10px 0;
+}
+.edit_container input {
+  font-size: 32px;
+  height: min-content;
+  width: 8ch;
+}
+.edit_container select {
+  font-size: 32px;
+  height: min-content;
+}
+.edit_container button {
+  font-size: 32px;
+  border-radius: 5px;
+  border: none;
+}
+.edit_container .top_buttons {
+  background-color: #353535;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-around;
+}
+.edit_container .top_buttons button {
+  color: white;
+  border: none;
+  margin: 0;
+}
+.edit_container .top_buttons button:hover {
+  background-color: #555;
+}
+.edit_container .date_line {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2%;
+  margin: 10px 0;
+}
+.edit_container .date_line label {
+  font-size: 42px;
+}
+.edit_container .date_line input {
+  width: 13ch;
+  font-size: 32px;
+  background-color: #c1c1c1;
+}
+.edit_container .date_line input:last-of-type {
+  width: 11ch;
+}
+.edit_container .existing_exercise, .edit_container .added_fieldset {
+  margin: 0 15px;
+  font-size: 36px;
+}
+.edit_container .existing_exercise input, .edit_container .added_fieldset input {
+  background-color: #c1c1c1;
+  font-size: 32px;
+}
+.edit_container .existing_exercise button, .edit_container .added_fieldset button {
+  background-color: #c1c1c1;
+}
+.edit_container .existing_exercise .top_line, .edit_container .added_fieldset .top_line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.edit_container .existing_exercise .top_line strong, .edit_container .added_fieldset .top_line strong {
+  font-size: 42px;
+}
+.edit_container .existing_exercise .top_line strong.added, .edit_container .added_fieldset .top_line strong.added {
+  text-decoration: underline;
+  text-decoration-color: #5fb95f;
+  text-decoration-thickness: 4px;
+}
+.edit_container .existing_exercise .top_line button, .edit_container .added_fieldset .top_line button {
+  border: 0;
+  background-color: #fd6363;
+  height: fit-content;
+  border-radius: 5px;
+  font-size: 32px;
+}
+.edit_container .existing_exercise .second_line, .edit_container .added_fieldset .second_line {
+  display: flex;
+  justify-content: center;
+}
+.edit_container .existing_exercise .second_line input, .edit_container .added_fieldset .second_line input {
+  width: 3ch;
+  text-indent: 0.5ch;
+}
+.edit_container .existing_exercise .macro_line_one, .edit_container .existing_exercise .macro_line_two, .edit_container .added_fieldset .macro_line_one, .edit_container .added_fieldset .macro_line_two {
+  display: flex;
+  justify-content: space-around;
+}
+.edit_container .existing_exercise .macro_line_one input, .edit_container .existing_exercise .macro_line_two input, .edit_container .added_fieldset .macro_line_one input, .edit_container .added_fieldset .macro_line_two input {
+  width: 6ch;
+  text-indent: 0.5ch;
+}
+.edit_container .existing_exercise .set_line, .edit_container .added_fieldset .set_line {
+  display: grid;
+  justify-items: start;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.edit_container .existing_exercise .set_line input, .edit_container .added_fieldset .set_line input {
+  width: 6ch;
+  text-indent: 0.5ch;
+}
+.edit_container .existing_exercise .set_line strong, .edit_container .added_fieldset .set_line strong {
+  justify-self: start;
+}
+.edit_container .existing_exercise .template_controls, .edit_container .added_fieldset .template_controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 0;
+}
+.edit_container .existing_exercise .templates_container, .edit_container .added_fieldset .templates_container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  white-space: nowrap;
+  overflow-x: auto;
+  margin-top: 0;
+  scrollbar-width: thin;
+}
+.edit_container .existing_exercise .templates_container::-webkit-scrollbar, .edit_container .added_fieldset .templates_container::-webkit-scrollbar {
+  height: 5px;
+  background-color: #c1c1c1;
+}
+.edit_container .existing_exercise .templates_container::-webkit-scrollbar-thumb, .edit_container .added_fieldset .templates_container::-webkit-scrollbar-thumb {
+  background-color: #353535;
+}
+.edit_container .existing_exercise .templates_container .template_container, .edit_container .added_fieldset .templates_container .template_container {
+  margin: 0;
+}
+.edit_container .existing_exercise .custom_line, .edit_container .added_fieldset .custom_line {
+  display: flex;
+  justify-content: space-around;
+}
+
+.missing_exercises_container {
+  position: fixed;
+  height: 100%;
+  background-color: #353535;
+  width: 205px;
+  left: 0;
+  top: 0;
+}
+
+.missing_exercises {
+  margin-top: 50px;
+  height: calc(100% - 50px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+}
+.missing_exercises::-webkit-scrollbar {
+  width: 5px;
+  background-color: #353535;
+}
+.missing_exercises::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+}
+.missing_exercises button {
+  color: white;
+  border: none;
+  border-radius: 5px;
+  width: 90%;
+  text-align: start;
+}
+.missing_exercises button:hover {
+  background-color: #555;
+}
+.missing_exercises button.added_lift {
+  color: #5fb95f;
+}
+
+.load_container_edit {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  top: 25px;
+  left: calc(50% + 102.5px);
+  background-color: rgba(53, 53, 53, 0.3137254902);
+}
+
+.feedback_container_edit {
+  position: fixed;
+  bottom: 10px;
+  background-color: rgba(253, 99, 99, 0.1450980392);
+  font-variant: small-caps;
+  text-align: center;
+  border-radius: 5px;
+  padding: 0 15px;
+}
+
+.submit_button_edit {
+  transform: translate(0%, 0%);
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background-color: #5fb95f;
+  border: #353535 2px solid;
+  border-radius: 5px;
+  font-size: 32px;
+}
+
+.return_to_top_edit {
+  position: fixed;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: #353535;
+  color: white;
+  border-radius: 50%;
+  bottom: 75px;
+  right: 15px;
 }
 
 /*# sourceMappingURL=Style.css.map */

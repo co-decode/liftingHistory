@@ -57,7 +57,7 @@ function createUpdateFromObject(sid, lifts) {
                 tempNo === templates.length - 1 
                 ? acc + `{${template}}` 
                 : acc + `{${template}},`, ``)
-        output = output.concat(`UPDATE ${exerciseArray[i]} SET mass = '{${lifts[exerciseArray[i]].mass}}', reps = '{${lifts[exerciseArray[i]].reps}}', variation_templates = '{${variation_templates_string}}', vars = '{${lifts[exerciseArray[i]].vars}}' WHERE sid = ${sid};`)
+        output = output.concat(`UPDATE ${exerciseArray[i]} SET mass = '{${lifts[exerciseArray[i]].mass}}', reps = '{${lifts[exerciseArray[i]].reps}}', variation_templates = '{${variation_templates_string.replace("'", "''")}}', vars = '{${lifts[exerciseArray[i]].vars}}' WHERE sid = ${sid};`)
     }
     return output;
 }

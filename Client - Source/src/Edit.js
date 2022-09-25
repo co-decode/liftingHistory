@@ -24,7 +24,8 @@ export default function Edit({
   setDateFilter,
   dateFilter,
   varFilter,
-  setVarFilter
+  setVarFilter,
+  windowInfo
 }) {
   const [update, setUpdate] = useState(null);
   const [feedback, setFeedback] = useState(null);
@@ -257,8 +258,8 @@ export default function Edit({
           ).toISOString();
           return (
             <div key={sidVal}>
-              <>
-                <label htmlFor="date">Date of Session</label>
+              <div className="date_line">
+                <label htmlFor="date">Date of Session:</label>
                 <input
                   id="date"
                   type="date"
@@ -272,7 +273,7 @@ export default function Edit({
                 />
                 <input
                   type="time"
-                  defaultValue={time.slice(11, 19)}
+                  defaultValue={time.slice(11, 16)}
                   onChange={(e) =>
                     setUpdate({
                       ...update,
@@ -280,7 +281,7 @@ export default function Edit({
                     })
                   }
                 />
-              </>
+              </div>
               {exerciseCall.map((exercise) => {
 
                 if (!exerciseRefs.current[exercise]) exerciseRefs.current = {...exerciseRefs.current, [exercise]: {}}
@@ -295,32 +296,24 @@ export default function Edit({
                 const filtered = get[exercise].find(
                   (v) => v.sid === sidVal
                 );
-                // function variationArray() {
-                //   if (filtered.variation.length < variationObject[exercise].length) {
-                //     return Array(variationObject[exercise].length).fill(null).map((v,i)=> filtered.variation[i] || "")
-                //   }
-                //   else return filtered.variation
-                // }
                 if (!update) return null
-                // const varArray = update.lifts[exercise]
-                //   .variation_templates
-                  /* .flat()
-                  .reduce((acc, vari) => !!vari && !acc.includes(vari) ? [...acc, vari] : acc, []) */
                 return (
-                  <div key={exercise}>
+                  <div key={exercise} className="existing_exercise">
+                    <div className="top_line">
+                    <strong>
+                      {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}:
+                    </strong>
                     <button onClick={() => loseLift(exercise)}>
                       {update?.lostLifts.includes(exercise)
                         ? "Re-introduce "
                         : "Remove "}
                       {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}
-                    </button>{" "}
-                    <br />
-                    <strong>
-                      {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}:
-                    </strong>
+                    </button>
+                    </div>
                     {update?.lostLifts.includes(exercise) ? null : (
                       <div>
-                        <label htmlFor={`${exercise}Sets`}>Sets:</label>
+                        <div className="second_line">
+                        <label htmlFor={`${exercise}Sets`}><strong>Sets:</strong>&nbsp;</label>
                         <input
                           id={`${exercise}Sets`}
                           placeholder={filtered.mass.length}
@@ -369,9 +362,11 @@ export default function Edit({
                               });
                             }
                           }}
-                        /><br/>
-                        <div>
-                          Fill
+                        />
+                        </div>
+                        <div className="macro_line_one">
+                          <label>
+                          Fill&nbsp;
                           <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], fields: e.target.value}})} 
                                   ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {fields: el}}}
                                   defaultValue={macroState[exercise].fields}>
@@ -379,11 +374,15 @@ export default function Edit({
                             <option>Reps</option>
                             <option>Both</option>
                             <option>Template</option>
-                          </select>&nbsp;
-                          with <input type="number" max="999" min="0" 
+                          </select>
+                          </label>
+                          <label>
+                          with&nbsp; <input type="number" max="999" min="0" 
                             onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], number: e.target.value}})} 
-                            ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], number: el}}} style={{ width: "9ch" }} 
-                            defaultValue={macroState[exercise].number}/> for&nbsp;
+                            ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], number: el}}}
+                            defaultValue={macroState[exercise].number}/>
+                          </label>
+                          <label>for&nbsp;
                           <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], range: e.target.value}})} 
                                   ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], range: el}}}
                                   defaultValue={macroState[exercise].range}>
@@ -392,8 +391,11 @@ export default function Edit({
                             <option>Even</option>
                             <option>Odd</option>
                           </select>
+                          </label>
+                          </div>
+                          <div className="macro_line_two">
                           { macroState[exercise].range === "Range" && <>
-                          {": Sets "}
+                          {"Sets"}
                           <input type="number" max="20" min="0" 
                             onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], from: e.target.value}})}
                             ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], from: el}}} style={{ width: "5ch" }} 
@@ -410,12 +412,10 @@ export default function Edit({
                           .map((set, setNo) => {
                             // const templateNumber = update.lifts[exercise].vars[setNo]
                             return (
-                              <div key={`${exercise}set${setNo}`}>
-                                {" "}
-                                Set {setNo + 1} -{" "}
+                              <div key={`${exercise}set${setNo}`} className="set_line">
+                                <strong>Set {setNo + 1}</strong>
                                 <label htmlFor={`${exercise}Set${setNo}mass`}>
-                                  Mass:
-                                </label>
+                                  Mass:&nbsp;
                                 <input
                                   id={`${exercise}Set${setNo}mass`}
                                   ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
@@ -441,9 +441,10 @@ export default function Edit({
                                   }}
                                   defaultValue={filtered.mass[setNo]}
                                 />
-                                <label htmlFor={`${exercise}Set${setNo}reps`}>
-                                  Reps:
                                 </label>
+
+                                <label htmlFor={`${exercise}Set${setNo}reps`}>
+                                  Reps:&nbsp;
                                 <input
                                   id={`${exercise}Set${setNo}reps`}
                                   ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
@@ -469,7 +470,9 @@ export default function Edit({
                                   }}
                                   defaultValue={filtered.reps[setNo]}
                                 />
-                                <label>Template
+                                </label>
+
+                                <label>Template:&nbsp;
                                   <select
                                     defaultValue={update.lifts[exercise].vars[setNo]}
 
@@ -503,7 +506,8 @@ export default function Edit({
                           })}
 
                         <div>
-                          Variation
+                          <div className="template_controls">
+                          Variations:
                           <div style={{display: "inline-block"}}>
 
                             {  extraVarFields[exercise].length < 5 &&
@@ -533,12 +537,12 @@ export default function Edit({
                             </button>}
 
                           </div>
-
-                          <div style={{display:"flex"}}>
+                          </div>
+                          <div className="templates_container">
                           {templateArrays && templateArrays[exercise].map((temp, tempNo) => { 
                             // console.log(templateArrays, exercise, temp, tempNo)
                             return (
-                              <div key={`${exercise}template${tempNo}`} style={{display: "inline-block", marginRight:"20px"}}>
+                              <div key={`${exercise}template${tempNo}`} className="template_container" style={{display: "inline-block"}}>
                                 Template {`${tempNo + 1}`}
                                 {update.lifts[exercise].variation_templates[tempNo] // had no [tempNo] before, not sure if this is breaking
                                 && temp.filter(v=> v !== null).map((variation, varNo) => {
@@ -546,7 +550,7 @@ export default function Edit({
                                   return (
                                     <div key={`${exercise}_template_${tempNo}_var_${varNo}`}>
                                       <label htmlFor={`${exercise}variation`}>
-                                        {varNo + 1}
+                                        {varNo + 1}&nbsp;
                                       </label>
                                       <select
                                         id={`${exercise}variation`}
@@ -622,8 +626,10 @@ export default function Edit({
                                 }}>-</button>}
                               </div>
                           )})}
-                        </div>{ update.lifts[exercise].variation_templates.some(temp => temp.length > variationObject[exercise].length) &&
-                          <><label> New Custom:
+                        </div>
+                        { update.lifts[exercise].variation_templates.some(temp => temp.length > variationObject[exercise].length) &&
+                          <div className="custom_line">
+                          <label> New Custom Tag:&nbsp;
                             <input type='text' ref={(el) => customRefs.current[exercise] = el}/>
                           </label>
                           <button onClick={() => 
@@ -631,7 +637,8 @@ export default function Edit({
                                 [exercise]: [...customAdditions[exercise], 
                                   customRefs.current[exercise].value]})}>
                             Add New Variation
-                          </button></>}
+                          </button>
+                          </div>}
                         </div>
                       </div>
                     )}
@@ -694,12 +701,12 @@ export default function Edit({
     if (
       Object.keys(update.lifts).some((exercise) =>
         update.lifts[exercise].variation_templates
-        .some((template) => template.some((v) => !v.trim())
+        .some((template) => template.some((v) => v === null || !v.trim())
         )) 
       ||
       Object.keys(update.newLifts).some((exercise) =>
         update.newLifts[exercise].variation_templates
-        .some((template) => template.some((v) => !v.trim())
+        .some((template) => template.some((v) => v === null || !v.trim())
       ))
     ) {
       setFeedback("Incomplete Template Fields");
@@ -813,11 +820,18 @@ export default function Edit({
     }}); return null}
 
     return (
-      <fieldset>
+      <div className="added_fieldset">
         <div>
-          <label htmlFor={`${exercise}Sets`}>Sets:</label>
+          <div className="top_line">
+          <strong className="added">
+            {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}:
+          </strong>
+          </div>
+          <div className="second_line">
+          <label htmlFor={`${exercise}Sets`}><strong>Sets:</strong>&nbsp;</label>
           <input
             id={`${exercise}Sets`}
+            placeholder="1"
             onChange={(e) => {
               if (e.target.value >= 1 && e.target.value <= 20) {
                 setFields({ ...fields, [exercise]: parseInt(e.target.value) });
@@ -859,9 +873,11 @@ export default function Edit({
                 });
               }
             }}
-          /><br/>
-          <div>
-            Fill
+          />
+          </div>
+          <div className="macro_line_one">
+            <label>
+            Fill&nbsp;
             <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], fields: e.target.value}})} 
                     ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {fields: el}}}
                     defaultValue={macroState[exercise].fields}>
@@ -869,11 +885,15 @@ export default function Edit({
               <option>Reps</option>
               <option>Both</option>
               <option>Template</option>
-            </select>&nbsp;
+            </select>
+            </label>
+            <label>
             with <input type="number" max="999" min="0" 
               onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], number: e.target.value}})} 
-              ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], number: el}}} style={{ width: "9ch" }} 
-              defaultValue={macroState[exercise].number}/> for&nbsp;
+              ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], number: el}}} 
+              defaultValue={macroState[exercise].number}/>
+            </label>
+            <label>for&nbsp;
             <select onChange={(e) => setMacroState({...macroState, [exercise]: {...macroState[exercise], range: e.target.value}})} 
                     ref={(el) => macroRefs.current = {...macroRefs.current, [exercise]: {...macroRefs.current[exercise], range: el}}}
                     defaultValue={macroState[exercise].range}>
@@ -882,6 +902,9 @@ export default function Edit({
               <option>Even</option>
               <option>Odd</option>
             </select>
+            </label>
+          </div>
+          <div className="macro_line_two">
             { macroState[exercise].range === "Range" && <>
             {": Sets "}
             <input type="number" max="20" min="0" 
@@ -900,9 +923,9 @@ export default function Edit({
             .map((set, setNo) => {
               if (!exerciseRefs.current[exercise]) exerciseRefs.current = {...exerciseRefs.current, [exercise]: {}}
               return (
-                <div key={`${exercise}set${setNo}`}>
-                  Set {setNo + 1} - &nbsp;
-                  <label htmlFor={`${exercise}Set${setNo}mass`}>Mass:</label>
+                <div key={`${exercise}set${setNo}`} className="set_line">
+                  Set {setNo + 1}
+                  <label htmlFor={`${exercise}Set${setNo}mass`}>Mass:&nbsp;
                   <input
                     id={`${exercise}Set${setNo}mass`}
                     ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
@@ -927,7 +950,8 @@ export default function Edit({
                       });
                     }}
                   />
-                  <label htmlFor={`${exercise}Set${setNo}reps`}>Reps:</label>
+                  </label>
+                  <label htmlFor={`${exercise}Set${setNo}reps`}>Reps:&nbsp;
                   <input
                     id={`${exercise}Set${setNo}reps`}
                     ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
@@ -952,7 +976,8 @@ export default function Edit({
                       });
                     }}
                   />
-                  <label>Template
+                  </label>
+                  <label>Template:&nbsp;
                   <select
                     type="number"
                     step="0.25"
@@ -993,8 +1018,9 @@ export default function Edit({
             })}
 
           <div>
-            {" "}
-            Variation
+            <div className="template_controls">
+
+            Variations:
             <div>
               { extraVarFields[exercise].length < 5 && 
               <button 
@@ -1024,6 +1050,9 @@ export default function Edit({
               >Subtract a template</button>
               }
             </div>
+            </div>
+
+            <div className="templates_container">
             {update.newLifts[exercise].variation_templates.map((temp, tempNo) => {
               return (
                 <div key={`${exercise}_template_${tempNo}`}>
@@ -1064,6 +1093,7 @@ export default function Edit({
                   </select>
                 </div>
               )})}
+              
               {update.newLifts[exercise].variation_templates[tempNo].length < 5 &&
                 <button onClick={() => {
                   setUpdate({
@@ -1088,7 +1118,9 @@ export default function Edit({
                       ? extraFields + 1 
                       : extraFields)})
                 }}>+</button>
-                }{ update.newLifts[exercise].variation_templates[tempNo].length > variationObject[exercise].length &&
+                }
+                
+                { update.newLifts[exercise].variation_templates[tempNo].length > variationObject[exercise].length &&
                 <button onClick={()=> {
                   setUpdate({
                     ...update,
@@ -1113,10 +1145,11 @@ export default function Edit({
               )
             })
             }
+            </div>
             {update.newLifts[exercise].variation_templates
               .some(temp => temp.length > variationObject[exercise].length) &&
-            <>
-              <label> New Custom:
+            <div className="custom_line">
+              <label> New Custom Tag:&nbsp;
                 <input type='text' ref={(el) => customRefs.current[exercise] = el}/>
               </label>
               <button onClick={() => 
@@ -1125,11 +1158,11 @@ export default function Edit({
                       customRefs.current[exercise].value]})}>
                 Add New Variation
               </button>
-            </>}
+            </div>}
           </div>
         </div>
 
-      </fieldset> 
+      </div> 
     );
   }
 
@@ -1147,7 +1180,7 @@ export default function Edit({
 
   const addExercise = (exercise) => {
     let customsComb = []
-    if (get[exercise]){
+    if (get[exercise]) {
     get[exercise].forEach((sess) =>
       sess.variation_templates.forEach(template=> template.forEach(
         (variation) =>
@@ -1211,8 +1244,16 @@ export default function Edit({
     }
   };
 
+  const missingSessionExercises = exerciseArray.sort()
+    .filter(
+      (exercise) =>
+        !get.sessions.find((session) => session.sid === edit).exercises.includes(exercise)
+    )
+
   return (
-    <div>
+    <div className="edit_page_container">
+    <div className="edit_container">
+      <div className="top_buttons">
       <button
         onClick={() => {
           setEdit(0); 
@@ -1228,37 +1269,57 @@ export default function Edit({
       >
         Cancel and view Breakdown
       </button>
-      {/* <button onClick={() => console.log(exerciseRefs.current)}>log exerciseRefs</button><br/>
-      <button onClick={() => console.log(extraVarFields)}>log extraVarFields</button><br/>
-      <button onClick={() => console.log(templateArrays)}>log templateArrays</button><br/>
-      <button onClick={() => console.log(update)}>log Update</button><br/> */}
-      <button onClick={() =>submitUpdate(update)}>Submit Update</button><br/><br/>
-      {update && exerciseArray
-            .filter(
-              (v) =>
-                !get.sessions.find((v) => v.sid === edit).exercises.includes(v)
-            )
-            .map((exercise) => {
-              return (
-                <div key={`missing${exercise}`} style={{display:"inline-block"}}>
-                  <button style={{display:"inline-block"}}
-                    onClick={() => { 
-                      update.newLifts[exercise]
-                        ? removeExercise(exercise)
-                        : addExercise(exercise);
-                      
-                    }}
-                  >
-                    {update.newLifts[exercise] ? `Remove ` : `Add `}
-                    {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}
-                  </button>
-                  {update.newLifts[exercise] && addFieldset(exercise)}
-                </div>
-              );
-            })}
+      </div>
+      <button className="submit_button_edit" onClick={() =>submitUpdate(update)}>Submit Update</button>
+      
       {returnSid(get, [edit])}
+      {update && Object.keys(update.newLifts).map(exercise => {
+        return (
+          <div key={`${exercise}NewFieldset`}>
+            {addFieldset(exercise)}
+          </div>
+        )
+      })}
+    </div>
+    {loading &&
+    <div className="load_container_edit">
+      <Spinner/>
+    </div>
+    }
+    <div className="feedback_container_edit">
       {feedback}
-      {loading && <Spinner/>}
+    </div>
+    <div className="missing_exercises_container">
+      <div className="missing_exercises">
+      {update && missingSessionExercises
+        .map((exercise) => {
+          return (
+            <div key={`missing${exercise}`} style={{display:"inline-block"}}>
+              <button style={{display:"inline-block"}}
+                onClick={(e) => { 
+                  if (update.newLifts[exercise]) {
+                    removeExercise(exercise)
+                    e.target.classList.remove("added_lift")
+                  }
+                  else {
+                    addExercise(exercise);
+                    e.target.classList.add("added_lift")
+                  }
+                }}
+                >
+                {update.newLifts[exercise] ? `Remove ` : `Add `}
+                {exercise.split("_").map(word=> word[0].toUpperCase() + word.slice(1)).join(" ")}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+    {windowInfo.scrollPosition > 50 &&
+      <div className="return_to_top_edit" onClick={() =>window.scrollTo({top:0, behavior:"smooth"})}>
+        <span>{'\u2191'}</span>
+      </div>
+    }
     </div>
   );
 }
