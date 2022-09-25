@@ -52,7 +52,7 @@ export const variationObject = {
     ],
     overhead_press: [["Barbell","Dumbbell"],["Strict", "Push"]],
     bicep: [["Standard","Supinated","Hammer","Reverse"], ["Dumbbell", "Barbell"]],
-    tricep: [["Overhead", "Push Down"], ["Dumbbell", "Barbell"]],
+    tricep: [["Overhead", "Push Down", "JM Press"], ["Dumbbell", "Barbell"]],
     grip: [["Hang", "Hold", "Wrist Curl"]],
     lunge: [["Standard", "Split", "Bulgarian"]],
     calf: [["Dumbbell","Back Loaded", "Front Loaded","Seated"]],

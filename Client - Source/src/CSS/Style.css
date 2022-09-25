@@ -606,6 +606,9 @@ input {
   justify-items: center;
   width: 100%;
 }
+.add_container .exercise_fieldset .number_container .set_line input {
+  width: 7ch;
+}
 .add_container .exercise_fieldset .template_container {
   width: 100%;
 }
@@ -910,13 +913,16 @@ input {
 .calendar_page_container .colour_container .colour_frame .colour_scroll::-webkit-scrollbar-thumb {
   background-color: #c1c1c1;
 }
+.calendar_page_container .colour_container .colour_frame span {
+  pointer-events: none;
+  user-select: none;
+  text-indent: 10px;
+  z-index: 1;
+}
 .calendar_page_container .colour_container .colour_frame label {
   display: flex;
   justify-content: space-between;
   position: relative;
-  pointer-events: none;
-  user-select: none;
-  text-indent: 10px;
 }
 .calendar_page_container .colour_container .colour_frame select {
   position: absolute;
@@ -925,7 +931,10 @@ input {
   border: #353535 5px solid;
   pointer-events: all;
   scrollbar-width: thin;
-  z-index: -1;
+  z-index: 0;
+}
+.calendar_page_container .colour_container .colour_frame select:hover {
+  cursor: pointer;
 }
 .calendar_page_container .colour_container .colour_frame option {
   width: 100%;
@@ -1179,10 +1188,10 @@ input {
 .edit_container .existing_exercise .set_line, .edit_container .added_fieldset .set_line {
   display: grid;
   justify-items: start;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 1fr 1fr 1fr;
 }
 .edit_container .existing_exercise .set_line input, .edit_container .added_fieldset .set_line input {
-  width: 6ch;
+  width: 7ch;
   text-indent: 0.5ch;
 }
 .edit_container .existing_exercise .set_line strong, .edit_container .added_fieldset .set_line strong {

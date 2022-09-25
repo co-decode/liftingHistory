@@ -724,6 +724,9 @@ input {
                 justify-items:center;
                 width: 100%;
 
+                input {
+                    width: 7ch;
+                }
 
             }
         }
@@ -1139,13 +1142,17 @@ input {
                 }
             }
 
+            span {
+                pointer-events: none;
+                user-select: none;
+                text-indent: 10px;
+                z-index:1;
+            }
+
             label {
                 display: flex;
                 justify-content: space-between;
                 position:relative;
-                pointer-events: none;
-                user-select: none;
-                text-indent: 10px;
             }
     
             select {
@@ -1155,7 +1162,10 @@ input {
                 border:#353535 5px solid;
                 pointer-events: all;
                 scrollbar-width: thin;
-                z-index:-1;
+                z-index:0;
+                &:hover {
+                    cursor:pointer;
+                }
             }
     
             option {
@@ -1468,11 +1478,11 @@ input {
         .set_line {
             display:grid;
             justify-items: start;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-columns: 0.5fr 1fr 1fr 1fr;
 
             
             input {
-                width: 6ch;
+                width: 7ch;
                 text-indent: 0.5ch;
             }
 

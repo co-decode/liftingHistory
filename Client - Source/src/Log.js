@@ -61,7 +61,6 @@ export default function Log() {
     function resizeListener() {
       const screenWidth = window.innerWidth
       const screenHeight = window.innerHeight
-      console.log('resize')
       setWindowInfo({...windowInfo, screenWidth, screenHeight})
     }
     window.addEventListener("scroll", scrollListener, {passive:true})

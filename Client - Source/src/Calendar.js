@@ -432,15 +432,6 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
     <div className="calendar_page_container">
       <div className="calendar_container" ref={cal_container_ref}>
       <svg className="calendar" ref={svgRef}/>
-      {/* <div className="calendar_control">
-        <label > Go to: &nbsp;
-        <select>
-          {monthString.map(month => <option key={month}>{month}</option>)}
-        </select>
-        </label> 
-        <input type="number" pattern="\d{4}" placeholder="yyyy" maxlength="4" minlength="4" defaultValue={new Date(Date.now()).getFullYear()}/>
-      </div> */}
-
       <label className="calendar_control"> Go to: &nbsp;
         <input 
           type="date" 
@@ -454,10 +445,11 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
     {Object.keys(get).filter(key=> key !== "sessions").sort().map(exercise => {
       if (colourState[exercise] === undefined) setColourState({...colourState, [exercise]: null})
       return (
-          <label key={`color_${exercise}`}>{exercise
+          <label key={`color_${exercise}`}>
+            <span>{exercise
             .split("_")
             .map((word) => word[0].toUpperCase() + word.slice(1))
-            .join(" ")}
+            .join(" ")}</span>
             <select style={{backgroundColor: colourState[exercise] || colourState[exercise]}}
                     onChange={(e)=> setColourState({...colourState, [exercise]: e.target.value})}
                     defaultValue={JSON.parse(localStorage.getItem("liftingLogCalendarColors") || JSON.stringify({exercise: null}))[exercise] || colourState[exercise]}>
