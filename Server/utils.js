@@ -175,15 +175,15 @@ function createGet(uid, exerciseArray = [
 }
 // log(createGet(3))
 
-"SELECT jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises))) from sessions;"
+// "SELECT jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises))) from sessions;"
 
 //This will work vvv
 
-String.raw`SELECT jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises))) sessions, (select jsonb_build_object('bench', jsonb_agg(jsonb_build_object('mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates))) from bench) from sessions;`
+// String.raw`SELECT jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises))) sessions, (select jsonb_build_object('bench', jsonb_agg(jsonb_build_object('mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates))) from bench) from sessions;`
 
-String.raw`SELECT jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises)) sessions, (select jsonb_agg(jsonb_build_object('sid', sid, 'mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates)) bench from bench) from sessions;`
+// String.raw`SELECT jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises)) sessions, (select jsonb_agg(jsonb_build_object('sid', sid, 'mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates)) bench from bench) from sessions;`
 
-String.raw`select array_agg(distinct u.val) from sessions cross join lateral unnest(sessions.exercises) as u(val);`
+// String.raw`select array_agg(distinct u.val) from sessions cross join lateral unnest(sessions.exercises) as u(val);`
 
 function deleteSessionQuery(sid, exerciseArray) {
     let output = ``

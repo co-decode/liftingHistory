@@ -22,8 +22,8 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      // origin: ["https://lifting-log.netlify.app"],
-      origin: ["http://localhost:3000"],
+      origin: ["https://lifting-log.netlify.app"],
+      // origin: ["http://localhost:3000"],
       credentials: true,
     })
   );
@@ -80,7 +80,7 @@ function makeApp(database,  ) {
           (err, result) => {
             if (err) throw err;
             const sid = result.rows[0].sid;
-            console.log(sid);
+            // console.log(sid);
             userPool.query(
               `${createInsertFromObject(id, sid, lifts)}`,
               (err, result) => {
