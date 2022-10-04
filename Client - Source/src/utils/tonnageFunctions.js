@@ -61,7 +61,7 @@ export default function intervalTon(
   
   return (
     <>
-      {exerciseArray.map((exercise) => {
+      {exerciseArray.sort().map((exercise) => {
           // vv A session exists with the variation selected
         if (variationFilter[exercise].length){ 
         const sidsByExerciseByVariation = get[exercise]

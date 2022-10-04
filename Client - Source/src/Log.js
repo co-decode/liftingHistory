@@ -704,9 +704,10 @@ export default function Log() {
         </div>
       </div>
       
-
-      {loading && <Spinner />}
       {returnComponent()}
+      <div className="log_spinner">
+        {loading && <Spinner />}
+      </div>
     </div>
   );
 }

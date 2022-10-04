@@ -8,6 +8,7 @@ export default function Profile({user}) {
     const [response, setResponse] = useState(null)
     const [input, setInput] = useState({1: null, 2: null})
     const [loading, setLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
     const link = useNavigate();
 
     useEffect(() => {
@@ -47,16 +48,24 @@ export default function Profile({user}) {
       <form onSubmit={(e)=>handleSubmit(e)}>
         <label>
           New password:&nbsp;
-          <input type="text" required onChange={(e)=> {setResponse(null); setInput({...input, 1: e.target.value})}}/>
+          <input type={`${showPassword ? "text" : "password"}`} required onChange={(e)=> {setResponse(null); setInput({...input, 1: e.target.value})}}/>
+        <button type="button" className="show_password" 
+        onClick={(e)=>{e.target.classList.toggle("eye_shut"); setShowPassword(!showPassword)}}/>
         </label>
         <label>
           Confirm password:&nbsp;
-          <input type="text" required onChange={(e)=> {setResponse(null); setInput({...input, 2: e.target.value})}}/>
+          <input type="password" required onChange={(e)=> {setResponse(null); setInput({...input, 2: e.target.value})}}/>
         </label>
         <button>Submit Change</button>
       </form>
+      {response && 
+      <div className="profile_response">
       {response}
-      {loading && <Spinner/>}
+      </div>
+      }
+      <div className="profile_spinner">
+        {loading && <Spinner/>}
+      </div>
     </div>
   );
 }

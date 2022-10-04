@@ -4,11 +4,16 @@ import {exerciseArray} from "./utils/variables"
 
 export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowInfo, cal_container_ref, cal_colour_ref }) {
   const svgRef = useRef();
+  const [response, setResponse] = useState(null)
   const [colourState, setColourState] = useState(() => {
     let output ={}
     exerciseArray.forEach((exercise, ind) => 
-      output[exercise] = JSON.parse(localStorage.getItem("liftingLogCalendarColors") || JSON.stringify({exercise: null}))[exercise] 
-      || "#" + (parseInt("ffffff",  16) * Math.random()).toString(16).replace(/\.\w+$/, "").padStart(6, 0) /* + "50" */)
+      output[exercise] = JSON.parse(
+        localStorage.getItem("liftingLogCalendarColors") 
+        || JSON.stringify({exercise: null}))[exercise] 
+        || "#" + (parseInt("ffffff",  16) * Math.random())
+          .toString(16).replace(/\.\w+$/, "")
+          .padStart(6, 0) /* + "50" */)
     return output
   })
   const colorStrings = [
@@ -463,13 +468,19 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
       )
     })}
     </div>
-    <button onClick={()=>{localStorage.setItem("liftingLogCalendarColors", JSON.stringify(
-      Object.keys(colourState)
-      .filter(ex => Object.keys(get).filter(key=> key !== "sessions").includes(ex))
-      .reduce((obj, ex) => obj = {...obj, [ex]: colourState[ex]},{})
-      ))}}>
-      
-      Save colours
+    <button onClick={()=>{
+      localStorage.setItem(
+        "liftingLogCalendarColors", 
+        JSON.stringify(Object.keys(colourState)
+      .filter(ex => 
+        Object.keys(get).filter(key=> key !== "sessions")
+          .includes(ex))
+      .reduce((obj, ex) => 
+        obj = {...obj, [ex]: colourState[ex]},{})
+      ))
+      setResponse("Saved!")
+      setTimeout(()=> setResponse(null), 300)}}>
+      {response ? response : "Save Colours"}
     </button>
       </div>
       </div>

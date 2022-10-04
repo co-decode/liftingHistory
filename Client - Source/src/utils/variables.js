@@ -1,7 +1,7 @@
 export const authenticatedKick = '/log'
 
-export const backend = "http://localhost:3001"
-// export const backend = "https://liftinghistory-production.up.railway.app"
+// export const backend = "http://localhost:3001"
+export const backend = "https://liftinghistory-production.up.railway.app"
 // "https://lifting-history-2-container.herokuapp.com"
 // backend = "https://node-lifting-history2.herokuapp.com"
 
@@ -54,7 +54,7 @@ export const variationObject = {
     bicep: [["Standard","Supinated","Hammer","Reverse"], ["Dumbbell", "Barbell"]],
     tricep: [["Overhead", "Push Down", "JM Press"], ["Dumbbell", "Barbell"]],
     grip: [["Hang", "Hold", "Wrist Curl"]],
-    lunge: [["Standard", "Split", "Bulgarian"]],
+    lunge: [["Standard", "Split", "Bulgarian"], ["Both", "Left", "Right"]],
     calf: [["Dumbbell","Back Loaded", "Front Loaded","Seated"]],
     row: [["Dumbbell", "Barbell","Seal"]],
     shrug: [["Barbell", "Dumbbell"]],
@@ -68,13 +68,13 @@ export const variationObject = {
     hip_thrust: [["Thrust", "Bridge"]],
     hip_abduction: [["Banded", "Weighted"]],
     adductors: [["Banded", "Split Hold", "Machine"]],
-    reverse_flies: [["T", "Y", "I"]],
-    rotator_cuff: [["Dumbbell", "Banded"]],
+    reverse_flies: [["T", "Y", "I"], ["Both", "Left", "Right"]],
+    rotator_cuff: [["Dumbbell", "Banded"], ["Both", "Left", "Right"]],
     pull_over: [["Straight Arm, Elbow"]],
     neck: [["Extension","Flexion", "Side"]],
     nordic: [["Standard","Assisted"]],
     reverse_nordic: [["Full","Wall Assisted"]],
     leg_curl: [["Banded", "Machine"]],
-    flies: [["Dumbbell","Cable"]],
+    flies: [["Dumbbell","Cable"], ["Both", "Left", "Right"]],
     back_extension: [["Diagonal", "Parallel"]]
   };

@@ -476,6 +476,14 @@ input {
   justify-content: space-around;
 }
 
+.log_spinner {
+  position: fixed;
+  bottom: 2%;
+  background-color: rgba(53, 53, 53, 0.3137254902);
+  border-radius: 5px;
+  padding: 2px;
+}
+
 .return_to_top {
   border-radius: 50%;
   background-color: #353535;
@@ -1055,9 +1063,12 @@ input {
   padding: 15px;
 }
 .profile_container label input {
-  width: 40%;
+  width: 50%;
   font-size: 32px;
   text-align: center;
+}
+.profile_container label:first-child {
+  position: relative;
 }
 .profile_container button {
   color: white;
@@ -1070,6 +1081,44 @@ input {
 }
 .profile_container button:hover {
   background-color: #555;
+}
+.profile_container .show_password {
+  width: 25px;
+  height: 25px;
+  background-color: transparent;
+  border: none;
+  position: absolute;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  right: 2%;
+  outline: none;
+  user-select: none;
+  z-index: 10;
+  background-image: url("../Images/eye.svg");
+}
+.profile_container .show_password:hover {
+  background-color: transparent;
+}
+.profile_container .eye_shut {
+  background-image: url("../Images/closed-eye.svg");
+}
+.profile_container .profile_response {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  background-color: #353535;
+  border: #555 double 5px;
+  border-radius: 5px;
+  padding: 0 15px;
+  bottom: 10px;
+}
+.profile_container .profile_spinner {
+  position: fixed;
+  top: 25px;
+  left: 50%;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
 }
 
 /* Edit section */
