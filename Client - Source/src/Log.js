@@ -213,7 +213,7 @@ export default function Log() {
               }}
             >
               <div className="top_line">
-                {baseTimeString.slice(0,6) + baseTimeString.slice(8,16) + baseTimeString.slice(19)}
+                {baseTimeString.replace("/20", "/").replace(":00 ", " ")}
                   <button
                     onClick={() => {
                       setEdit(sidVal);
