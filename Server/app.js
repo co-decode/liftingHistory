@@ -41,10 +41,16 @@ function makeApp(database,  ) {
       secret,
       resave: false,
       saveUninitialized: false,
+      cookie: {
+        sameSite: "Strict",
+      }
     })
   );
   app.use(passport.initialize());
   app.use(passport.session());
+
+  app.enable('trust proxy')
+ 
 
   // -- CRUD Endpoints --
 
