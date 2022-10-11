@@ -110,6 +110,8 @@ export default function Add({
       e.preventDefault();
     }
 
+    if (loading) return
+
     const datePart = dateRefs.current.date.value;
     const timePart = dateRefs.current.time.value;
 

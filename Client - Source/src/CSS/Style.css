@@ -219,9 +219,39 @@ input {
   line-height: 50px;
   margin-right: 30px;
 }
+@media (width < 400px) {
+  .navbar.log h1 {
+    margin: 0 10px;
+  }
+}
 .navbar.log div h2 {
   font-size: 32px;
   margin: 0;
+}
+.navbar.log .calc_svg {
+  background-image: url("../Images/calculator.svg");
+  width: 30px;
+  height: 30px;
+}
+.navbar.log .graph_svg {
+  background-image: url("../Images/graph.svg");
+  width: 30px;
+  height: 30px;
+}
+.navbar.log .list_svg {
+  background-image: url("../Images/list.svg");
+  width: 30px;
+  height: 30px;
+}
+.navbar.log .calendar_svg {
+  background-image: url("../Images/calendar.svg");
+  width: 30px;
+  height: 30px;
+}
+.navbar.log .add_svg {
+  background-image: url("../Images/add.svg");
+  width: 30px;
+  height: 30px;
 }
 .navbar.log .center_text {
   display: flex;
@@ -234,6 +264,23 @@ input {
 .navbar.log .center_text.h2:hover {
   background-color: #555;
   cursor: pointer;
+}
+.navbar.log .log_button_container {
+  display: flex;
+}
+@media (width < 810px) {
+  .navbar.log .log_button_container {
+    position: absolute;
+    top: 50px;
+    height: 50px;
+    left: -400px;
+    background-color: #353535;
+    border-bottom-right-radius: 5px;
+    transition: transform 0.3s;
+  }
+  .navbar.log h1:hover ~ .log_button_container, .navbar.log .log_button_container:hover {
+    transform: translateX(400px);
+  }
 }
 .navbar.log .profile {
   margin-left: auto;
@@ -319,6 +366,8 @@ input {
 
 .log_container {
   transition: margin-left 0.3s;
+  width: 100%;
+  max-width: 1000px;
 }
 
 .active_filter {
@@ -379,12 +428,18 @@ input {
 }
 
 .filter_bar {
-  width: 1000px;
-  height: 50px;
+  width: 100%;
+  min-height: 50px;
   background-color: #353535;
   margin-top: 25px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+}
+@media (width < 810px) {
+  .filter_bar {
+    justify-content: space-around;
+  }
 }
 .filter_bar h1 {
   margin-right: 20px;
@@ -432,7 +487,7 @@ input {
 }
 
 .all_entries_container {
-  width: 1000px;
+  width: 100%;
   border: #353535 4px solid;
   padding-bottom: 5px;
   margin-bottom: 25px;
@@ -446,13 +501,25 @@ input {
   font-size: 32px;
   margin: auto;
   padding-top: 10px;
-  width: 900px;
+  max-width: 900px;
+  width: 100%;
+}
+@media (width < 450px) {
+  .entry_container .top_line {
+    flex-direction: column;
+  }
 }
 .entry_container .top_line {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+@media (width < 850px) {
+  .entry_container .top_line {
+    justify-content: space-around;
+  }
 }
 .entry_container .top_line button {
   font-size: 32px;
@@ -471,9 +538,18 @@ input {
 .entry_container .top_line button.delete:hover {
   background-color: #fd0000;
 }
+@media (width < 550px) {
+  .entry_container .exercise_line {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
+}
 .entry_container .exercise_line {
   display: flex;
   justify-content: space-around;
+  text-align: center;
 }
 
 .log_spinner {

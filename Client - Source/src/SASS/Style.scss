@@ -12,7 +12,17 @@ Profile - Line 1248
 Edit - Line 1304
 */
 
-
+$font-size-1: 50px;
+$font-size-2: 48px;
+$font-size-3: 42px;
+$font-size-4: 36px;
+$font-size-5: 32px;
+$font-size-6: 28px;
+$font-size-7: 26px;
+$font-size-8: 25px;
+$font-size-9: 24px;
+$font-size-10: 22px;
+$font-size-11: 20px;
 
 @font-face {
     font-family: "Cute Font";
@@ -22,7 +32,7 @@ html {
     height:100%;
     font-family: "Cute Font";
     scrollbar-width:thin;
-    font-size: 32px;
+    font-size: $font-size-5;
 
     &::-webkit-scrollbar {
         width: 5px;
@@ -52,7 +62,7 @@ h1::selection, label::selection, p::selection {
 }
 
 h1 {
-    font-size: 48px;
+    font-size: $font-size-2;
     margin:0;
     margin-left: 25px;
     color: white;
@@ -60,14 +70,14 @@ h1 {
 
 select {
     font-family: "Cute Font";
-    font-size: 24px;
+    font-size: $font-size-9;
     background-color: #c1c1c1;
     border-radius:5px;
     border: none;
 }
 
 button {
-    font-size: 24px;
+    font-size: $font-size-9;
     border: black 1px solid;
     font-family: "Cute Font";
     background-color: transparent;
@@ -117,7 +127,7 @@ input {
 
     div > label {
         color: white;
-        font-size: 48px;
+        font-size: $font-size-2;
         margin: auto 30px;
     }
     div > input {
@@ -129,7 +139,7 @@ input {
         text-indent: 1ch;
         background-color: #c1c1c1;
         
-        font-size:48px;
+        font-size:$font-size-2;
         vertical-align: middle;
 
         outline:invert;
@@ -173,7 +183,7 @@ input {
             height: 60px;
             border: #c1c1c1 solid 5px;
             background-color: transparent;
-            font-size: 48px;
+            font-size: $font-size-2;
             // font-family: "Cute Font";
             color: white;
             &:hover {
@@ -185,7 +195,7 @@ input {
             width: 240px;
             height: 60px;
             background-color: transparent;
-            font-size: 48px;
+            font-size: $font-size-2;
             // font-family: "Cute Font";
             color: white;
             border: 5px #c1c1c1 solid;
@@ -200,7 +210,7 @@ input {
     // position:absolute;
     // bottom: 0;
     // left: 0;
-    font-size: 32px;
+    font-size: $font-size-5;
     color:white;
     display:flex;
     margin-left:20px;
@@ -247,16 +257,48 @@ input {
 
 .navbar.log {
     color: white;
-    // font-size: 24px;
+    // font-size: $font-size-9;
 
     h1 {
         line-height:50px;
         margin-right: 30px;
     }
 
+    @media (width < 400px) {
+        h1 {
+            margin: 0 10px;
+        }
+    }
+
     div h2 {
-        font-size: 32px;
+        font-size: $font-size-5;
         margin: 0;
+    }
+
+    .calc_svg {
+        background-image: url("../Images/calculator.svg");
+        width:30px;
+        height:30px;
+    }
+    .graph_svg {
+        background-image: url("../Images/graph.svg");
+        width:30px;
+        height:30px;
+    }
+    .list_svg {
+        background-image: url("../Images/list.svg");
+        width:30px;
+        height:30px;
+    }
+    .calendar_svg {
+        background-image: url("../Images/calendar.svg");
+        width:30px;
+        height:30px;
+    }
+    .add_svg {
+        background-image: url("../Images/add.svg");
+        width:30px;
+        height:30px;
     }
 
     .center_text {
@@ -271,6 +313,24 @@ input {
             cursor:pointer;
         }
     }
+
+    .log_button_container {
+        display:flex;
+    }
+    @media (width < 810px) {
+        .log_button_container {
+            position:absolute;
+            top:50px;
+            height:50px;
+            left:-400px;
+            background-color: #353535;
+            border-bottom-right-radius: 5px;
+            transition: transform 0.3s;
+        }
+        h1:hover ~ .log_button_container, .log_button_container:hover {
+            transform: translateX(400px);
+        }
+    } 
 
     .profile {
         margin-left: auto;
@@ -292,7 +352,7 @@ input {
 
               
         h3 {
-            font-size: 24px;
+            font-size: $font-size-9;
             margin: 0;
             background-color: #353535;
             z-index: 100;
@@ -313,7 +373,7 @@ input {
             // opacity:0;
             z-index:1;
             pointer-events: none;
-            font-size: 32px;
+            font-size: $font-size-5;
             position:absolute;
             right:0;
             top:-100px;
@@ -334,7 +394,7 @@ input {
                 margin:0;
                 // width: 180px;
                 height:50px;
-                font-size: 32px;
+                font-size: $font-size-5;
                 color:white;
 
                 display:flex;
@@ -366,7 +426,7 @@ input {
             }
 
             .change_password {
-                font-size: 24px;
+                font-size: $font-size-9;
                 border-bottom-left-radius: 5px;
             }
         }
@@ -374,7 +434,7 @@ input {
 
     @media (width < 1380px) {
         div h2 {
-            font-size: 24px;
+            font-size: $font-size-9;
         }        
     }
     // @media (width < 1150px) {
@@ -385,6 +445,8 @@ input {
 
 .log_container {
     transition: margin-left 0.3s;
+    width:100%;
+    max-width:1000px;
 }
 .active_filter {
     margin-left: 250px;
@@ -421,7 +483,7 @@ input {
         
         button {
             width:fit-content;
-            font-size:32px;
+            font-size: $font-size-5;
 
             align-self: center;
 
@@ -431,7 +493,7 @@ input {
             border-radius: 5px;
 
             &.filter {
-                font-size:24px;
+                font-size:$font-size-9;
             }
 
 
@@ -441,7 +503,7 @@ input {
         }
 
         label {
-            font-size: 20px;
+            font-size: $font-size-11;
             color: white;
             margin-left:5px;
         }
@@ -453,7 +515,7 @@ input {
 
             label {
                 white-space: nowrap;
-                font-size: 24px;
+                font-size: $font-size-9;
             }
         }
 
@@ -461,20 +523,27 @@ input {
 }
 
 .filter_bar {
-    width: 1000px;
-    height: 50px;
+    width: 100%;
+    min-height: 50px;
     background-color:#353535;
     margin-top: 25px;
 
     display: flex;
     align-items: center;
+    flex-wrap:wrap;
+
+    @media (width < 810px) {
+        & {
+            justify-content: space-around;
+        }
+    }
 
     h1 {
         margin-right: 20px;
     }
 
     label {
-        font-size: 32px;
+        font-size: $font-size-5;
         color: white;
         padding-left: 20px;
         padding-right: 10px;
@@ -487,7 +556,7 @@ input {
         background-color: #d9d9d9;
         border: none;
         border-radius: 5px;
-        font-size: 24px;
+        font-size: $font-size-9;
         font-family: "Cute Font";
     }
     
@@ -495,7 +564,7 @@ input {
         background-color: #d9d9d9;
         border: none;
         border-radius: 5px;
-        font-size: 26px;
+        font-size: $font-size-7;
         height: 30px;
         line-height: 3px;
         font-family: "Cute Font";
@@ -506,7 +575,7 @@ input {
 
     button {
         color: white;
-        font-size: 32px;
+        font-size: $font-size-5;
         font-family:"Cute Font";
         background-color: transparent;
         border: none;
@@ -522,7 +591,7 @@ input {
 
 .all_entries_container {
 
-    width: 1000px;
+    width: 100%;
     border:#353535 4px solid;
     padding-bottom:5px;
     margin-bottom:25px;
@@ -533,19 +602,33 @@ input {
 }
 
 .entry_container {
-    font-size: 32px;
+    font-size: $font-size-5;
     margin:auto;
     padding-top: 10px;
-    width: 900px;
+    max-width: 900px;
+    width:100%;
+
+    @media (width < 450px) {
+        .top_line {
+            flex-direction:column;
+        }
+    }
 
     .top_line {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom:5px;
+        flex-wrap:wrap;
+        
+        @media (width < 850px) {
+            & {
+                justify-content: space-around;
+            }
+        }
 
         button {
-            font-size: 32px;
+            font-size: $font-size-5;
             border: none;
             background-color: transparent;
 
@@ -566,9 +649,19 @@ input {
             }
         }
     }
+    @media (width < 550px) {
+        .exercise_line {
+            flex-direction: column;
+            align-items: center;
+            gap:10px;
+            text-align:center;
+        }
+    }
+
     .exercise_line {
         display:flex;
         justify-content: space-around;
+        text-align:center;
     }
 }
 
@@ -588,7 +681,7 @@ input {
     position:fixed;
     right: 30px;
     bottom:30px;
-    font-size:50px;
+    font-size:$font-size-1;
     color: #d9d9d9;
     display:flex;
     justify-content: center;
@@ -655,7 +748,7 @@ input {
     }
 
     label {
-        font-size: 32px;
+        font-size: $font-size-5;
         color: black;
         padding-left: 20px;
         padding-right: 10px;
@@ -668,7 +761,7 @@ input {
         background-color: #d9d9d9;
         border: none;
         border-radius: 5px;
-        font-size: 32px;
+        font-size: $font-size-5;
         font-family: "Cute Font";
     }
 
@@ -682,7 +775,7 @@ input {
         border: 4px #353535 solid;
         background-color:#d9d9d9;
         margin-bottom:-4px;
-        // font-size:32px;
+        // font-size: $font-size-5;
 
         input, select {
             background-color: #c1c1c1;
@@ -693,7 +786,7 @@ input {
         button {
             background-color: #c1c1c1;
             border-radius:5px;
-            font-size: 28px;
+            font-size: $font-size-6;
         }
 
         
@@ -720,7 +813,7 @@ input {
                 input, select {
                     width: fit-content;
                     font-family: "Cute Font";
-                    font-size: 32px;
+                    font-size: $font-size-5;
                     border-radius: 5px;
                     width:9ch;
                 }
@@ -750,7 +843,7 @@ input {
 
             select, option {
                 font-family:"Cute Font";
-                font-size: 25px;
+                font-size: $font-size-8;
                 // height: 20px;
                 width: fit-content;
             }
@@ -789,7 +882,7 @@ input {
             border-radius: 5px;
             border: #353535 2px solid;
             background-color:#5fb95f;
-            font-size: 32px;
+            font-size: $font-size-5;
             position: fixed;
             bottom: 50px;
             right: 20px;
@@ -909,15 +1002,15 @@ input {
                 color: white;
                 background-color: transparent;
                 border: none;
-                font-size:32px;
+                font-size: $font-size-5;
             }
 
             label {
-                font-size: 32px;
+                font-size: $font-size-5;
             }
 
             div > label {
-                font-size: 24px;
+                font-size: $font-size-9;
             }
 
             select {
@@ -928,7 +1021,7 @@ input {
             input {
                 background-color: #d9d9d9;
                 font-family:"Cute Font";
-                font-size: 24px;
+                font-size: $font-size-9;
                 text-indent: 0.5ch;
                 border:none;
                 border-radius:5px;
@@ -940,7 +1033,7 @@ input {
             }
 
             .filter button {
-                font-size: 24px;
+                font-size: $font-size-9;
             }
             
         }
@@ -991,7 +1084,7 @@ input {
     input {
         background-color: #d9d9d9;
         // font-family:"Cute"
-        font-size: 22px;
+        font-size: $font-size-10;
     }
 
     height:100%; 
@@ -1083,7 +1176,7 @@ input {
     
         .calendar_control {
             position:absolute;
-            font-size:28px;
+            font-size:$font-size-6;
             top:0;
             right:15px;
             outline:none;
@@ -1091,7 +1184,7 @@ input {
     
             
             input {
-                font-size: 24px;
+                font-size: $font-size-9;
     
                 // width: 7ch;
                 // text-indent: 0.5ch;
@@ -1231,7 +1324,7 @@ input {
             // padding:0;
             margin:0;
             color: white;
-            font-size:28px;
+            font-size:$font-size-6;
 
             &:hover {
                 background-color: #555;
@@ -1241,7 +1334,7 @@ input {
 
     .session_aggregates {
         width: 100%;
-        font-size:42px;
+        font-size:$font-size-3;
         display: flex;
         justify-content: space-around;
     }
@@ -1257,7 +1350,7 @@ input {
 
     .exercise_container {
         width: 80%;
-        font-size: 42px;
+        font-size: $font-size-3;
         h2 {
             margin:0;
             text-align:center;
@@ -1323,7 +1416,7 @@ input {
 
         input {
             width: 50%;
-            font-size: 32px;
+            font-size: $font-size-5;
             text-align: center;
         }
 
@@ -1336,7 +1429,7 @@ input {
         color:white;
         border: #555 5px solid;
         margin:0;
-        font-size: 48px;
+        font-size: $font-size-2;
         margin-top:15px;
         border-bottom-left-radius:5px;
         border-bottom-right-radius:5px;
@@ -1416,18 +1509,18 @@ input {
     }
 
     input {
-        font-size:32px;
+        font-size: $font-size-5;
         height:min-content;
         width: 8ch;
     }
     
     select {
-        font-size:32px;
+        font-size: $font-size-5;
         height: min-content;
     }
     
     button {
-        font-size:32px;
+        font-size: $font-size-5;
         border-radius:5px;
         border: none;
 
@@ -1459,12 +1552,12 @@ input {
         margin:10px 0;
 
         label {
-            font-size: 42px;
+            font-size: $font-size-3;
         }
 
         input {
             width: 13ch;
-            font-size:32px;
+            font-size: $font-size-5;
             background-color: #c1c1c1;
 
             &:last-of-type {
@@ -1476,11 +1569,11 @@ input {
     .existing_exercise, .added_fieldset {
         margin: 0 15px;
 
-        font-size:36px;
+        font-size:$font-size-4;
 
         input {
             background-color:#c1c1c1;
-            font-size: 32px;
+            font-size: $font-size-5;
         }
 
         button {
@@ -1493,7 +1586,7 @@ input {
             align-items: center;
 
             strong {
-                font-size:42px;
+                font-size:$font-size-3;
                 &.added {
                     text-decoration: underline;
                     text-decoration-color: #5fb95f;
@@ -1506,7 +1599,7 @@ input {
                 background-color:#fd6363;
                 height:fit-content;
                 border-radius:5px;
-                font-size: 32px;
+                font-size: $font-size-5;
             }
 
         }
@@ -1652,7 +1745,7 @@ input {
     background-color:#5fb95f;
     border:#353535 2px solid;
     border-radius: 5px;
-    font-size:32px;
+    font-size: $font-size-5;
 }
 .return_to_top_edit {
     position:fixed;

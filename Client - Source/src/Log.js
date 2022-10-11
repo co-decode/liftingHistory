@@ -297,30 +297,40 @@ export default function Log() {
     const goBack = <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
     if (page === LOG) {
       return (
-        <>
+        <div className="log_button_container">
         <div className="center_text h2" tabIndex={1} onClick={() => setPage(ADD)}>
-          <h2>{windowInfo.screenWidth < 1200 ? "New Entry" : "Add a New Entry"}</h2>
+          {windowInfo.screenWidth > 1200 ? <h2>Add a New Entry</h2> 
+             : windowInfo.screenWidth > 980 ? <h2>New Entry</h2>
+             : <div className="add_svg"></div>}
         </div>
           {get && (
             <>
         <div className="center_text h2" onClick={() => setPage(CAL)}>
-          <h2>{windowInfo.screenWidth < 1200 ? "Calendar" : "Go to Calendar"}</h2>
+          {windowInfo.screenWidth > 1200 ? <h2>Go to Calendar</h2> 
+             : windowInfo.screenWidth > 980 ? <h2>Calendar</h2>
+             : <div className="calendar_svg"></div>}
         </div>
         <div className="center_text h2" onClick={() => 
           {setPage(TONS); setTonnagePage(TABLE)}}>
-          <h2>{windowInfo.screenWidth < 1200 ? "Tonnage" : "View Tonnage"}</h2>
+          {windowInfo.screenWidth > 1200 ? <h2>View Tonnage</h2> 
+             : windowInfo.screenWidth > 980 ? <h2>Tonnage</h2>
+             : <div className="list_svg"></div>}
         </div>
         <div className="center_text h2" onClick={() => 
           { new Promise((resolve) => {setPage(TONS); resolve()}).then(() => setTonnagePage(GRAPH)) }}>
-          <h2>{windowInfo.screenWidth < 1200 ? "Graph" : "View Graph"}</h2>
+          {windowInfo.screenWidth > 1200 ? <h2>View Graph</h2> 
+             : windowInfo.screenWidth > 980 ? <h2>Graph</h2>
+             : <div className="graph_svg"></div>}
         </div>
             </>
           )}
         <div className="center_text h2" onClick={() => setPage(EQUIV)}>
-          <h2>{windowInfo.screenWidth < 1200 ? "Calculator" : "Go to Calculator"}</h2>
+          {windowInfo.screenWidth > 1200 ? <h2>Go to Calculator</h2> 
+             : windowInfo.screenWidth > 980 ? <h2>Calculator</h2>
+             : <div className="calc_svg"></div>}
         </div>
           {/* <button onClick={() => setPage(PROFILE)}>Change Password</button> */}
-        </>
+        </div>
       );
     } else if (page === TONS) {
         return (
@@ -393,7 +403,7 @@ export default function Log() {
   function returnDateFilter() {
     return (
       <>
-        <label htmlFor="from">From: </label>
+        <label htmlFor="from">From:&nbsp;
         <input
           id="from"
           type="date"
@@ -401,15 +411,17 @@ export default function Log() {
           onChange={(e) =>
             setDateFilter({ ...dateFilter, from: e.target.value })
           }
-        />
-        <label htmlFor="to">To: </label>
+          />
+          </label>
+        <label htmlFor="to">To:&nbsp;
         <input
           id="to"
           type="date"
           defaultValue={`${dateFilter.to}`}
           onChange={(e) => setDateFilter({ ...dateFilter, to: e.target.value })}
-        />
-        <label htmlFor="order">Order:</label>
+          />
+          </label>
+        <label htmlFor="order">Order:&nbsp;
         <select id="order"
           defaultValue={dateFilter.ascending}
           onChange={(e) => {
@@ -422,11 +434,12 @@ export default function Log() {
             localStorage.setItem(
               "WeightLiftingLogAscending",
               e.target.value
-            );
-          }}>
+              );
+            }}>
           <option value="false">Newest</option>
           <option value="true">Oldest</option>
         </select>
+        </label>
         <button onClick={() => {
           setShowVarFilter(!showVarFilter)
           // log_container_ref.current.classList.toggle("active_filter")
@@ -598,7 +611,9 @@ export default function Log() {
           (<>
             <div className="log_container" ref={log_container_ref}>
               <div className="filter_bar">
+                {windowInfo.screenWidth > 940  &&
                 <h1>Filter</h1>
+                }
                   {returnDateFilter()}
               </div>
               <div className="all_entries_container">
