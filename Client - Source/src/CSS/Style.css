@@ -19,6 +19,7 @@ html {
   height: 100%;
   font-family: "Cute Font";
   scrollbar-width: thin;
+  overflow-x: hidden;
   font-size: 32px;
 }
 html::-webkit-scrollbar {
@@ -214,6 +215,19 @@ input {
 .login_loading p {
   margin: 0;
 }
+@media (width < 520px) {
+  .login_loading p {
+    position: absolute;
+    display: block;
+    transform: translateX(-50%);
+    left: 50%;
+    width: max-content;
+    top: 55px;
+    padding: 0 10px;
+    border-radius: 5px;
+    background-color: rgba(53, 53, 53, 0.3137254902);
+  }
+}
 
 .preload {
   visibility: hidden;
@@ -252,7 +266,7 @@ input {
   line-height: 50px;
   margin-right: 30px;
 }
-@media (width < 400px) {
+@media (width < 405px) {
   .navbar.log h1 {
     margin: 0 10px;
   }
@@ -286,6 +300,16 @@ input {
   width: 30px;
   height: 30px;
 }
+.navbar.log .return_svg {
+  background-image: url("../Images/return.svg");
+  width: 30px;
+  height: 30px;
+}
+.navbar.log .palette_svg {
+  background-image: url("../Images/palette.svg");
+  width: 30px;
+  height: 30px;
+}
 .navbar.log .center_text {
   display: flex;
   justify-content: center;
@@ -313,6 +337,19 @@ input {
   }
   .navbar.log h1:hover ~ .log_button_container, .navbar.log .log_button_container:hover {
     transform: translateX(400px);
+  }
+}
+@media (width < 516px) {
+  .navbar.log h1:hover ~ .add_button_container, .navbar.log .add_button_container:hover {
+    left: 0 !important;
+  }
+  .navbar.log .add_button_container:hover > div {
+    border-bottom-right-radius: 5px;
+  }
+}
+@media (width < 560px) {
+  .navbar.log h1:hover ~ .calendar_button_container, .navbar.log .calendar_button_container:hover {
+    left: 0 !important;
   }
 }
 .navbar.log .profile {
@@ -608,6 +645,14 @@ input {
   align-items: center;
   cursor: pointer;
 }
+@media (width < 550px) {
+  .return_to_top {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    font-size: 30px;
+  }
+}
 
 /* Add component */
 .exercise_list_container {
@@ -616,6 +661,33 @@ input {
   width: 250px;
   height: 100%;
   left: 0;
+}
+@media (width < 680px) {
+  .exercise_list_container {
+    left: -250px;
+    transition: left 0.3s;
+    z-index: 10;
+  }
+  .exercise_list_container.active {
+    left: 0;
+  }
+}
+
+.add_exercise_list_toggle {
+  position: absolute;
+  right: 5px;
+  top: 55px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  padding: 20px;
+  background-color: #353535;
+  color: white;
+  border: 0;
+  background-image: url("../Images/weight.svg");
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .exercise_list {
@@ -651,12 +723,38 @@ input {
   border-right-color: #c1c1c1;
   padding: 0;
 }
+@media (width < 680px) {
+  .add_spinner {
+    margin: 0;
+    left: 50%;
+  }
+}
+
+.add_button_container {
+  display: flex;
+}
+@media (width < 516px) {
+  .add_button_container {
+    position: absolute;
+    left: -80px;
+    transition: left 0.3s;
+    background-color: #353535;
+    height: 50px;
+    top: 50px;
+    border-bottom-right-radius: 5px;
+  }
+}
 
 .add_container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: calc(100% - 250px);
+}
+@media (width < 680px) {
+  .add_container {
+    width: 100%;
+  }
 }
 .add_container div {
   padding: 2px 0;
@@ -685,6 +783,12 @@ input {
   background-color: #d9d9d9;
   margin-bottom: -4px;
 }
+@media (width < 1050px) {
+  .add_container .exercise_fieldset {
+    border-right: 0;
+    border-left: 0;
+  }
+}
 .add_container .exercise_fieldset input, .add_container .exercise_fieldset select {
   background-color: #c1c1c1;
   text-indent: 0.5ch;
@@ -705,6 +809,12 @@ input {
 .add_container .exercise_fieldset .number_container .macro_container .top_line {
   display: flex;
   justify-content: center;
+}
+@media (width < 680px) {
+  .add_container .exercise_fieldset .number_container .macro_container .top_line {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
 }
 .add_container .exercise_fieldset .number_container .macro_container .bottom_line {
   display: flex;
@@ -738,6 +848,7 @@ input {
 .add_container .exercise_fieldset .template_line select, .add_container .exercise_fieldset .template_line option {
   font-family: "Cute Font";
   font-size: 25px;
+  text-indent: 0.25ch;
   width: fit-content;
 }
 .add_container .exercise_fieldset .template_line .tag_container {
@@ -761,6 +872,16 @@ input {
   flex-direction: column;
   align-items: center;
 }
+@media (width < 1050px) {
+  .add_container form {
+    width: 100%;
+  }
+}
+@media (width < 680px) {
+  .add_container form {
+    margin: 0;
+  }
+}
 .add_container form .add_submit {
   width: fit-content;
   border-radius: 5px;
@@ -770,6 +891,11 @@ input {
   position: fixed;
   bottom: 50px;
   right: 20px;
+}
+@media (width < 680px) {
+  .add_container form .add_submit {
+    bottom: 15px;
+  }
 }
 .add_container form .date_container {
   margin-bottom: 10px;
@@ -786,7 +912,20 @@ input {
 }
 .add_container .return_to_top.add_component {
   left: 270px;
-  right: 20px;
+}
+@media (width < 900px) {
+  .add_container .return_to_top.add_component {
+    width: 40px;
+    height: 40px;
+    font-size: 25px;
+    padding: 0;
+  }
+}
+@media (width < 680px) {
+  .add_container .return_to_top.add_component {
+    left: 20px;
+    bottom: 15px;
+  }
 }
 .add_container h1 {
   color: black;
@@ -963,6 +1102,24 @@ input {
   cursor: pointer;
 }
 
+.calendar_button_container {
+  display: flex;
+}
+@media (width < 560px) {
+  .calendar_button_container {
+    position: absolute;
+    background-color: #353535;
+    left: -160px;
+    top: 50px;
+    height: 50px;
+    border-bottom-right-radius: 5px;
+    transition: left 0.3s;
+  }
+}
+.calendar_button_container > div:last-of-type:hover {
+  border-bottom-right-radius: 5px;
+}
+
 .calendar_page_container .calendar_container {
   position: absolute;
   display: flex;
@@ -970,12 +1127,47 @@ input {
   left: 50%;
   transition: left 0.3s;
 }
-.calendar_page_container .calendar_container.calendar_container_active {
-  left: calc(50% + 100px);
-}
 .calendar_page_container .calendar_container .calendar {
   border-left: #353535 15px solid;
   border-right: #353535 15px solid;
+}
+@media (width < 950px) {
+  .calendar_page_container .calendar_container {
+    transform: translateX(-50%) scale(90%);
+    border: #353535 15px solid;
+    box-sizing: border-box;
+  }
+  .calendar_page_container .calendar_container .calendar {
+    border: 0;
+  }
+}
+@media (width < 850px) {
+  .calendar_page_container .calendar_container {
+    transform: translateX(-50%) scale(80%);
+  }
+}
+@media (width < 750px) {
+  .calendar_page_container .calendar_container {
+    transform: translateX(-50%) scale(70%);
+  }
+}
+@media (width < 650px) {
+  .calendar_page_container .calendar_container {
+    transform: translateX(-50%) scale(60%);
+  }
+}
+@media (width < 560px) {
+  .calendar_page_container .calendar_container {
+    transform: translateX(-50%) scale(50%);
+  }
+}
+@media (width < 475px) {
+  .calendar_page_container .calendar_container {
+    transform: translateX(-50%) scale(40%);
+  }
+}
+.calendar_page_container .calendar_container.calendar_container_active {
+  left: calc(50% + 100px);
 }
 .calendar_page_container .calendar_container .calendar_control {
   position: absolute;

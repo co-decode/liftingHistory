@@ -52,6 +52,9 @@ export default function Log() {
   const [windowInfo, setWindowInfo] = useState({scrollPosition: null, screenWidth: null, screenHeight:null})
   const link = useNavigate();
 
+  useEffect(() => {
+    setWindowInfo({...windowInfo, screenWidth: window.innerWidth })
+  },[])
   
   useEffect(() => {
     function scrollListener() {
@@ -294,7 +297,14 @@ export default function Log() {
     );
   }
   function pageButtons() {
-    const goBack = <div className="center_text h2" onClick={() => setPage(LOG)}><h2>Go Back</h2></div>
+    function goBack(breakpoint) {
+    return <div className="center_text h2" onClick={() => setPage(LOG)}>
+      {windowInfo.screenWidth > breakpoint ? <h2>Go Back</h2>
+       : <div className="return_svg"></div>}
+    </div>
+    }
+    
+
     if (page === LOG) {
       return (
         <div className="log_button_container">
@@ -335,26 +345,27 @@ export default function Log() {
     } else if (page === TONS) {
         return (
         <>
-          {goBack}
+          {goBack(515)}
           <div className="center_text h2" onClick={() => tonnagePage === TABLE ? setTonnagePage(GRAPH) : setTonnagePage(TABLE)}>
             <h2>View {tonnagePage === TABLE ? "Graph" : "Table"}</h2>
           </div>
         </> )
     } else if (page === CAL) {
         return (
-          <>
-          {goBack}
+          <div className="calendar_button_container">
+          {goBack(620)}
           <div className="center_text h2" onClick={() => {
             cal_container_ref.current.classList.toggle("calendar_container_active")
             cal_colour_ref.current.classList.toggle("colour_container_active")}}>
-            <h2>Colours</h2>
+              {windowInfo.screenWidth > 620 ? <h2>Colours</h2>
+       : <div className="palette_svg"></div>}
           </div>
-          </>
+          </div>
         )
     } else if (page === BREAK) {
         return (
           <>
-          {goBack}
+          {goBack(515)}
           <div className="center_text h2" 
             onClick={() => {
               setPage(EDIT)
@@ -366,7 +377,7 @@ export default function Log() {
     } else if (page === EQUIV) {
         return (
           <>
-          {goBack}
+          {goBack(515)}
           <div className="center_text h2" 
             onClick={() => {
               const options = document.getElementById("options");
@@ -397,7 +408,9 @@ export default function Log() {
           </>
         )
     } else if (page) {
-        return goBack
+        return <div className="add_button_container">
+        {goBack(515)}
+        </div>
     }
   }
   function returnDateFilter() {
@@ -425,8 +438,6 @@ export default function Log() {
         <select id="order"
           defaultValue={dateFilter.ascending}
           onChange={(e) => {
-            console.log(e.target.value, typeof e.target.value)
-            // const opposite = !dateFilter.ascending
             setDateFilter({
               ...dateFilter,
               ascending: JSON.parse(e.target.value),

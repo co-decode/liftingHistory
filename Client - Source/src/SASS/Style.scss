@@ -32,6 +32,7 @@ html {
     height:100%;
     font-family: "Cute Font";
     scrollbar-width:thin;
+    overflow-x:hidden;
     font-size: $font-size-5;
 
     &::-webkit-scrollbar {
@@ -245,6 +246,18 @@ input {
 
     p {
         margin: 0;
+
+        @media (width < 520px) {
+            position:absolute;
+            display:block;
+            transform: translateX(-50%);
+            left:50%;
+            width:max-content;
+            top:55px;
+            padding:0 10px;
+            border-radius: 5px;
+            background-color: #35353550;
+        }
     }
 }
 .preload {
@@ -290,7 +303,7 @@ input {
         margin-right: 30px;
     }
 
-    @media (width < 400px) {
+    @media (width < 405px) {
         h1 {
             margin: 0 10px;
         }
@@ -326,6 +339,16 @@ input {
         width:30px;
         height:30px;
     }
+    .return_svg {
+        background-image: url("../Images/return.svg");
+        width:30px;
+        height:30px;
+    }
+    .palette_svg {
+        background-image: url("../Images/palette.svg");
+        width:30px;
+        height:30px;
+    }
 
     .center_text {
         display: flex;
@@ -357,6 +380,21 @@ input {
             transform: translateX(400px);
         }
     } 
+    
+    @media (width < 516px) {
+        h1:hover ~ .add_button_container, .add_button_container:hover {
+            left:0 !important;
+        }
+        
+        .add_button_container:hover > div {
+            border-bottom-right-radius: 5px;
+        }
+    }
+    @media (width < 560px) {
+        h1:hover ~ .calendar_button_container, .calendar_button_container:hover {
+            left:0 !important;
+        }
+    }
 
     .profile {
         margin-left: auto;
@@ -713,6 +751,13 @@ input {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+
+    @media (width < 550px) {
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        font-size:30px;
+    }
 }
 
 /* Add component */
@@ -723,6 +768,32 @@ input {
     height:100%;
 
     left:0;
+
+    @media (width < 680px) {
+        left:-250px;
+        transition: left 0.3s;
+        z-index: 10;
+        &.active {
+            left:0;
+        }
+    }
+}
+.add_exercise_list_toggle {
+    position:absolute;
+    right:5px;
+    top:55px;
+    height:30px;
+    width:30px;
+    border-radius: 50%;
+    padding: 20px;
+    background-color: #353535;
+    color: white;
+    border:0;
+
+    background-image: url("../Images/weight.svg");
+    background-size:80%;
+    background-repeat:no-repeat;
+    background-position:center;
 }
 .exercise_list {
     color: white;
@@ -761,6 +832,25 @@ input {
     z-index:10000;
     background-color:#35353550;
     border-radius:5px;
+
+    @media (width < 680px) {
+        margin:0;
+        left:50%;
+    }
+}
+
+.add_button_container {
+    display:flex;
+    @media (width < 516px) {
+        position:absolute;
+        left:-80px;
+        // transform: translateX(-100%);
+        transition: left 0.3s;
+        background-color:#353535;
+        height:50px;
+        top:50px;
+        border-bottom-right-radius: 5px;
+    }    
 }
 
 .add_container {
@@ -768,6 +858,10 @@ input {
     flex-direction: column;
     align-items: center;
     width: calc(100% - 250px);
+
+    @media(width < 680px) {
+        width: 100%;
+    }
 
     div {
         padding: 2px 0;
@@ -803,6 +897,11 @@ input {
         margin-bottom:-4px;
         // font-size: $font-size-5;
 
+        @media (width < 1050px) {
+            border-right: 0;
+            border-left: 0;
+        }
+
         input, select {
             background-color: #c1c1c1;
             text-indent: 0.5ch;
@@ -829,6 +928,10 @@ input {
                 .top_line {
                     display: flex;
                     justify-content: center;
+                    @media (width < 680px) {
+                        flex-wrap:wrap;
+                        row-gap: 10px;
+                    }
                 }
 
                 .bottom_line {
@@ -870,6 +973,7 @@ input {
             select, option {
                 font-family:"Cute Font";
                 font-size: $font-size-8;
+                text-indent:0.25ch;
                 // height: 20px;
                 width: fit-content;
             }
@@ -903,6 +1007,14 @@ input {
         flex-direction: column;
         align-items: center;
 
+        @media (width < 1050px) {
+            width: 100%;
+        }
+
+        @media (width < 680px) {
+            margin:0;
+        }
+
         .add_submit {
             width: fit-content;
             border-radius: 5px;
@@ -912,6 +1024,10 @@ input {
             position: fixed;
             bottom: 50px;
             right: 20px;
+
+            @media (width < 680px) {
+                bottom: 15px;
+            }
         }
 
         .date_container {
@@ -934,7 +1050,20 @@ input {
     }
     .return_to_top.add_component {
         left: 270px;
-        right: 20px
+        // right: 20px;
+
+        @media (width < 900px) {
+            width: 40px;
+            height: 40px;
+            font-size:25px;
+            padding:0;
+
+        }
+
+        @media (width < 680px) {
+            left: 20px;
+            bottom: 15px;
+        }
     }
     h1 {
         color:black;
@@ -1178,27 +1307,68 @@ input {
     cursor: pointer;
 }
 
+.calendar_button_container {
+    display:flex;
+    @media (width < 560px) {
+        position: absolute;
+        background-color: #353535;
+        left:-160px;
+        top:50px;
+        height:50px;
+        border-bottom-right-radius: 5px;
+        transition:left 0.3s;
+    }
+    & > div:last-of-type:hover {
+        border-bottom-right-radius: 5px;
+    }
+}
 .calendar_page_container {
     // width: 100%;
 
     .calendar_container {
         position: absolute;
         display: flex;
-        transform: translateX(-50%);
+        
+        transform:translateX(-50%);
         left:50%;
         // width: 100%;
         transition:left 0.3s;
+        // overflow:scroll;
         // animation: to_center 0.3s ease forwards;
+        
+        .calendar {
+            border-left:#353535 15px solid;
+            border-right:#353535 15px solid;
+        }
+        @media (width < 950px) {
+            transform:translateX(-50%) scale(90%);
+            border: #353535 15px solid;
+            box-sizing: border-box;
+            .calendar {
+                border:0;
+            }
+        }
+        @media (width < 850px) {
+            transform:translateX(-50%) scale(80%);
+        }
+        @media (width < 750px) {
+            transform:translateX(-50%) scale(70%);
+        }
+        @media (width < 650px) {
+            transform:translateX(-50%) scale(60%);
+        }
+        @media (width < 560px) {
+            transform:translateX(-50%) scale(50%);
+        }
+        @media (width < 475px) {
+            transform:translateX(-50%) scale(40%);
+        }
         
         &.calendar_container_active {
             left: calc(50% + 100px);
             // animation: to_right 0.3s ease forwards;
         }
         
-        .calendar {
-            border-left:#353535 15px solid;
-            border-right:#353535 15px solid;
-        }
     
         .calendar_control {
             position:absolute;

@@ -67,7 +67,7 @@ export default function Breakdown({
         Return to Calendar at Month
       </button>
       </div>
-      <h1>{sessionDate.toDateString() + ", " + sessionDate.toLocaleTimeString().slice(0,4) + " pm"}</h1>
+      <h1>{sessionDate.toDateString() + ", " + sessionDate.toLocaleTimeString().replace(/\:00\s/, " ")}</h1>
       <div className="session_aggregates">{sessionAggregates()}</div>
       <div className="show_exercises">
         {session.exercises.map((exercise) => {

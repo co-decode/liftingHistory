@@ -38,6 +38,7 @@ export default function Login() {
       const width = window.innerWidth
       setScreenWidth(width)
     }
+    resizeListener()
     window.addEventListener("resize", resizeListener, {passive:true})
     return () =>{ 
       window.removeEventListener("resize", resizeListener)
@@ -71,7 +72,7 @@ export default function Login() {
     {loading && 
     <div className="login_loading">
       <Spinner/>
-      <p>Awaiting server response...</p>
+      <p className="login_loading_p">Awaiting server response...</p>
     </div>}
     </div>
     <div className="login_container">

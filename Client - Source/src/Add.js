@@ -17,6 +17,7 @@ export default function Add({
   const dateRefs = useRef({ date: null, time: null });
   const exerciseRefs = useRef({});
   const fileRef = useRef();
+  const exerciseContainerRef = useRef();
   const [blob, setBlob] = useState();
   const [exArr, setExArr] = useState([]);
   const [response, setResponse] = useState(null);
@@ -267,7 +268,11 @@ export default function Add({
 
   return (
     <>
-    <div className="exercise_list_container">
+    {windowInfo.screenWidth < 680 && exerciseContainerRef.current && 
+    <button className="add_exercise_list_toggle" 
+      onClick={()=> exerciseContainerRef.current.classList.toggle("active")}>
+    </button>}
+    <div className="exercise_list_container" ref={exerciseContainerRef}>
 
       <div className="exercise_list">
       <ExerciseAdd exArr={exArr} setExArr={setExArr} />
@@ -304,6 +309,7 @@ export default function Add({
           exArr={exArr}
           get={get}
           blob={blob}
+          windowInfo={windowInfo}
         />
 
         {exArr.length ? (
@@ -549,7 +555,7 @@ function ExerciseAdd({ exArr, setExArr }) {
   );
 }
 
-function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
+function ExerciseFieldSets({ exerciseRefs, exArr, get, blob, windowInfo }) {
   const [fields, setFields] = useState({});
   const macroRefs = useRef()
   const [macroState, setMacroState] = useState({})
@@ -617,7 +623,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
     arr.fill(null);
     return arr.map((v, i) => (
       <div className="set_line" key={`${exercise}${i}`}>
-        <strong>Set {i+1}: </strong>
+        <strong>{windowInfo.screenWidth > 680 && "Set "}{i+1}: </strong>
         <label>Mass&nbsp;
         <input
           id={`${exercise}Set${i}Mass`}
@@ -654,7 +660,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob }) {
             })
           }
         /></label>
-        <label>Template&nbsp;
+        <label>{windowInfo.screenWidth < 680 ? "T" : "Template"}&nbsp;
         <select
           id={`${exercise}Set${i}Vars`}
           type="number"
