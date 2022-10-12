@@ -77,6 +77,7 @@ export default function Register() {
         </div>
         <div>
           <label htmlFor="password">Password: </label>
+          <span>
           <input
             type={showPassword ? "text" : "password"}
             id="password"
@@ -86,6 +87,7 @@ export default function Register() {
             />
           <button className="show_password" onClick={(e)=>{e.target.classList.toggle("eye_shut"); setShowPassword(!showPassword)}}>
           </button>
+          </span>
         </div>
           {/* <button onClick={() => setShowPassword(!showPassword)}>{`${
             showPassword ? "Hide" : "Show"

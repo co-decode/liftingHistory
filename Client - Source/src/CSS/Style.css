@@ -1,8 +1,8 @@
 /* 
     Contents
-Login and Register - Line 51
+Login and Register - Line 101
 Spinner - Line 186
-Log - Line 236
+Log - Line 250
 Add - Line 591
 Table - Line 776
 Graph - Line 888
@@ -95,6 +95,17 @@ input {
   display: grid;
   grid-template-rows: 1fr 1fr 1fr 1fr;
 }
+@media (width < 630px) {
+  .login_container {
+    border-radius: 0;
+    width: 100%;
+  }
+}
+@media (width < 530px) {
+  .login_container {
+    grid-template-rows: 1fr 2fr 2fr 2.5fr;
+  }
+}
 .login_container h1 {
   margin: 0;
   align-self: center;
@@ -104,12 +115,26 @@ input {
   display: flex;
   align-items: center;
 }
+@media (width < 630px) {
+  .login_container div {
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+}
+.login_container div:nth-of-type(2) span {
+  position: relative;
+}
 .login_container div > label {
   color: white;
   font-size: 48px;
   margin: auto 30px;
 }
-.login_container div > input {
+@media (width < 630px) {
+  .login_container div > label {
+    margin: auto 10px;
+  }
+}
+.login_container div > input, .login_container div > span > input {
   width: 370px;
   border: none;
   height: 60px;
@@ -121,10 +146,16 @@ input {
   vertical-align: middle;
   outline: invert;
 }
-.login_container div > input:focus {
+@media (width < 400px) {
+  .login_container div > input, .login_container div > span > input {
+    box-sizing: border-box;
+    width: 350px;
+  }
+}
+.login_container div > input:focus, .login_container div > span > input:focus {
   outline: black solid 5px;
 }
-.login_container div > input::selection {
+.login_container div > input::selection, .login_container div > span > input::selection {
   background-color: black;
   color: #c1c1c1;
 }
@@ -133,8 +164,10 @@ input {
   height: 25px;
   background-color: transparent;
   border: none;
-  position: relative;
-  margin-left: -40px;
+  position: absolute;
+  top: 50%;
+  right: 2%;
+  transform: translate(0, -50%);
   outline: none;
   user-select: none;
   z-index: 10;

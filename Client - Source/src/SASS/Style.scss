@@ -1,8 +1,8 @@
 /* 
     Contents
-Login and Register - Line 51
+Login and Register - Line 101
 Spinner - Line 186
-Log - Line 236
+Log - Line 250
 Add - Line 591
 Table - Line 776
 Graph - Line 888
@@ -113,6 +113,14 @@ input {
     display:grid;
     grid-template-rows: 1fr 1fr 1fr 1fr;
 
+    @media (width < 630px) {
+        border-radius: 0;
+        width:100%;
+    }
+    @media (width < 530px) {
+        grid-template-rows: 1fr 2fr 2fr 2.5fr;
+    }
+    
     h1 {
         margin:0;
         // margin-top: 20px;
@@ -120,17 +128,30 @@ input {
         text-align: center;
     }
 
+    
     div {
         display: flex;
+        // position:relative;
         align-items: center;
+        @media (width < 630px) {
+            justify-content: space-around;
+            flex-wrap:wrap;
+        }
     }
 
+    div:nth-of-type(2) span {
+        position: relative;
+    }
+    
     div > label {
         color: white;
         font-size: $font-size-2;
         margin: auto 30px;
+        @media (width < 630px) {
+            margin: auto 10px;
+        }
     }
-    div > input {
+    div > input, div > span > input {
         width: 370px;
         border: none;
         height: 60px;
@@ -143,6 +164,11 @@ input {
         vertical-align: middle;
 
         outline:invert;
+
+        @media (width < 400px) {
+            box-sizing: border-box;
+            width:350px;
+        }
 
         &:focus {
             outline:black solid 5px;
@@ -160,8 +186,10 @@ input {
         height:25px;
         background-color:transparent;
         border:none;
-        position: relative;
-        margin-left:-40px;
+        position: absolute;
+        top:50%;
+        right:2%;
+        transform:translate(0, -50%);
         outline: none;
         user-select:none;
         z-index: 10;
@@ -170,8 +198,6 @@ input {
     .eye_shut {
         background-image:url("../Images/closed-eye.svg");
     }
-
-    
 
     .button_container {
 

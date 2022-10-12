@@ -10,6 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false)
   const [response, setResponse] = useState(null)
+  const [screenWidth, setScreenWidth] = useState()
   const link = useNavigate();
   const [loading, setLoading] = useState(true);
 
@@ -31,6 +32,17 @@ export default function Login() {
   useEffect(()=> {
     callServer()
   },[callServer])
+
+  useEffect(() => {
+    function resizeListener() {
+      const width = window.innerWidth
+      setScreenWidth(width)
+    }
+    window.addEventListener("resize", resizeListener, {passive:true})
+    return () =>{ 
+      window.removeEventListener("resize", resizeListener)
+    }
+  },[])
 
   const handleChangeUser = (e) => {
     setUsername(e.target.value)
@@ -63,16 +75,18 @@ export default function Login() {
     </div>}
     </div>
     <div className="login_container">
-      <h1>Login with an existing account</h1>
+      <h1>{screenWidth < 500 ? "Existing Account" : "Login with an existing account"}</h1>
       <div>
         <label htmlFor="username">Username: </label>
         <input type="text" id="username" name="username" required onChange={e=>handleChangeUser(e)}/>
       </div>
       <div>
         <label htmlFor="password">Password: </label>
+        <span>
         <input type={showPassword ? "text" : "password"} id="password" name="password" required onChange={e=>handleChangePass(e)}/>
       <button className="show_password" onClick={(e)=>{e.target.classList.toggle("eye_shut"); setShowPassword(!showPassword)}}>
       </button>
+        </span>
       </div>
       <div className="button_container">
         <button className="login_register" type="submit" onClick={login}>Login</button>
