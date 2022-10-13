@@ -550,18 +550,24 @@ export default function Graph({ get }) {
           </select>
         </label>
         <div className="top_line variations">
+        <div className="inner">
           {returnVarControls()}
         </div>
-      </div>
-      <fieldset>
-        {returnInputControls()}
-        <div className="data_range">
-          {returnDataRange()}
         </div>
-      </fieldset>
-      <fieldset className="bottom_line">
+      </div>
+      <div className="middle_line">
+        {returnInputControls()}
+          <div className="data_range">
+        <div className="inner">
+          {returnDataRange()}
+          </div>
+        </div>
+      </div>
+      <div className="bottom_line">
+        <div className="inner">
         {returnCustomControls()}
-      </fieldset>
+        </div>
+      </div>
       <div className="graph_container">
       <Line options={options} data={data} />
       </div>

@@ -344,12 +344,14 @@ export default function Log() {
       );
     } else if (page === TONS) {
         return (
-        <>
-          {goBack(515)}
+        <div className="tonnage_button_container">
+          {goBack(650)}
           <div className="center_text h2" onClick={() => tonnagePage === TABLE ? setTonnagePage(GRAPH) : setTonnagePage(TABLE)}>
-            <h2>View {tonnagePage === TABLE ? "Graph" : "Table"}</h2>
+          {windowInfo.screenWidth > 650 ? <h2>View {tonnagePage === TABLE ? "Graph" : "Table"}</h2>
+       : <div className={tonnagePage === TABLE ? "graph_svg" : "list_svg"}></div>}
+            
           </div>
-        </> )
+        </div> )
     } else if (page === CAL) {
         return (
           <div className="calendar_button_container">
@@ -364,15 +366,16 @@ export default function Log() {
         )
     } else if (page === BREAK) {
         return (
-          <>
-          {goBack(515)}
+          <div className="breakdown_button_container">
+          {goBack(700)}
           <div className="center_text h2" 
             onClick={() => {
               setPage(EDIT)
             }}>
-            <h2>Edit this Session</h2>
+      {windowInfo.screenWidth > 700 ? <h2>Edit this Session</h2>
+       : <div className="edit_svg"></div>}
           </div>
-          </>
+          </div>
         )
     } else if (page === EQUIV) {
         return (
@@ -682,7 +685,11 @@ export default function Log() {
           windowInfo={windowInfo}
         />
       );
-    else if (page === TONS) return <Tonnage get={get} tonnagePage={tonnagePage} setTonnagePage={setTonnagePage} />;
+    else if (page === TONS) return <Tonnage 
+      get={get} 
+      tonnagePage={tonnagePage} 
+      setTonnagePage={setTonnagePage}
+      windowInfo={windowInfo} />;
     else if (page === CAL)
       return (
         <Calendar

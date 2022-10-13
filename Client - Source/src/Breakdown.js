@@ -56,7 +56,7 @@ export default function Breakdown({
           setPage("LOG");
         }}
       >
-        Return to Log at Position
+        {windowInfo.screenWidth > 515 ? "Return to Log at Position" : "Log"}
       </button>
       <button
         onClick={() => {
@@ -64,7 +64,7 @@ export default function Breakdown({
           setPage("CALENDAR");
         }}
       >
-        Return to Calendar at Month
+        {windowInfo.screenWidth > 515 ? "Return to Calendar at Month" : "Calendar"}
       </button>
       </div>
       <h1>{sessionDate.toDateString() + ", " + sessionDate.toLocaleTimeString().replace(/\:00\s/, " ")}</h1>
@@ -135,7 +135,8 @@ export default function Breakdown({
                 <div key={`${exercise}Set${set}`} className="set_lines">
                   <div>
                     <strong>
-                  Set&nbsp;{set + 1}: 
+                    {windowInfo.screenWidth > 500 && "Set"}
+                  &nbsp;{set + 1}: 
                     </strong>
                   </div>
                   <div>
@@ -145,7 +146,8 @@ export default function Breakdown({
                       {reps[set]}&nbsp;rep{reps[set] > 1 ? `s` : null}
                   </div>
                   <div>
-                      Template&nbsp;{vars[set] + 1}
+                    {windowInfo.screenWidth > 500 ? "Template" : "T:"}
+                      &nbsp;{vars[set] + 1}
                   </div>
                 </div>
               );

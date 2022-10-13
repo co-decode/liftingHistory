@@ -3,7 +3,7 @@ import Graph from "./Graph";
 import returnTonnage from "./utils/tonnageFunctions";
 // import { variationObject } from "./utils/variables";
 
-export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
+export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }) {
   // const [page, setPage] = useState("TABLE");
   const [interval, setInterval] = useState(null);
   const [intervalLength, setIntervalLength] = useState([null, null]);
@@ -18,6 +18,7 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
   // const [showVariationFilter, setShowVariationFilter] = useState(false)
   const [variationMenus, setVariationMenus] = useState({});
   const checkRefs = useRef({});
+  const sidebarRef = useRef();
 
   /* function returnPageButtons() {
     return (
@@ -62,7 +63,7 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
 
     return (
       <div className="tonnage_table_container">
-        <div className="sidebar">
+        <div className="sidebar" ref={sidebarRef}>
         <div className="options_container">
         <fieldset>
           <label htmlFor="tonnageInterval">Interval:&nbsp;</label>
@@ -267,15 +268,40 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
         </div>
         </div>
         <div className="tableGridContainer top_line">
-          <span className="tableInterval">Interval</span>
-          <span className="tableTotalReps">Total Reps</span>
-          <span className="tableTotalMass">Total Mass</span>
-          <span className="tableMassPerRep">Mass Per Reps</span>
-          <span className="tableMax">Max</span>
+          <div className="inner">
+          <span className="tableInterval">
+            {windowInfo.screenWidth > 940 ? "Interval" 
+            : "I"}
+          </span>
+          <span className="tableTotalReps">
+            {windowInfo.screenWidth > 1100 ? "Total Reps" 
+            : windowInfo.screenWidth > 940 ? "Reps" 
+            : "R"}
+          </span>
+          <span className="tableTotalMass">
+            {windowInfo.screenWidth > 1100 ? "Total Mass" 
+            : windowInfo.screenWidth > 940 ? "Mass"
+            : "M"}
+          </span>
+          <span className="tableMassPerRep">
+            {windowInfo.screenWidth > 1100 ? "Mass Per Reps" 
+            : windowInfo.screenWidth > 940 ? "Mass / Reps"
+            : "MpR"}
+          </span>
+          <span className="tableMax">
+            {windowInfo.screenWidth > 940 ? "Max" : "Mx"}
+          </span>
           {interval === "SESSION" ? null : (
-            <span className="tableAvMax">Average Max</span>
+            <span className="tableAvMax">
+              {windowInfo.screenWidth > 940 ? "Average Max" : "Av Mx"}
+            </span>
           )}
-          <span className="tableRepsPerSet">Reps Per Set</span>
+          <span className="tableRepsPerSet">
+            {windowInfo.screenWidth > 1100 ? "Reps per Set" 
+            : windowInfo.screenWidth > 940 ? "Reps / Set"
+            : "RpS"}
+          </span>
+          </div>
         </div>
         {returnTonnage(
           get,
@@ -284,6 +310,9 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage }) {
           referenceDate,
           variationFilter
         )}
+        <button className="sidebar_toggle"
+          onClick={()=> sidebarRef.current.classList.toggle("active")}>
+        </button>
       </div>
     );
   }

@@ -310,6 +310,11 @@ input {
   width: 30px;
   height: 30px;
 }
+.navbar.log .edit_svg {
+  background-image: url("../Images/edit.svg");
+  width: 30px;
+  height: 30px;
+}
 .navbar.log .center_text {
   display: flex;
   justify-content: center;
@@ -349,6 +354,16 @@ input {
 }
 @media (width < 560px) {
   .navbar.log h1:hover ~ .calendar_button_container, .navbar.log .calendar_button_container:hover {
+    left: 0 !important;
+  }
+}
+@media (width < 701px) {
+  .navbar.log h1:hover ~ .breakdown_button_container, .navbar.log .breakdown_button_container:hover {
+    left: 0 !important;
+  }
+}
+@media (width < 571px) {
+  .navbar.log h1:hover ~ .tonnage_button_container, .navbar.log .tonnage_button_container:hover {
     left: 0 !important;
   }
 }
@@ -947,20 +962,59 @@ input {
   width: 100%;
 }
 
+.tonnage_button_container {
+  display: flex;
+  transition: left 0.3s;
+}
+.tonnage_button_container > div:nth-of-type(2) {
+  border-bottom-right-radius: 5px;
+}
+@media (width < 570px) {
+  .tonnage_button_container {
+    position: absolute;
+    height: 50px;
+    background-color: #353535;
+    border-bottom-right-radius: 5px;
+    top: 50px;
+    left: -180px;
+  }
+}
+
 .tonnage_table_container {
   height: calc(100% - 250px);
   margin-left: 230px;
   color: black;
   transition: margin-left 0.3s;
 }
+@media (width < 941px) {
+  .tonnage_table_container {
+    margin-left: 0;
+  }
+}
 .tonnage_table_container .tableGridContainer {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   text-align: center;
+  overflow-x: scroll;
+  scrollbar-width: none;
 }
 .tonnage_table_container .tableGridContainer.top_line {
   border-bottom: #353535 5px solid;
+  overflow-x: scroll;
+  scrollbar-width: none;
+}
+.tonnage_table_container .tableGridContainer.top_line .inner {
+  display: flex;
+  justify-content: space-around;
+  min-width: 500px;
+  width: 100%;
+}
+.tonnage_table_container .tableGridContainer .inner {
+  display: flex;
+  justify-content: space-around;
+  min-width: 800px;
+  width: 100%;
 }
 .tonnage_table_container strong {
   margin-left: 5px;
@@ -976,6 +1030,36 @@ input {
   width: 230px;
   left: 0;
   transition: left 0.3s;
+}
+@media (width < 941px) {
+  .tonnage_table_container .sidebar {
+    left: -230px;
+  }
+}
+.tonnage_table_container .sidebar.active {
+  left: 0;
+}
+.tonnage_table_container .sidebar_toggle {
+  position: fixed;
+  left: 95%;
+  transform: translateX(-50%);
+  top: 100px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background-color: #353535;
+  color: white;
+  border: 0;
+  background-image: url("../Images/weight.svg");
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: none;
+}
+@media (width < 941px) {
+  .tonnage_table_container .sidebar_toggle {
+    display: block;
+  }
 }
 .tonnage_table_container .options_container {
   overflow-y: auto;
@@ -1037,21 +1121,46 @@ input {
   align-items: center;
   justify-content: center;
 }
-.graph_page_container fieldset {
+.graph_page_container .middle_line {
   padding: 0;
   margin: 0;
   border: none;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   margin-left: 1%;
+  white-space: nowrap;
 }
-.graph_page_container fieldset .data_range {
+.graph_page_container .middle_line .data_range {
+  width: 100%;
+  display: flex;
+  flex-grow: 1;
+  overflow-x: scroll;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+.graph_page_container .middle_line .data_range .inner {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   justify-items: center;
+  width: 100%;
+  min-width: 700px;
 }
-.graph_page_container fieldset.bottom_line {
+.graph_page_container .bottom_line {
   margin-right: 1%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-left: 1%;
+  overflow-x: scroll;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+.graph_page_container .bottom_line .inner {
+  display: flex;
+  justify-content: start;
+  width: 100%;
+  min-width: 700px;
 }
 
 .graph_page_container_2 {
@@ -1071,11 +1180,20 @@ input {
   display: flex;
   justify-content: space-around;
   margin-left: 1%;
+  white-space: nowrap;
 }
 .graph_page_container_2 .top_line.variations {
   display: flex;
   justify-content: space-around;
   flex-grow: 1;
+  overflow-x: scroll;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+.graph_page_container_2 .top_line.variations .inner {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .graph_container {
@@ -1271,10 +1389,20 @@ input {
   flex-direction: column;
   align-items: center;
 }
+@media (width < 1055px) {
+  .breakdown_container {
+    width: 100%;
+  }
+}
 .breakdown_container h1 {
   color: black;
   width: fit-content;
   margin: 0;
+}
+@media (width < 450px) {
+  .breakdown_container h1 {
+    font-size: 42px;
+  }
 }
 .breakdown_container .button_container {
   background-color: #353535;
@@ -1298,6 +1426,7 @@ input {
   font-size: 42px;
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
 }
 .breakdown_container .show_exercises {
   width: 100%;
@@ -1306,10 +1435,17 @@ input {
   color: white;
   display: flex;
   justify-content: space-evenly;
+  flex-wrap: wrap;
 }
 .breakdown_container .exercise_container {
   width: 80%;
   font-size: 42px;
+}
+@media (width < 850px) {
+  .breakdown_container .exercise_container {
+    width: 98%;
+    font-size: 36px;
+  }
 }
 .breakdown_container .exercise_container h2 {
   margin: 0;
@@ -1318,8 +1454,10 @@ input {
 .breakdown_container .exercise_container .top_line {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 .breakdown_container .exercise_container .second_line {
+  flex-wrap: wrap;
   display: flex;
   justify-content: space-between;
 }
@@ -1328,9 +1466,33 @@ input {
   grid-template-columns: repeat(4, 1fr);
   justify-items: center;
 }
+@media (width < 500px) {
+  .breakdown_container .exercise_container .set_lines {
+    display: flex;
+    justify-content: space-between;
+  }
+}
 .breakdown_container .return_to_top {
   transform: translateX(50%);
-  right: 5%;
+  right: 8%;
+}
+
+.breakdown_button_container {
+  display: flex;
+}
+.breakdown_button_container:nth-child(2) {
+  border-bottom-right-radius: 5px;
+}
+@media (width < 701px) {
+  .breakdown_button_container {
+    position: absolute;
+    left: -160px;
+    transition: left 0.3s;
+    background-color: #353535;
+    border-bottom-right-radius: 5px;
+    height: 50px;
+    top: 50px;
+  }
 }
 
 /* Profile section */

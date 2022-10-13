@@ -118,6 +118,7 @@ export default function intervalTon(
                 return (
                   <div key={`${interval}`}>
                   <div className="tableGridContainer">
+                    <div className="inner">
                     <span className="tableInterval">{interval}</span>
                     <span className="tableTotalReps">{totalReps}</span>
                     <span className="tableTotalMass">
@@ -165,6 +166,7 @@ export default function intervalTon(
                         ).toFixed(2)}
                       {` r / s`}
                     </span>
+                    </div>
                   </div>
                   </div>
                 )
