@@ -1,15 +1,15 @@
 /* 
     Contents
 Login and Register - Line 101
-Spinner - Line 186
-Log - Line 250
-Add - Line 591
-Table - Line 776
-Graph - Line 888
-Calendar - Line 979
-Breakdown - Line 1156
-Profile - Line 1248
-Edit - Line 1304
+Spinner - Line 271
+Log - Line 290
+Add - Line 763
+Table - Line 1085
+Graph - Line 1200
+Calendar - Line 1280
+Breakdown - Line 1488
+Profile - Line 1577
+Edit - Line 1684
 */
 
 $font-size-1: 50px;
@@ -1690,6 +1690,10 @@ input {
     display:flex;
     justify-content: center;
     width:calc(100% - 205px);
+    @media (width < 715px) {
+        left: 0;
+        width:100%;
+    }
  }
 
  .edit_container {
@@ -1699,6 +1703,12 @@ input {
     border-left:#353535 5px solid;
     border-bottom:#353535 5px solid;
     width: 90%;
+
+    @media (width < 910px) {
+        width:100%;
+        border-left:0;
+        border-right: 0;
+    }
 
     div {
         margin: 10px 0;
@@ -1756,14 +1766,24 @@ input {
             font-size: $font-size-5;
             background-color: #c1c1c1;
 
+            @media (width < 515px) {
+                font-size: $font-size-6;
+            }
+
             &:last-of-type {
                 width: 11ch;
             }
         }
+
+        
     }
 
     .existing_exercise, .added_fieldset {
         margin: 0 15px;
+
+        @media (width < 515px) {
+            margin: 0 5px;
+        }
 
         font-size:$font-size-4;
 
@@ -1813,6 +1833,7 @@ input {
         .macro_line_one, .macro_line_two {
             display: flex;
             justify-content:space-around;
+            flex-wrap:wrap;
             
             input {
                 width: 6ch;
@@ -1824,6 +1845,11 @@ input {
             display:grid;
             justify-items: start;
             grid-template-columns: 0.5fr 1fr 1fr 1fr;
+
+            @media (width < 841px) {
+                display: flex;
+                justify-content: space-between;
+            }
 
             
             input {
@@ -1881,6 +1907,15 @@ input {
     width:205px;
     left: 0;
     top:0;
+    transition: left 0.3s;
+
+    @media (width < 715px) {
+        left: -205px;
+    }
+
+    &.active {
+        left:0;
+    }
 }
 .missing_exercises {
     margin-top:50px;
@@ -1956,4 +1991,27 @@ input {
     border-radius:50%;
     bottom:75px;
     right:15px;
+}
+
+.edit_exercise_list_toggle {
+    position:fixed;
+    left:50%;
+    transform: translateX(-50%);
+    bottom:5px;
+    height:30px;
+    width:30px;
+    border-radius: 50%;
+    // padding: 20px;
+    background-color: #353535;
+    color: white;
+    border:0;
+
+    background-image: url("../Images/weight.svg");
+    background-size:80%;
+    background-repeat:no-repeat;
+    background-position:center;
+
+    @media (width > 714px) {
+        display:none;
+    }
 }

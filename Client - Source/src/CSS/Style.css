@@ -1,15 +1,15 @@
 /* 
     Contents
 Login and Register - Line 101
-Spinner - Line 186
-Log - Line 250
-Add - Line 591
-Table - Line 776
-Graph - Line 888
-Calendar - Line 979
-Breakdown - Line 1156
-Profile - Line 1248
-Edit - Line 1304
+Spinner - Line 271
+Log - Line 290
+Add - Line 763
+Table - Line 1085
+Graph - Line 1200
+Calendar - Line 1280
+Breakdown - Line 1488
+Profile - Line 1577
+Edit - Line 1684
 */
 @font-face {
   font-family: "Cute Font";
@@ -1431,6 +1431,12 @@ input {
   justify-content: center;
   width: calc(100% - 205px);
 }
+@media (width < 715px) {
+  .edit_page_container {
+    left: 0;
+    width: 100%;
+  }
+}
 
 .edit_container {
   background-color: #d9d9d9;
@@ -1438,6 +1444,13 @@ input {
   border-left: #353535 5px solid;
   border-bottom: #353535 5px solid;
   width: 90%;
+}
+@media (width < 910px) {
+  .edit_container {
+    width: 100%;
+    border-left: 0;
+    border-right: 0;
+  }
 }
 .edit_container div {
   margin: 10px 0;
@@ -1485,12 +1498,22 @@ input {
   font-size: 32px;
   background-color: #c1c1c1;
 }
+@media (width < 515px) {
+  .edit_container .date_line input {
+    font-size: 28px;
+  }
+}
 .edit_container .date_line input:last-of-type {
   width: 11ch;
 }
 .edit_container .existing_exercise, .edit_container .added_fieldset {
   margin: 0 15px;
   font-size: 36px;
+}
+@media (width < 515px) {
+  .edit_container .existing_exercise, .edit_container .added_fieldset {
+    margin: 0 5px;
+  }
 }
 .edit_container .existing_exercise input, .edit_container .added_fieldset input {
   background-color: #c1c1c1;
@@ -1530,6 +1553,7 @@ input {
 .edit_container .existing_exercise .macro_line_one, .edit_container .existing_exercise .macro_line_two, .edit_container .added_fieldset .macro_line_one, .edit_container .added_fieldset .macro_line_two {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
 }
 .edit_container .existing_exercise .macro_line_one input, .edit_container .existing_exercise .macro_line_two input, .edit_container .added_fieldset .macro_line_one input, .edit_container .added_fieldset .macro_line_two input {
   width: 6ch;
@@ -1539,6 +1563,12 @@ input {
   display: grid;
   justify-items: start;
   grid-template-columns: 0.5fr 1fr 1fr 1fr;
+}
+@media (width < 841px) {
+  .edit_container .existing_exercise .set_line, .edit_container .added_fieldset .set_line {
+    display: flex;
+    justify-content: space-between;
+  }
 }
 .edit_container .existing_exercise .set_line input, .edit_container .added_fieldset .set_line input {
   width: 7ch;
@@ -1584,6 +1614,15 @@ input {
   width: 205px;
   left: 0;
   top: 0;
+  transition: left 0.3s;
+}
+@media (width < 715px) {
+  .missing_exercises_container {
+    left: -205px;
+  }
+}
+.missing_exercises_container.active {
+  left: 0;
 }
 
 .missing_exercises {
@@ -1658,6 +1697,28 @@ input {
   border-radius: 50%;
   bottom: 75px;
   right: 15px;
+}
+
+.edit_exercise_list_toggle {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 5px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background-color: #353535;
+  color: white;
+  border: 0;
+  background-image: url("../Images/weight.svg");
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+@media (width > 714px) {
+  .edit_exercise_list_toggle {
+    display: none;
+  }
 }
 
 /*# sourceMappingURL=Style.css.map */

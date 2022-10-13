@@ -34,10 +34,11 @@ export default function Edit({
   const [customAdditions, setCustomAdditions] = useState()
   const [extraVarFields, setExtraVarFields] = useState()
   const [templateArrays, setTemplateArrays] = useState()
+  const [macroState, setMacroState] = useState({})
   const exerciseRefs = useRef({})
   const macroRefs = useRef({})
-  const [macroState, setMacroState] = useState({})
   const customRefs = useRef({})
+  const listToggleRef = useRef()
   const link = useNavigate();
 
   useEffect(() => {
@@ -259,7 +260,9 @@ export default function Edit({
           return (
             <div key={sidVal}>
               <div className="date_line">
-                <label htmlFor="date">Date of Session:</label>
+                <label htmlFor="date">
+                  {windowInfo.screenWidth > 780 ? "Date of Session:" : "Date:"}
+                </label>
                 <input
                   id="date"
                   type="date"
@@ -413,9 +416,10 @@ export default function Edit({
                             // const templateNumber = update.lifts[exercise].vars[setNo]
                             return (
                               <div key={`${exercise}set${setNo}`} className="set_line">
-                                <strong>Set {setNo + 1}</strong>
+                                <strong>{windowInfo.screenWidth > 715 && "Set "}{setNo + 1}</strong>
                                 <label htmlFor={`${exercise}Set${setNo}mass`}>
-                                  Mass:&nbsp;
+                                {windowInfo.screenWidth > 840 ? "Mass:" : "M:"}
+                                  &nbsp;
                                 <input
                                   id={`${exercise}Set${setNo}mass`}
                                   ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
@@ -444,7 +448,8 @@ export default function Edit({
                                 </label>
 
                                 <label htmlFor={`${exercise}Set${setNo}reps`}>
-                                  Reps:&nbsp;
+                                {windowInfo.screenWidth > 840 ? "Reps:" : "R:"}
+                                  &nbsp;
                                 <input
                                   id={`${exercise}Set${setNo}reps`}
                                   ref={el=> exerciseRefs.current = {...exerciseRefs.current, 
@@ -472,7 +477,8 @@ export default function Edit({
                                 />
                                 </label>
 
-                                <label>Template:&nbsp;
+                                <label>
+                                  {windowInfo.screenWidth > 840 ? "Template:" : "T:"}&nbsp;
                                   <select
                                     defaultValue={update.lifts[exercise].vars[setNo]}
 
@@ -1260,17 +1266,21 @@ export default function Edit({
           setPage(LOG);
         }}
       >
-        Cancel and go to Log
+        {windowInfo.screenWidth > 515 ? "Cancel and go to Log" : "Log"}
       </button>
       <button
         onClick={() => {
           setPage("BREAKDOWN");
         }}
       >
-        Cancel and view Breakdown
+        {windowInfo.screenWidth > 515 ? "Cancel and view Breakdown" : "Breakdown"}
+        
       </button>
       </div>
-      <button className="submit_button_edit" onClick={() =>submitUpdate(update)}>Submit Update</button>
+      <button className="submit_button_edit" onClick={() =>submitUpdate(update)}>
+      {windowInfo.screenWidth > 515 ? "Submit Update" : "Submit"}
+
+        </button>
       
       {returnSid(get, [edit])}
       {update && Object.keys(update.newLifts).map(exercise => {
@@ -1289,7 +1299,7 @@ export default function Edit({
     <div className="feedback_container_edit">
       {feedback}
     </div>
-    <div className="missing_exercises_container">
+    <div className="missing_exercises_container" ref={listToggleRef}>
       <div className="missing_exercises">
       {update && missingSessionExercises
         .map((exercise) => {
@@ -1320,6 +1330,9 @@ export default function Edit({
         <span>{'\u2191'}</span>
       </div>
     }
+    <button className="edit_exercise_list_toggle" 
+      onClick={()=> listToggleRef.current?.classList.toggle("active")}>
+    </button>
     </div>
   );
 }
