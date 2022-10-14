@@ -342,7 +342,6 @@ export default function Log() {
              : windowInfo.screenWidth > 980 ? <h2>Calculator</h2>
              : <div className="calc_svg"></div>}
         </div>
-          {/* <button onClick={() => setPage(PROFILE)}>Change Password</button> */}
         </div>
       );
     } else if (page === TONS) {
@@ -462,9 +461,6 @@ export default function Log() {
         </label>
         <button onClick={() => {
           setShowVarFilter(!showVarFilter)
-          // log_container_ref.current.classList.toggle("active_filter")
-
-          // exercise_filter_ref.current.classList.toggle("active_exercise_filter")
         }}>{showVarFilter ? "Close Exercise Filter" : "Open Exercise Filter"}</button>
       </>
     );

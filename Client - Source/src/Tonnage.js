@@ -1,10 +1,8 @@
 import React, { useRef, useState } from "react";
 import Graph from "./Graph";
 import returnTonnage from "./utils/tonnageFunctions";
-// import { variationObject } from "./utils/variables";
 
 export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }) {
-  // const [page, setPage] = useState("TABLE");
   const [interval, setInterval] = useState(null);
   const [intervalLength, setIntervalLength] = useState([null, null]);
   const [referenceDate, setReferenceDate] = useState(null);
@@ -15,26 +13,10 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }
     return output;
   }
   const [variationFilter, setVariationFilter] = useState(initialFilter());
-  // const [showVariationFilter, setShowVariationFilter] = useState(false)
   const [variationMenus, setVariationMenus] = useState({});
   const checkRefs = useRef({});
   const sidebarRef = useRef();
 
-  /* function returnPageButtons() {
-    return (
-      <>
-        <button
-          onClick={() =>
-            tonnagePage === "TABLE"
-              ? setTonnagePage("GRAPH")
-              : setTonnagePage("TABLE")
-          }
-        >
-          {tonnagePage === "TABLE" ? `View Graph` : `View Table`}
-        </button>
-      </>
-    );
-  } */
 
   function returnTable() {
     function handleHideAll() {
@@ -77,9 +59,6 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }
             <option value="SESSION">Session</option>
             <option value="CUSTOM">Custom</option>
           </select>
-          {/* <button onClick={() => setShowVariationFilter(!showVariationFilter)}>
-            {showVariationFilter ? "Hide Filter" : "Show Filter"}
-          </button> */}
           
           
           <br/>
@@ -134,7 +113,7 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }
               : "Hide"}{" "}
             All Exercises
           </button>
-          {/* showVariationFilter &&  */exercisesForUser.sort().map((exercise) => {
+          {exercisesForUser.sort().map((exercise) => {
             let variationsForUser = [];
             get[exercise].forEach((sess) =>
               sess.variation_templates.forEach((template) =>
@@ -218,7 +197,7 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }
                     <div style={{display:"flex", flexWrap:"wrap",justifyContent:"space-around"}}>
 
                     {variationMenus[exercise] &&
-                      /* variationObject[exercise].flat() */ variationsForUser.map(
+                      variationsForUser.map(
                         (value) => {
                           return (
                             <label style={{whiteSpace:"nowrap"}} key={`${exercise}_${value}_box`}>
@@ -329,9 +308,7 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }
 
   return (
     <div className="tonnage_container">
-
       {returnPage()}
-      {/* {returnPageButtons()} */}
     </div>
   );
 }

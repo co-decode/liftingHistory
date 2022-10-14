@@ -1,16 +1,6 @@
 const Pool = require('pg-pool');
 const url = require('url')
 
-// LOCAL URL
-
-// const userDB = {
-//   host: "localhost",
-//   database: "weightlifting_3",
-//   user: "postgres",
-//   password: " ",
-//   port: 5432
-// }
-
 // RAILWAY URL
 
 const params = url.parse(process.env.DATABASE_URL);
@@ -24,7 +14,6 @@ const configRAILWAY = {
   ssl: { rejectUnauthorized: false }
 };
 
-// const userPool = new Pool(userDB)
 const userPool = new Pool(configRAILWAY)
 
 module.exports = {userPool};

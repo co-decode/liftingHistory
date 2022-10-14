@@ -80,8 +80,3 @@ describe("POST /users", () => {
         })
     })
 })
-
-// TODO:
-    // hash password before it gets to the database
-    // send userID to the client in a SESSION or JWT
-    // send a 500 status code when the server fails to connect to the database

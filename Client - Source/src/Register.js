@@ -51,7 +51,6 @@ export default function Register() {
     });
   };
 
-  // if (loading) return <><strong>Awaiting server response...</strong><Spinner/></>;
 
   return (
     <>
@@ -89,9 +88,6 @@ export default function Register() {
           </button>
           </span>
         </div>
-          {/* <button onClick={() => setShowPassword(!showPassword)}>{`${
-            showPassword ? "Hide" : "Show"
-          } Password`}</button> */}
 
         <div className="button_container">
           <button className="login_register" type="submit" onClick={register}>

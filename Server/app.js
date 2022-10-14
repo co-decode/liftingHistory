@@ -62,7 +62,6 @@ function makeApp(database,  ) {
   app.get("/sessions/:id", async (req, res, next) => {
     try {
     const id = parseInt(req.params.id);
-    // console.log(createGet(id))
     let {rows} = await userPool.query(createGet(id))
     let output = rows[0]
       Object.keys(output).filter(key => output[key] === null).forEach(nullKey => delete output[nullKey])
@@ -87,7 +86,6 @@ function makeApp(database,  ) {
           (err, result) => {
             if (err) throw err;
             const sid = result.rows[0].sid;
-            // console.log(sid);
             userPool.query(
               `${createInsertFromObject(id, sid, lifts)}`,
               (err, result) => {

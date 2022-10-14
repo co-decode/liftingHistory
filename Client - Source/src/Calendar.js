@@ -201,19 +201,6 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
                 nextMonthFirst.getTime() + trailingDays * 1000 * 60 * 60 * 24
               )
             )
-          /* CODE FOR SELECTING ONLY SESSIONS WITHIN THE MONTH
-          sessionDate >=
-            new Date(
-              monthYearDate.getFullYear(),
-              monthYearDate.getMonth(),
-              1
-            ) &&
-          sessionDate <
-            new Date(
-              monthYearDate.getFullYear(),
-              monthYearDate.getMonth() + 1,
-              1
-            ) */
         );
       })
       .map((sess) => {
@@ -250,7 +237,6 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
       .scaleLinear()
       .domain([0, Object.keys(dataObject).length])
       .range([0, width]);
-    // const y = d3.scaleLinear().domain([0, Object.keys(dataObject).length]).range([0, height]);
     d3.selectAll("g > *").remove();
     d3.selectAll("defs").remove();
     d3.selectAll("text").remove();
@@ -271,7 +257,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
       .data([0, 1])
       .join("text")
       .text((d) => (d ? ">" : "<"))
-      .attr("x", (d) => /* width / 2 - 60 + 120 * d */ `${50 - 15 + 30 * d}%`)
+      .attr("x", (d) => `${50 - 15 + 30 * d}%`)
       .attr("y", 18)
       .attr("font-size", "32px")
       .attr("text-anchor", "middle")
@@ -342,7 +328,6 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
 
             function returnGradient() {
               session.exercises.forEach((exercise, ind) => {
-                // console.log(exercise, colourForExercise[exercise])
                 gradient
                   .append("stop")
                   .attr("offset", `${parseInt(ind * Math.round(100 / (session.exercises.length - 1 || 1)))}%`)
@@ -383,24 +368,6 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
           ) {
             return "#00000050";
           } 
-          /* else if (
-            !session &&
-            i + 7 * ind >=
-              shiftGetDay(
-                new Date(
-                  monthYearDate.getFullYear(),
-                  monthYearDate.getMonth(),
-                  1
-                ).getDay()
-              ) +
-                new Date(
-                  monthYearDate.getFullYear(),
-                  monthYearDate.getMonth() + 1,
-                  0
-                ).getDate()
-          ) {
-            return "#00000050";
-          } */
           return "transparent";
         })
         .on("click", function (e, d) {
@@ -432,7 +399,6 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
     });
   }, [sortedSessions, monthYearDate, setEdit, setPage, colourState, windowInfo]);
 
-  // const monthString = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
   return (
     <div className="calendar_page_container">
       <div className="calendar_container" ref={cal_container_ref}>

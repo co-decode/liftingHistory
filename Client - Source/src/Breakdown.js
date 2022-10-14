@@ -43,13 +43,6 @@ export default function Breakdown({
   return (
     <div className="breakdown_container">
       <div className="button_container">
-      {/* <button
-        onClick={() => {
-          setPage("EDIT");
-        }}
-      >
-        Edit this Session
-      </button> */}
       <button
         onClick={() => {
           setEdit(0);
@@ -158,7 +151,6 @@ export default function Breakdown({
               <strong key={`variation${i}`}>
                 {i + 1}&nbsp;
                 {v.filter(vari=>!!vari).toString().replace(/,/g, ", ")}
-                {/* {i < a.length - 1 ? ` | ` : null} */}
               </strong>
               </div>
             ))}

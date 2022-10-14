@@ -258,13 +258,6 @@ export default function Add({
 
   let fileURL = URL.createObjectURL(downloadableFile);
 
-  // if (!user)
-  //   return (
-  //     <>
-  //       <strong>Loading...</strong>
-  //       <Spinner />
-  //     </>
-  //   );
 
   return (
     <>
@@ -279,30 +272,10 @@ export default function Add({
       </div>
     </div>
     <div className="add_container">
-      {/* <label>
-        Redirect on submit
-        <input
-          type="checkbox"
-          onChange={(e) => setRedirect(e.target.checked)}
-        />
-      </label> */}
       <form
         onKeyDown={(e) => e.code === "Enter" && e.preventDefault()}
         onSubmit={(e) => handleSubmit(e)}
       >
-        {/* <label>
-          Download a file:
-          <a href={`${fileURL}`} download={"hello.json"}>
-            CLICK ME
-          </a>
-        </label>
-        <button onClick={() => readFile()}>Output file read</button>
-        <label>
-          Upload a file:
-          <input type="file" ref={fileRef} />
-        </label>
-        <button onClick={() => readFile()}>Output file read</button> */}
-        {/* <div>{!!blob && console.log(JSON.parse(blob))}</div> */}
         <DateInput dateRefs={dateRefs} />
         <ExerciseFieldSets
           exerciseRefs={exerciseRefs}
@@ -349,7 +322,7 @@ function VariationOptions({
   const number = variationObject[exercise].length;
   const [array, setArray] = useState(() =>
     varFields[exercise].map( (extraFields) =>
-      Array(number + extraFields) //
+      Array(number + extraFields)
         .fill(null)
         .map((val, ind) => {
           if (ind < number) {
@@ -476,18 +449,7 @@ function VariationOptions({
               onClick={() =>{
                   setVarFields({ ...varFields, [exercise]: varFields[exercise]
                     .map((extraFieldsForTemplate, tempInd) => tempInd === tempNo ? extraFieldsForTemplate - 1 : extraFieldsForTemplate)})
-                    }
-                /* = {
-                  ...exerciseRefs.current,
-                  [exercise]: {
-                    ...exerciseRefs.current[exercise],
-                    [tempNo]: {
-                      ...exerciseRefs.current[exercise][tempNo],
-                      [varNo]: el
-                    } 
-                  },
-                }
-              } */}
+                    }}
             >
               -
             </button>
@@ -743,7 +705,7 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob, windowInfo }) {
       }
       new Promise((resolve) => {
         if (fields[exercise] < sets)
-          setFields({ ...fields, [exercise]: readFields /* sets */ });
+          setFields({ ...fields, [exercise]: readFields });
         if (varFields[exercise] < noOfVars) {
           setVarFields({ ...varFields, [exercise]: noOfVars });
         }
@@ -778,15 +740,9 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob, windowInfo }) {
                   exerciseRefs.current[exercise][key].mass.value =
                     readSets[key].mass;
 
-                  /* get[exercise].find(
-                      (v) => v.sid === mostRecentExerciseSessionSID
-                    ).mass[key - 1]; */
                   exerciseRefs.current[exercise][key].reps.value =
                     readSets[key].reps;
 
-                  /* get[exercise].find(
-                      (v) => v.sid === mostRecentExerciseSessionSID
-                    ).reps[key - 1]; */
                 }
               });
               Object.keys(exerciseRefs.current[exercise].variation).forEach(
@@ -794,8 +750,6 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob, windowInfo }) {
                   exerciseRefs.current[exercise].variation[index].value =
                     readVariation[index];
 
-                  /* get[exercise]   
-                    .find((v) => v.sid === mostRecentExerciseSessionSID).variation[index];  */
                 }
               );
             }
@@ -859,7 +813,6 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob, windowInfo }) {
         className="exercise_fieldset"
         key={`${exercise}FieldSet`}
       >
-      {/* <button onClick={()=>console.log(JSON.stringify(varFields), exerciseRefs.current, fields)}>log varFields</button> */}
 
         <div style={{ fontWeight: "bold" }}>
           <h1>{exercise
@@ -943,12 +896,11 @@ function ExerciseFieldSets({ exerciseRefs, exArr, get, blob, windowInfo }) {
             fields={fields}
             varFields={varFields}
             setVarFields={setVarFields}
-            /* variationObject[exercise] */ exerciseRefs={exerciseRefs}
+            exerciseRefs={exerciseRefs}
             customs={customs[exercise]}
           />
         )}{" "}
         {varFields && varFields[exercise] && addSubtractTemplates()}
-        {/* {returnTemplateButton()} */}
       </div>
     );
   });

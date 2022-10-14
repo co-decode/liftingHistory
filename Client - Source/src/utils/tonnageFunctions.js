@@ -13,7 +13,6 @@ export default function intervalTon(
   intervalFormat,
   intervalLengthInDays,
   begin,
-  // showZeroes,
   variationFilter
 ) {
   function getCustomInterval(date) {

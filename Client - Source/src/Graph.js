@@ -185,16 +185,9 @@ export default function Graph({ get }) {
     }
     const sessionListFiltered = filterSessions()
 
-    const getDataset = (/* what, */ input) => {
+    const getDataset = (input) => {
       function returnExerciseObject(getWhat, sid) {
         const sess =  get[getWhat].find((entry) => entry.sid === sid)
-        // const sidsWithExercise = sessionList.filter((sess) => sess.exercises.includes(input.exercise)).map(sess => sess.sid)
-          // const exercisesObjectsWithSid = get[input.exercise].filter(sess=> sidsWithExercise.includes(sess.sid) )
-          // const sessionsWithVariation = exercisesObjectsWithSid.filter((session) =>
-          //     varFilter.some((variation)=>
-          //       session.variation_templates.flat().includes(variation)))
-              
-          // const sessionsGutted = sessionsWithVariation.map(sess => { 
         if (varFilter.length){
           const templatesWithVariation = sess.variation_templates
             .reduce((acc, template, tempNo) => 
@@ -216,27 +209,18 @@ export default function Graph({ get }) {
           }
           return guttedSession
         }
-          // })
-          // return sessionsGutted
-
         return sess;
       }
       function totalMassRepsSets(exerciseObject) {
         let output = {mass: [], reps: [], sets: []}
-        // if (what === "mass") {
-          //return 
           output.mass = exerciseObject.reps.reduce(
             (a, v, i) => a + v * exerciseObject.mass[i],
             0
           );
-        // } else if (what === "reps")
-          // return 
           output.reps = exerciseObject.reps.reduce((a, v) => {
             return a + v;
           }, 0);
-        // else if (what === "sets") /* return */ 
         output.sets = exerciseObject.reps.length;
-        // else throw Error;
         return output
       }
       function returnTotalSwitch(sid) {
@@ -258,7 +242,7 @@ export default function Graph({ get }) {
       }
       let output = {mass: [], reps: [], sets: []}
       if (input.interval === "SESSION") {
-        /* return  */sessionListFiltered
+        sessionListFiltered
           .map((sess) => sess.sid)
           .map((sid) => returnTotalSwitch(sid))
           .forEach(sess=> Object.keys(output).forEach(key=>output[key].push(sess[key])));
@@ -367,7 +351,7 @@ export default function Graph({ get }) {
           yAxisID: "y",
           xAxisID: "x",
           label: "Tonnage (kg)",
-          data: output.mass, //getDataset("mass", input)
+          data: output.mass,
           borderColor: "rgb(75, 192, 192)",
           backgroundColor: "rgb(75, 192, 192)",
           fill: false,
@@ -375,7 +359,7 @@ export default function Graph({ get }) {
         {
           yAxisID: "y1",
           label: "Reps",
-          data: output.reps, //getDataset("reps", input)
+          data: output.reps,
           borderColor: "rgb(255, 192, 192)",
           backgroundColor: "rgb(255, 192, 192)",
           fill: false,
@@ -383,7 +367,7 @@ export default function Graph({ get }) {
         {
           yAxisID: "y1",
           label: "Sets",
-          data: output.sets, //getDataset("sets", input)
+          data: output.sets,
           borderColor: "rgb(70, 255, 192)",
           backgroundColor: "rgb(70, 255, 192)",
           fill: false,

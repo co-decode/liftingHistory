@@ -73,10 +73,6 @@ export default function Edit({
     const customsObject = {};
     session.exercises.forEach((exercise) => {
       const filtered = get[exercise].find((sess) => sess.sid === edit);
-      // const largestTemplateLength = Math.max(...filtered.variation_templates.map(template=> template.length))
-      /* let variationPart = variationObject[v].length - largestTemplateLength > 0                                
-      ? filtered.variation_templates.concat(Array(variationObject[v].length - largestTemplateLength).fill("")) 
-      : filtered.variation_templates                   << What was the intention of this? */
       const deNulledTemplates = filtered.variation_templates.map(temp=> temp.filter(vari=>vari))
       updateObject.lifts[exercise] = {
         mass: filtered.mass,
@@ -117,7 +113,6 @@ export default function Edit({
     session.exercises.forEach((exercise) => {
       templateArraysUpdate[exercise] = templateArray()
       function templateArray() {
-        // console.log(extraVarFields[exercise], exercise)
         return extraVarFields[exercise].map( (extraFields, tempNo) =>
         Array(variationObject[exercise].length + extraFields) 
           .fill(null)
@@ -198,7 +193,6 @@ export default function Edit({
               )}}})
           Object.keys(target).filter((key)=> key.includes("set_") && key.slice(4) % 2 === 0)
           .forEach((setName)=>{
-            // console.log(target, setName)
             target[`set_${setName.slice(4)}`][targetField].value
            = (targetField === "template" ? number.value - 1 : number.value)})
         }
@@ -413,7 +407,6 @@ export default function Edit({
                         {Array(fields[exercise])
                           .fill(null)
                           .map((set, setNo) => {
-                            // const templateNumber = update.lifts[exercise].vars[setNo]
                             return (
                               <div key={`${exercise}set${setNo}`} className="set_line">
                                 <strong>{windowInfo.screenWidth > 715 && "Set "}{setNo + 1}</strong>
@@ -546,11 +539,10 @@ export default function Edit({
                           </div>
                           <div className="templates_container">
                           {templateArrays && templateArrays[exercise].map((temp, tempNo) => { 
-                            // console.log(templateArrays, exercise, temp, tempNo)
                             return (
                               <div key={`${exercise}template${tempNo}`} className="template_container" style={{display: "inline-block"}}>
                                 Template {`${tempNo + 1}`}
-                                {update.lifts[exercise].variation_templates[tempNo] // had no [tempNo] before, not sure if this is breaking
+                                {update.lifts[exercise].variation_templates[tempNo] 
                                 && temp.filter(v=> v !== null).map((variation, varNo) => {
                                   const selectedVariation = update.lifts[exercise].variation_templates[tempNo][varNo]
                                   return (
@@ -1086,11 +1078,6 @@ export default function Edit({
                               ? template.map((v, i) => 
                                 i === varNo ? e.target.value : v) 
                               : template)
-                            /* variation_templates: update.newLifts[exercise].variation_templates.map(
-                              (v, i) => {
-                                return i === varNo
-                                  ? e.target.value
-                                  : update.newLifts[exercise].variation[i]}) */
                       }}});
                     }}
                   >

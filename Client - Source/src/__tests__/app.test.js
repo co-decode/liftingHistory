@@ -1,6 +1,5 @@
 import React from "react";
 import "@testing-library/jest-dom";
-// import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { render, screen, cleanup } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
@@ -111,5 +110,3 @@ test("kicks to login component if on log and authentication fails", async () => 
 //     })
 // })
 
-
-// My first real test!
