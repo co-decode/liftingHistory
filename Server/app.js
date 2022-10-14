@@ -22,8 +22,8 @@ function makeApp(database,  ) {
 
   app.use(
     cors({
-      // origin: ["https://lifting-log.netlify.app"],
-      origin: ["http://localhost:3000"],
+      origin: ["https://lifting-log.netlify.app"],
+      // origin: ["http://localhost:3000"],
       credentials: true,
     })
   );
@@ -41,11 +41,11 @@ function makeApp(database,  ) {
       secret,
       resave: false,
       saveUninitialized: false,
-      // proxy:true,
-      // cookie: {
-      //   secure:true,
-      //   sameSite: "none",
-      // }
+      proxy:true,
+      cookie: {
+        secure:true,
+        sameSite: "none",
+      }
     })
   );
   app.use(passport.initialize());

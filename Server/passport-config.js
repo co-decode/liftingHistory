@@ -22,18 +22,6 @@ function initialize(passport) {
                 else {
                     return (done(null, false, {message: "Something went wrong"}))
                 }
-            //     if (user == null) {
-            //         return done(null, false, { message: "No user with that username"})
-            //     }
-            //     try {
-            //         if (await ) {
-            //             return done(null, user)
-            //         } else {
-            //             return done(null, false, {message: "Password incorrect"})
-            //         }
-            //     } catch (e) {
-            //         return done(e)
-            //     }
         })
     }
     passport.use(new LocalStrategy(authenticateUser))

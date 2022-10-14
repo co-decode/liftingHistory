@@ -50,8 +50,8 @@ aside {
 div#tableContainer {
   height: 100%;
   width: 100%;
-  /* overflow-y: scroll; */
-  /* scrollbar-width: none; */
+  overflow-x: scroll;
+  scrollbar-width: none;
   margin-top: 8px;
 
   display: grid;
@@ -75,12 +75,38 @@ td {
     display:grid;
     grid-template-areas: "parameters parameters" "options highlight" "filter filter";
 } */
+.calc_filter_outer {
+  width:100%;
+  overflow-x: scroll;
+  white-space:nowrap;
+  scrollbar-width: none;
+}
+.calc_highlight_outer {
+  width:100%;
+  overflow-x: scroll;
+  white-space:nowrap;
+  scrollbar-width: none;
+}
+.calc_options_outer {
+  width:100%;
+  overflow-x: scroll;
+  white-space:nowrap;
+  scrollbar-width: none;
+}
+.calc_params_outer {
+  width:100%;
+  overflow-x: scroll;
+  white-space:nowrap;
+  scrollbar-width: none;
+}
+
 #parameters {
   position: relative;
   grid-area: "parameters";
   grid-column: 1 / 3;
   display: grid;
   grid-template-areas: "min min max max reps reps  step step stepVal";
+  min-width:990px;
   /* border:1px black solid; */
 }
 #parameters > * {
@@ -94,6 +120,7 @@ td {
   display: none;
   grid-template-areas: "tar tar bin bin";
   grid-template-columns:auto;
+  min-width:730px;
 }
 #highlightDiv > * {
   margin: auto auto auto 18%;
@@ -129,6 +156,7 @@ input[type=checkbox]:focus {} */
   display: none;
   grid-template-areas: "convert invert reverse display";
   grid-template-columns: auto;
+  min-width: 850px;
 }
 
 #options > #convert {
@@ -144,9 +172,17 @@ input[type=checkbox]:focus {} */
   margin: auto;
   margin-left: 18.7%;
 }
+#options > #reverserDiv > label{
+  margin: auto;
+  display:flex;
+  align-items: center;
+}
 
-#options > #reverserDiv > input {
-  margin-left: 11px;
+#options > #reverserDiv > label > input {
+  /* margin-left: 11px; */
+  width:auto;
+  display:block;
+  margin-right:auto;
 }
 
 #options > * {
@@ -158,6 +194,7 @@ input[type=checkbox]:focus {} */
   grid-column: 1 / 3;
   display: none;
   grid-template-areas: "row column restore";
+  min-width: 1000px;
 }
 
 #formDisplay {

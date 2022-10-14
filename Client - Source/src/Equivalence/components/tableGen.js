@@ -10,6 +10,7 @@ const TableGen = ({ reps, setReps, min, step, max, handleMin, handleMax, handleS
     }
 
     return (
+        <div className="calc_params_outer">
     <div id="parameters">
         <label htmlFor="min">
             Minimum:
@@ -36,6 +37,7 @@ const TableGen = ({ reps, setReps, min, step, max, handleMin, handleMax, handleS
         </span>
         
         {/* <FormDisplay /> */}
+    </div>
     </div>
     )};
 

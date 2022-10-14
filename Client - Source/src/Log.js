@@ -53,7 +53,10 @@ export default function Log() {
   const link = useNavigate();
 
   useEffect(() => {
-    setWindowInfo({...windowInfo, screenWidth: window.innerWidth })
+    setWindowInfo({
+      scrollPosition:window.scrollY, 
+      screenHeight:window.innerHeight,
+      screenWidth: window.innerWidth })
   },[])
   
   useEffect(() => {
@@ -379,8 +382,8 @@ export default function Log() {
         )
     } else if (page === EQUIV) {
         return (
-          <>
-          {goBack(515)}
+          <div className="calculator_button_container">
+          {goBack(851)}
           <div className="center_text h2" 
             onClick={() => {
               const options = document.getElementById("options");
@@ -388,7 +391,8 @@ export default function Log() {
                 ? options.style.setProperty("display", "none")
                 : options.style.setProperty("display", "grid");
             }}>
-            <h2>Options</h2>
+            {windowInfo.screenWidth > 850 ? <h2>Options</h2>
+            : <h1 className="calendar_h1">O</h1>}
           </div>
           <div className="center_text h2" 
             onClick={() => {
@@ -397,7 +401,8 @@ export default function Log() {
                 ? options.style.setProperty("display", "none")
                 : options.style.setProperty("display", "grid");
             }}>
-            <h2>Highlighter</h2>
+            {windowInfo.screenWidth > 850 ? <h2>Highlighter</h2>
+            : <h1 className="calendar_h1">H</h1>}
           </div>
           <div className="center_text h2" 
             onClick={() => {
@@ -406,9 +411,10 @@ export default function Log() {
                 ? options.style.setProperty("display", "none")
                 : options.style.setProperty("display", "grid");
             }}>
-            <h2>Filter</h2>
+            {windowInfo.screenWidth > 850 ? <h2>Filter</h2>
+            : <h1 className="calendar_h1">F</h1>}
           </div>
-          </>
+          </div>
         )
     } else if (page) {
         return <div className="add_button_container">

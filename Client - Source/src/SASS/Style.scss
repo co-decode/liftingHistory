@@ -410,6 +410,11 @@ input {
             left:0 !important;
         }
     }
+    @media (width < 700px) {
+        h1:hover ~ .calculator_button_container, .calculator_button_container:hover {
+            left:0 !important;
+        }
+    }
 
     .profile {
         margin-left: auto;
@@ -1142,11 +1147,17 @@ input {
         text-align: center;
         overflow-x:scroll;
         scrollbar-width: none;
+        &::-webkit-scrollbar {
+            display: none;
+        }
 
         &.top_line {
             border-bottom:#353535 5px solid;
             overflow-x:scroll;
             scrollbar-width: none;
+            &::-webkit-scrollbar {
+                display: none;
+            }
             
             .inner {
                 display:flex;
@@ -1316,6 +1327,9 @@ input {
             flex-grow: 1;
             overflow-x: scroll;
             scrollbar-width: none;
+            &::-webkit-scrollbar {
+                display: none;
+            }
             white-space:nowrap;
             
             .inner {
@@ -1337,6 +1351,9 @@ input {
         margin-left: 1%;
         overflow-x: scroll;
         scrollbar-width: none;
+        &::-webkit-scrollbar {
+            display: none;
+        }
         
         white-space:nowrap;
 
@@ -1344,7 +1361,7 @@ input {
             // display:grid;
             // grid-template-columns: 1fr 1fr 1fr 1fr;
             display:flex;
-            justify-content: start;
+            justify-content: flex-start;
             width:100%;
             min-width:700px;
         }
@@ -1380,6 +1397,9 @@ input {
             flex-grow: 1;
             overflow-x: scroll;
             scrollbar-width: none;
+            &::-webkit-scrollbar {
+                display: none;
+            }
             white-space:nowrap;
             .inner {
                 display:flex;
@@ -1398,6 +1418,9 @@ input {
     border-top:#353535 5px solid;
     overflow:auto;
     scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
     width: auto;
     max-width:100%;
     height:100%;
@@ -1590,6 +1613,14 @@ input {
                 border:#353535 5px solid;
                 pointer-events: all;
                 scrollbar-width: thin;
+                &::-webkit-scrollbar {
+                    background-color: #353535;
+                    width: 5px;
+                }
+    
+                &::-webkit-scrollbar-thumb {
+                    background-color: #c1c1c1;
+                }
                 z-index:0;
                 &:hover {
                     cursor:pointer;
@@ -1754,11 +1785,19 @@ input {
     margin-top:25px;
     color:white;
     width: 40%;
+    min-width:450px;
     padding:15px;
     box-sizing:border-box;
 
     display:flex;
     flex-direction: column;
+
+    @media (width < 450px) {
+        width:100%;
+        min-width:375px;
+        border-left:none;
+        border-right:none;
+    }
 
     h1 {
         text-align: center;
@@ -1781,8 +1820,12 @@ input {
         justify-content: space-between;
         padding: 15px;
 
+        @media (width < 435px) {
+            flex-direction: column;
+            align-items: center;
+        }
+        
         input {
-            width: 50%;
             font-size: $font-size-5;
             text-align: center;
         }
@@ -1804,6 +1847,18 @@ input {
 
         &:hover {
             background-color: #555;
+        }
+    }
+
+    span {
+        position:relative;
+        width: 50%;
+
+        @media (width < 435px) {
+            width: 80%;
+        }
+        input {
+            width: 100%;
         }
     }
 
@@ -2052,6 +2107,7 @@ input {
             scrollbar-width: thin;
 
 
+            
             &::-webkit-scrollbar {
                 height:5px;
                 background-color: #c1c1c1;
@@ -2185,4 +2241,27 @@ input {
     @media (width > 714px) {
         display:none;
     }
+}
+
+// Calculator Section
+
+.calculator_button_container {
+    display:flex;
+    transition: left 0.3s;
+
+    & > div:last-child {
+        border-bottom-right-radius: 5px;
+    }
+
+    @media (width < 700px) {
+        position:absolute;
+        height:50px;
+        left:-293px;
+        background-color: #353535;
+        border-bottom-right-radius: 5px;
+        top:50px;
+    }
+}
+.calendar_h1 {
+    margin:0 !important;
 }

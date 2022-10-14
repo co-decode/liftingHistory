@@ -48,13 +48,17 @@ export default function Profile({user}) {
       <form onSubmit={(e)=>handleSubmit(e)}>
         <label>
           New password:&nbsp;
+          <span>
           <input type={`${showPassword ? "text" : "password"}`} required onChange={(e)=> {setResponse(null); setInput({...input, 1: e.target.value})}}/>
         <button type="button" className="show_password" 
         onClick={(e)=>{e.target.classList.toggle("eye_shut"); setShowPassword(!showPassword)}}/>
+        </span>
         </label>
         <label>
           Confirm password:&nbsp;
+          <span>
           <input type="password" required onChange={(e)=> {setResponse(null); setInput({...input, 2: e.target.value})}}/>
+          </span>
         </label>
         <button>Submit Change</button>
       </form>

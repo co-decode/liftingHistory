@@ -1,6 +1,7 @@
 import React from "react";
 
 const Highlight = ({target,setTarget,bin,setBin}) => (
+    <div className="calc_highlight_outer">
     <div id="highlightDiv">
         <label htmlFor="highlight">
             Highlight:
@@ -10,6 +11,7 @@ const Highlight = ({target,setTarget,bin,setBin}) => (
             Highlight Range:
         </label>
         <input id="highlightRange" type="number" min="0" max="10" value={bin} onChange={(e) => { setBin(Number(e.target.value)); }} />
+    </div>
     </div>
 );
 
