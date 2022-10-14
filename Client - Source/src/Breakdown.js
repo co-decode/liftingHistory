@@ -60,7 +60,7 @@ export default function Breakdown({
         {windowInfo.screenWidth > 515 ? "Return to Calendar at Month" : "Calendar"}
       </button>
       </div>
-      <h1>{sessionDate.toDateString() + ", " + sessionDate.toLocaleTimeString().replace(/\:00\s/, " ")}</h1>
+      <h1>{sessionDate.toDateString() + ", " + sessionDate.toLocaleTimeString().replace(/:00\s/, " ")}</h1>
       <div className="session_aggregates">{sessionAggregates()}</div>
       <div className="show_exercises">
         {session.exercises.map((exercise) => {

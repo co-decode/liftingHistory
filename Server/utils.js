@@ -72,6 +72,9 @@ function createGetFromExercises(arrayFromSet, uid) {
     output += (` WHERE uid = ${uid};`)
     return output
 }   
+// log(createGetFromExercises(['bench', 'deadlift'], 3))
+
+
 
 function createGet(uid, exerciseArray = [
         "deadlift", 
@@ -112,6 +115,7 @@ function createGet(uid, exerciseArray = [
     output = output.concat(` FROM sessions where uid = ${uid};`)
     return output
 }
+// log(createGet(3))
 
 function deleteSessionQuery(sid, exerciseArray) {
     let output = ``

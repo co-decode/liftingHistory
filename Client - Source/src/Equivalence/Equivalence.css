@@ -14,7 +14,7 @@ div#wrapper {
   width: 100%;
   min-height: 550px;
   display: grid;
-  overflow-y: scroll;
+  overflow: scroll;
   scrollbar-width: none;
   justify-content: center;
   /* grid-template-columns:20% 60% 20%; */
@@ -25,7 +25,12 @@ div#wrapper {
   z-index: 1;
   background-color: #c1c1c1;
   transition: transform 0.3s;
+
 }
+div#wrapper::-webkit-scrollbar {
+  display:none;
+}
+
 #wrapper > h1 {
   margin: auto;
   margin-top: 50px;
@@ -47,6 +52,21 @@ aside {
   text-align: center;
 }
 
+@media ( width < 550px) {
+  #wrapper > h1 {
+    font-size: 36px;
+  }
+  #wrapper > h4 {
+    font-size:28px;
+  }
+  #wrapper > p {
+    font-size:24px
+  }
+  #wrapper > aside {
+    font-size:20px;
+  }
+}
+
 div#tableContainer {
   height: 100%;
   width: 100%;
@@ -55,6 +75,10 @@ div#tableContainer {
   margin-top: 8px;
 
   display: grid;
+}
+
+div#tableContainer::-webkit-scrollbar {
+  display:none;
 }
 table {
   display: table;
@@ -81,11 +105,17 @@ td {
   white-space:nowrap;
   scrollbar-width: none;
 }
+.calc_filter_outer::-webkit-scrollbar {
+  display:none;
+}
 .calc_highlight_outer {
   width:100%;
   overflow-x: scroll;
   white-space:nowrap;
   scrollbar-width: none;
+}
+.calc_highlight_outer::-webkit-scrollbar {
+  display:none;
 }
 .calc_options_outer {
   width:100%;
@@ -93,11 +123,17 @@ td {
   white-space:nowrap;
   scrollbar-width: none;
 }
+.calc_options_outer::-webkit-scrollbar {
+  display:none;
+}
 .calc_params_outer {
   width:100%;
   overflow-x: scroll;
   white-space:nowrap;
   scrollbar-width: none;
+}
+.calc_params_outer::-webkit-scrollbar {
+  display:none;
 }
 
 #parameters {

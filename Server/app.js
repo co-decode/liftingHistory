@@ -41,9 +41,9 @@ function makeApp(database,  ) {
       secret,
       resave: false,
       saveUninitialized: false,
-      proxy:true,
+      proxy: true,
       cookie: {
-        secure:true,
+        secure: true,
         sameSite: "none",
       }
     })
