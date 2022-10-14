@@ -1,9 +1,6 @@
 const log = (statement) => console.log(statement)
 
 const lifts =  {deadlift: {mass: [155, 160, 167.5, 160], reps: [1,1,1,1], vars: [0,0,1,0], variation_templates: [["Conventional", "Mixed"],["UnderWater"]]}}
-/* ,
-bench: {mass: [80, 85, 90, 95, 90, 90], reps: [5,3,1,1,1,1], variation: ["Wide Grip", "Flat"]},
-squat: {mass: [130, 137.5, 142.5, 137.5, 130, 120], reps: [3, 1, 1, 1, 3, 5], variation: ["High Bar"]}} */
 
 function createExercisesFromBody(lifts) {
     let keys = Object.keys(lifts);
@@ -89,50 +86,7 @@ function createGetFromExercises(arrayFromSet, uid) {
 }   
 // log(createGetFromExercises(['bench', 'deadlift'], 3))
 
-// function createGet(uid, everySingleExercise = [
-//     "deadlift", 
-//     "squat", 
-//     "bench",
-//     "overhead_press",
-//     "bicep",
-//     "tricep",
-//     "grip",
-//     "lunge",
-//     "calf",
-//     "row",
-//     "shrug",
-//     "pull_up",
-//     "push_up",
-//     "dip",
-//     "abs",
-//     "lateral_raise",
-//     "good_morning",
-//     "face_pull",
-//     "hip_thrust",
-//     "hip_abduction",
-//     "adductors",
-//     "reverse_flies",
-//     "rotator_cuff",
-//     "pull_over",
-//     "neck",
-//     "nordic",
-//     "reverse_nordic",
-//     "leg_curl",
-//     "flies",
-//     "back_extension"
-// ]) {
-//     let output = `select jsonb_object_nullif(jsonb_build_object('session',jsonb_build_object('sid', sessions.sid, 'date', sessions.date, 'exercises', sessions.exercises)`
-//     everySingleExercise.forEach(exercise => {
-//         output = output.concat(`, '${exercise}', jsonb_object_nullif(jsonb_build_object('mass', ${exercise}.mass, 'reps', ${exercise}.reps, 'vars', ${exercise}.vars, 'variation_templates', ${exercise}.variation_templates))`)
-//     })
-//     output = output.concat(`)) as sessions from sessions`)
-//     everySingleExercise.forEach(exercise => {
-//         output = output.concat(` FULL JOIN ${exercise} ON ${exercise}.sid = sessions.sid`)
-//     })
-//     output = output.concat(` WHERE sessions.uid = ${uid};`)
-//     console.log(output)
-//     return output
-// }
+
 
 function createGet(uid, exerciseArray = [
         "deadlift", 
@@ -174,16 +128,6 @@ function createGet(uid, exerciseArray = [
     return output
 }
 // log(createGet(3))
-
-// "SELECT jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises))) from sessions;"
-
-//This will work vvv
-
-// String.raw`SELECT jsonb_build_object('sessions', jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises))) sessions, (select jsonb_build_object('bench', jsonb_agg(jsonb_build_object('mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates))) from bench) from sessions;`
-
-// String.raw`SELECT jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises)) sessions, (select jsonb_agg(jsonb_build_object('sid', sid, 'mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates)) bench from bench) from sessions;`
-
-// String.raw`select array_agg(distinct u.val) from sessions cross join lateral unnest(sessions.exercises) as u(val);`
 
 function deleteSessionQuery(sid, exerciseArray) {
     let output = ``
