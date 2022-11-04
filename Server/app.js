@@ -20,6 +20,8 @@ function makeApp(database,  ) {
   const initializePassport = require("./passport-config");
   initializePassport(passport);
 
+  /* Note - To run locally: set appropriate CORS origin AND turn off PROXY and COOKIE session options */
+
   app.use(
     cors({
       origin: ["https://lifting-log.netlify.app"],
