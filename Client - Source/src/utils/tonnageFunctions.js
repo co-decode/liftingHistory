@@ -13,7 +13,8 @@ export default function intervalTon(
   intervalFormat,
   intervalLengthInDays,
   begin,
-  variationFilter
+  variationFilter,
+  sort
 ) {
   function getCustomInterval(date) {
     const time = new Date(date);
@@ -40,7 +41,11 @@ export default function intervalTon(
       return `${new Date(date).toDateString()}`;
   }
   const sidsTagged = get.sessions
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .sort((a, b) => {
+      return sort === "Oldest" 
+      ? new Date(a.date).getTime() - new Date(b.date).getTime()
+      : new Date(b.date).getTime() - new Date(a.date).getTime()
+    })
     .map((v) => {
       return {
         sid: v.sid,
@@ -76,12 +81,9 @@ export default function intervalTon(
                 .filter((val) => sidsBinned[interval].includes(val.sid))
                 .filter((val) => val.exercises.includes(exercise));
 
-
-                
               let exerciseObjectsForSid = sidsByExercise.map((sidV) =>
               get[exercise].find((val) => val.sid === sidV.sid)
               );
-
               
               if (variationFilter[exercise].length) {
                 const sessionsWithVariation = exerciseObjectsForSid.filter((session) =>

@@ -4,6 +4,7 @@ import returnTonnage from "./utils/tonnageFunctions";
 
 export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }) {
   const [interval, setInterval] = useState(null);
+  const [sort, setSort] = useState(localStorage.getItem("tonnageSort"));
   const [intervalLength, setIntervalLength] = useState([null, null]);
   const [referenceDate, setReferenceDate] = useState(null);
   const exercisesForUser = Object.keys(get).filter((key) => key !== "sessions");
@@ -59,8 +60,18 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }
             <option value="SESSION">Session</option>
             <option value="CUSTOM">Custom</option>
           </select>
-          
-          
+          <br/>
+          <label htmlFor="tonnageSort">Sort By:&nbsp;</label>
+          <select
+            id="tonnageSort"
+            onChange={(e)=> {
+              setSort(e.target.value)
+              localStorage.setItem("tonnageSort", e.target.value)
+            }}
+          >
+            <option>Recent</option>
+            <option>Oldest</option>
+          </select>
           <br/>
           {interval === "CUSTOM" && (
             <>
@@ -287,7 +298,8 @@ export default function Tonnage({ get, tonnagePage, setTonnagePage, windowInfo }
           interval || "ALL",
           intervalLength[0] || 7,
           referenceDate,
-          variationFilter
+          variationFilter,
+          sort
         )}
         <button className="sidebar_toggle"
           onClick={()=> sidebarRef.current.classList.toggle("active")}>

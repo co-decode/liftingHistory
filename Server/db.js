@@ -1,15 +1,15 @@
 const Pool = require('pg-pool');
 const url = require('url')
 
-// / LOCAL URL
+// LOCAL URL, Note: Re enter correct password to run locally.
 
-const userDB = {
-  host: "localhost",
-  database: "weightlifting_3",
-  user: "postgres",
-  password: " ",
-  port: 5432
-}
+// const userDB = {
+//   host: "localhost",
+//   database: "weightlifting_3",
+//   user: "postgres",
+//   password: !!!,
+//   port: 5432
+// }
 
 
 // RAILWAY URL
