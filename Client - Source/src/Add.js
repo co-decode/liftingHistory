@@ -22,7 +22,6 @@ export default function Add({
   const [exArr, setExArr] = useState([]);
   const [response, setResponse] = useState(null);
   const [user, setUser] = useState(null);
-  const [redirect, setRedirect] = useState(true);
   const [loading, setLoading] = useState(false);
   const link = useNavigate();
 
@@ -61,7 +60,6 @@ export default function Add({
       url: `${backend}/sessions/${user.uid}`,
     })
       .then((res) => {
-        setLoading(false);
         setResponse(res.data);
       })
       .then((res) =>
@@ -102,7 +100,10 @@ export default function Add({
               ascending: dateFilter.ascending,
             });
           })
-          .then(() => redirect && setPage("LOG"))
+          .then(() => {
+            setPage("LOG")
+            setLoading(false)
+          })
       );
   }
 
