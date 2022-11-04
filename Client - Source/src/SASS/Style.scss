@@ -683,6 +683,10 @@ input {
     box-sizing: border-box;
     display: flex;
     justify-content: center;
+
+    & > div:first-child {
+        width:100%;
+    }
 }
 
 .entry_container {

@@ -586,6 +586,9 @@ input {
   display: flex;
   justify-content: center;
 }
+.all_entries_container > div:first-child {
+  width: 100%;
+}
 
 .entry_container {
   font-size: 32px;
