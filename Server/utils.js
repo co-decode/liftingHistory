@@ -110,12 +110,12 @@ function createGet(uid, exerciseArray = [
     ]) {
     let output = `SELECT jsonb_agg(jsonb_build_object('sid', sid,'date', date, 'exercises', exercises)) sessions`
     exerciseArray.forEach((exercise) => {
-        output = output.concat(`, (select jsonb_agg(jsonb_build_object('sid', sid, 'mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates)) from ${exercise}) "${exercise}"`)
+        output = output.concat(`, (select jsonb_agg(jsonb_build_object('sid', sid, 'mass', mass, 'reps', reps, 'vars', vars, 'variation_templates', variation_templates)) from ${exercise} where uid = ${uid}) "${exercise}"`)
     })
     output = output.concat(` FROM sessions where uid = ${uid};`)
     return output
 }
-// log(createGet(3))
+// log(createGet(2))
 
 function deleteSessionQuery(sid, exerciseArray) {
     let output = ``
