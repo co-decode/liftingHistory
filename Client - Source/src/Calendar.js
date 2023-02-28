@@ -160,6 +160,28 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
           1
         );
     }
+    function monthNumber(i,ind) {
+      const currentMonth = monthYearDate.getMonth()
+      const daysInRecentMonth = new Date(
+        monthYearDate.getFullYear(),
+        currentMonth + 1,
+        0
+      ).getDate();
+      const dayOfFirst = new Date(
+        monthYearDate.getFullYear(),
+        currentMonth,
+        1
+      ).getDay();
+      if (ind === 0 && i < shiftGetDay(dayOfFirst)) {
+        return currentMonth - 1;
+      } else if (
+        i + 1 + ind * 7 >
+        daysInRecentMonth + shiftGetDay(dayOfFirst)
+      ) {
+        return currentMonth + 1;
+      } else
+        return currentMonth;
+    }
 
     const days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
     const data = sortedSessions
@@ -208,6 +230,7 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
         return {
           sid: sess.sid,
           exercises: sess.exercises,
+          month: sessionDate.getMonth(),
           dayOfMonth: sessionDate.getDate(),
           dayOfWeek: sessionDate.getDay(),
         };
@@ -309,13 +332,17 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
         .attr("height", rectSize)
         .attr("class", (d, ind) =>  {
           const session = sessionArray.find(
-            (session) => session.dayOfMonth === dayNumber(i, ind)
+            (session) => 
+              session.dayOfMonth === dayNumber(i, ind) && 
+              session.month === monthNumber(i, ind)
           );
           return session ? `rectangle with_session` : `rectangle`
           })
         .attr("fill", (d, ind) => {
           const session = sessionArray.find(
-            (session) => session.dayOfMonth === dayNumber(i, ind)
+            (session) => 
+              session.dayOfMonth === dayNumber(i, ind) && 
+              session.month === monthNumber(i, ind)
           );
           if (session) {
             var gradient = defs
@@ -372,7 +399,9 @@ export default function Calendar({ get, setPage, setEdit, goToMonthYear, windowI
         })
         .on("click", function (e, d) {
           const sid = sessionArray.find(
-            (session) => session.dayOfMonth === dayNumber(i, d)
+            (session) => 
+              session.dayOfMonth === dayNumber(i, d) && 
+              session.month === monthNumber(i, d)
           )?.sid;
           if (sid) {
             setPage("BREAKDOWN");
