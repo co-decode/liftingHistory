@@ -146,12 +146,5 @@ VERSION 3:
                 
                 Could double the tonnage for unilateral exercises for aggregates...
 
-                IN V4: 
-                Make a UI... obviously. 
-                Experiment with web sockets and receiving queries from other applications, such as a native mobile application built with kotlin.
-
-
-
-        >> Then go work on the sheet music project.
 
     DONE: Experiment with the Accumulator logic for the Tonnage and Graph components, try to limit the number of times through the whole function to once for the three datasets.

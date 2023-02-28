@@ -1,13 +1,13 @@
 const Pool = require('pg-pool');
 const url = require('url')
 
-// LOCAL URL, Note: Re enter correct password to run locally.
+// LOCAL URL
 
 // const userDB = {
 //   host: "localhost",
 //   database: "weightlifting_3",
 //   user: "postgres",
-//   password: !!!,
+//   password: " ",
 //   port: 5432
 // }
 

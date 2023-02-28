@@ -1,15 +1,15 @@
 /* 
     Contents
-Login and Register - Line 101
-Spinner - Line 271
-Log - Line 290
-Add - Line 763
-Table - Line 1085
-Graph - Line 1200
-Calendar - Line 1280
-Breakdown - Line 1488
-Profile - Line 1577
-Edit - Line 1684
+Login and Register
+Spinner
+Log
+Add
+Table
+Graph
+Calendar
+Breakdown
+Profile
+Edit
 */
 
 $font-size-1: 50px;
@@ -264,6 +264,19 @@ input {
     visibility: hidden;
     .eye_shut {
         background-image:url("../Images/closed-eye.svg");
+    }
+}
+.test_user {
+    color:white;
+    border-color: white;
+    align-self:center;
+    justify-self:right;
+    margin-left:auto;
+    margin-right:20px;
+    transition: 0.3s ease;
+
+    &:hover {
+        background-color:#d9d9d920;
     }
 }
 

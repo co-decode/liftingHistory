@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from "react";
+import React, {useEffect, useState, useCallback, useRef} from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
 import { authenticatedKick, backend } from "./utils/variables";
@@ -8,6 +8,7 @@ import Spinner from "./utils/Spinner";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const inputRefs = useRef({username: null, password: null})
   const [showPassword, setShowPassword] = useState(false)
   const [response, setResponse] = useState(null)
   const [screenWidth, setScreenWidth] = useState()
@@ -51,6 +52,12 @@ export default function Login() {
   const handleChangePass = (e) => {
     setPassword(e.target.value)
   }
+  const handleTestUser = () => {
+    setUsername("testUser")
+    setPassword("testUserPassword")
+    inputRefs.current.username.value = "testUser"
+    inputRefs.current.password.value = "testUserPassword"
+  }
 
   const login = () => {
     setLoading(true)
@@ -74,17 +81,20 @@ export default function Login() {
       <Spinner/>
       <p className="login_loading_p">Awaiting server response...</p>
     </div>}
+      <button className="test_user" onClick={()=>handleTestUser()}>{screenWidth > 500 ? "Login with a " : null}Test User</button>
     </div>
     <div className="login_container">
       <h1>{screenWidth < 500 ? "Existing Account" : "Login with an existing account"}</h1>
       <div>
         <label htmlFor="username">Username: </label>
-        <input type="text" id="username" name="username" required onChange={e=>handleChangeUser(e)}/>
+        <input type="text" id="username" name="username" required 
+          ref={(el)=>inputRefs.current = {...inputRefs.current, username: el}} onChange={e=>handleChangeUser(e)}/>
       </div>
       <div>
         <label htmlFor="password">Password: </label>
         <span>
-        <input type={showPassword ? "text" : "password"} id="password" name="password" required onChange={e=>handleChangePass(e)}/>
+        <input type={showPassword ? "text" : "password"} id="password" name="password"  required
+          ref={(el)=>inputRefs.current = {...inputRefs.current, password: el}} onChange={e=>handleChangePass(e)}/>
       <button className="show_password" onClick={(e)=>{e.target.classList.toggle("eye_shut"); setShowPassword(!showPassword)}}>
       </button>
         </span>
