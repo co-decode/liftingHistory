@@ -14,7 +14,7 @@ _An application for recording weightlifting data, tracking progress and planning
 
 - Environment: create-react-app
 - Framework: React
-- User Interface: CSS
+- User Interface: SASS
 - AJAX: Axios
 
 **Deployment:**
@@ -26,51 +26,38 @@ Testing: Jest, React Testing Library, Supertest
 
 Version Control: Git and Github
 
-## out of date, requires updating...
-VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+## Instructions:
 
-## Components and Features:
+#### Login
 
-My Lifting Record features three major components:
+1. **Create an Account** by clicking register on the Login page
 
-- The Record Display
-- The Options bar
-- The Entry form
+#### Add a New Entry
 
-My Lifting Record takes some time to make requests of its database, so there is a loading spinner which is on display next to the page text logo in the top left hand corner whenever network requests are being processed. A useReducer hook is used to track this as state.
+2. Your log is empty! Click **Add a New Entry** at the top left of the page to enter some data. Please ensure that the time is correctly set, that data is input for every set specified and that each tag template has been filled out.
 
-The favicon image for this project was obtained from svgrepo.com under a CC0 licence.
+#### Log
 
-### The Record Display:
+3. When the log has been populated with some session data, use the date filter to view sessions that occured within a specific time frame, or open the exercise filter to filter by exercise, or even by tags indicating exercise variation
 
-The record display features:
+#### Calendar
 
-- A responsive grid of mapped workout records, obtained via SQL queries executed with Axios.
+4. To view a visualisation of when each of your sessions occured, click on the Calendar link at the top of the page. Click the colours button at the top of the page to customise how each exercise is indicated on the calendar. Click on the date of a session that you are interested in to view it in more detail.
 
-Each mapped element displays the date of the entry, its workout alias, and the specifics of the exercises performed within an expandable details element.
+#### Breakdown
 
-Media queries adapt the grid for smaller screen sizes. Four columns collapse to two columns below 700px, and two columns collapse to one column below 420px.
+5. The breakdown page will give you statistics and aggregates related to your session, such as the total amount of weight moved and the average weight per set. When you are done, you can return to the calendar at the month of this session or to the main Log page.
 
-Entries may be deleted by click on the **Delete Entry** button, which sends a DELETE request to the database through Axios. The browsers default Confirm dialogue is invoked before permitting the request to ensure the user does not unwillingly delte entries.
+#### Graph
 
-Users may also change the details of the entry by click the **Edit Entry** button and opening the Update Form. The update is pre-filled with the current values for the entry, ensuring that the user changes only the fields he/she desires to and does not overwrite unchanged entries with **_null_**. The PUT request is sent through Axios.
+6. To view a line graph detailing statistics about your weightlifting data over time, click on the Graph link at the top of the Log page. Use the filters to set the interval you want to group sessions by, the exercise and its variations you want to view and the time period you are interested in.
 
-### The Options Bar:
+#### Table
 
-The options bar features:
+7. You may also view more statistics by switching over to the Table page, either from the Graph page or the Log page.
 
-- An Order button, which can toggle the record's display between most recent or oldest sessions.
-- A date filter, which can allow the user to specify the range of dates to display sessions for.
-- A colour scheme selector
+#### Calculator
 
-Changing the order sends a new query to the database and updates the display, but mapped session elements maintain their state; if the Update Form for a specific entry was open when the order was switched, this specific entry will maintain this state after the order is switched.
+8. As an added utility, a weight equivalence calculator is included for planning future weightlifting sessions.
 
-Similarly, the date filter will not interfere with the ordering state. If the record display was ordered by most recent before being filtered, it will still be ordered by most recent after the filter is applied.
-
-The colour scheme selector stores changes in local storage, so users can reload the application with their theme selection preserved.
-
-### The Entry Form:
-
-The entry form is revealed by clicking the **Add an Entry** button at the bottom of the page, underneath the record display.
-
-Filling the form out and clicking the **Submit Entry** button makes a POST request to the database through Axios. A message will be displayed upon the successful submission of the data, and the record display will be updated to include the new session.
+9. When you are done, you may log out of Lifting Log by hovering over your user name in the top right corner of the screen and then clicking "Log Out".
