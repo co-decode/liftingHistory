@@ -12,11 +12,11 @@ const url = require('url')
 // }
 
 
-// RAILWAY URL
 
+// CLOUD URL
 const params = url.parse(process.env.DATABASE_URL);
 const auth = params.auth.split(':');
-const configRAILWAY = {
+const configCloud = {
   user: auth[0],
   password: auth[1],
   host: params.hostname,
@@ -25,6 +25,6 @@ const configRAILWAY = {
   ssl: { rejectUnauthorized: false }
 };
 
-const userPool = new Pool(configRAILWAY)
+const userPool = new Pool(configCloud)
 
 module.exports = {userPool};
