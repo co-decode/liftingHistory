@@ -13,7 +13,7 @@ const {
   createDeleteFromArray,
   createGetFromExercises,
   createGet,
-  createGet2
+  createGet_new
 } = require("./utils");
 
 function makeApp(database,  ) {
@@ -65,7 +65,7 @@ function makeApp(database,  ) {
   app.get("/testing/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      let {rows} = await userPool.query(createGet2(id))
+      let {rows} = await userPool.query(createGet_new(id))
       console.log(rows)
     } catch {
       throw new Error('something went wrong')
