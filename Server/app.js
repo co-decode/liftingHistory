@@ -62,17 +62,41 @@ function makeApp(database,  ) {
     res.send("Hello, world!")
   })
   
-  app.get("/testing/:id", async (req, res) => {
+  app.get("/sessions/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       let {rows} = await userPool.query(createGet_new(id))
-      console.log(rows)
+      let sessions = []
+      let output = { sessions }
+      rows.forEach(row => {
+        if (row.date === null) { // If exercise row
+          let exercise_name = row.exercise_name
+          delete row.date;
+          delete row.exercise_name
+          delete row.exercises
+          if (output[exercise_name]) { // If exercise already exists
+            output[exercise_name].push(row)
+          }
+          else { // If exercise doesn't already exist
+            output[exercise_name] = [row]
+          }
+        }
+        else { // If session row
+          delete row.exercise_name
+          delete row.reps
+          delete row.mass
+          delete row.variation_templates
+          delete row.vars
+          sessions.push(row)
+        }
+      })
+      return res.status(200).json(output)
     } catch {
       throw new Error('something went wrong')
     }
   });
 
-  app.get("/sessions/:id", async (req, res, next) => {
+  app.get("/sessions_old/:id", async (req, res, next) => {
     try {
     const id = parseInt(req.params.id);
     let {rows} = await userPool.query(createGet(id))
