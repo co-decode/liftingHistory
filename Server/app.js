@@ -12,7 +12,8 @@ const {
   createUpdateFromObject,
   createDeleteFromArray,
   createGetFromExercises,
-  createGet
+  createGet,
+  createGet2
 } = require("./utils");
 
 function makeApp(database,  ) {
@@ -60,6 +61,16 @@ function makeApp(database,  ) {
   app.get("/", (req, res) => {
     res.send("Hello, world!")
   })
+  
+  app.get("/testing/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      let {rows} = await userPool.query(createGet2(id))
+      console.log(rows)
+    } catch {
+      throw new Error('something went wrong')
+    }
+  });
 
   app.get("/sessions/:id", async (req, res, next) => {
     try {

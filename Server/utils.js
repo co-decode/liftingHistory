@@ -117,6 +117,9 @@ function createGet(uid, exerciseArray = [
 }
 // log(createGet(2))
 
+function createGet_new(uid) {
+    return `select * from get_user_sessions(${uid});`
+
 function deleteSessionQuery(sid, exerciseArray) {
     let output = ``
     exerciseArray.forEach(exer=> output += `delete from ${exer} where sid = ${sid};`)
