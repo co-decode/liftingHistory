@@ -119,6 +119,7 @@ function createGet(uid, exerciseArray = [
 
 function createGet_new(uid) {
     return `select * from get_user_sessions(${uid});`
+}
 
 function deleteSessionQuery(sid, exerciseArray) {
     let output = ``
