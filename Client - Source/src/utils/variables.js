@@ -1,6 +1,6 @@
 export const authenticatedKick = '/log'
 
-// export const backend = "http://localhost:3001"
+//export const backend = "http://localhost:3001"
 export const backend = "https://liftinghistory-production.up.railway.app"
 
 export const exerciseArray = [

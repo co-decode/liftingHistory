@@ -74,7 +74,8 @@ BEGIN
 
   final_query := left(final_query, -11) || ') AS all_sessions 
   UNION ALL select sid, date, exercises, NULL AS exercise_name, NULL AS reps,
-  NULL as mass, NULL AS variation_templates, NULL AS vars FROM sessions;';
+  NULL as mass, NULL AS variation_templates, NULL AS vars FROM sessions 
+  WHERE uid = ' || user_id || ' ;';
 
   RETURN QUERY EXECUTE final_query;
 END;

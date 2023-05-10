@@ -70,7 +70,7 @@ function makeApp(database,  ) {
       let output = { sessions }
       rows.forEach(row => {
         if (row.date === null) { // If exercise row
-          let exercise_name = row.exercise_name
+          let exercise_name = row.exercise_name.replaceAll('"','') // remove quote_ident quotations
           delete row.date;
           delete row.exercise_name
           delete row.exercises
