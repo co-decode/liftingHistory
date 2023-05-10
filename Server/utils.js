@@ -128,7 +128,7 @@ function deleteSessionQuery(sid, exerciseArray) {
     return output
 }
 
-module.exports = {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray, createGetFromExercises, deleteSessionQuery, createGet}
+module.exports = {createExercisesFromBody, createInsertFromObject, createUpdateFromObject, createDeleteFromArray, createGetFromExercises, deleteSessionQuery, createGet, createGet_new}
 
 
 // POSTGRES HELPER FUNCTION: 
