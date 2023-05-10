@@ -62,8 +62,9 @@ function makeApp(database,  ) {
     res.send("Hello, world!")
   })
   
-  app.get("/sessions/:id", async (req, res) => {
+  app.get("/sessions_dynamic/:id", async (req, res) => {
     try {
+        console.time()
       const id = parseInt(req.params.id);
       let {rows} = await userPool.query(createGet_new(id))
       let sessions = []
@@ -90,18 +91,21 @@ function makeApp(database,  ) {
           sessions.push(row)
         }
       })
+        console.timeEnd()
       return res.status(200).json(output)
     } catch {
       throw new Error('something went wrong')
     }
   });
 
-  app.get("/sessions_old/:id", async (req, res, next) => {
+  app.get("/sessions/:id", async (req, res, next) => {
     try {
+        console.time()
     const id = parseInt(req.params.id);
     let {rows} = await userPool.query(createGet(id))
     let output = rows[0]
       Object.keys(output).filter(key => output[key] === null).forEach(nullKey => delete output[nullKey])
+        console.timeEnd()
     return res.status(200).json(output)
     } catch {
       throw new Error('Something went wrong')
